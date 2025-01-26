@@ -8,14 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
-interface ServiceOrder {
-  numeroOS: string;
-  patrimonio: string;
-  equipamento: string;
-  status: string;
-  observacao: string;
-}
+import { ServiceOrder } from "@/types";
 
 interface StatisticsProps {
   serviceOrders: ServiceOrder[];
