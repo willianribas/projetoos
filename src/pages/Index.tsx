@@ -6,6 +6,7 @@ import ServiceOrderForm from "@/components/ServiceOrderForm";
 import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
+import ADEMonitor from "@/components/ADEMonitor";
 import { useToast } from "@/hooks/use-toast";
 
 interface ServiceOrder {
@@ -84,6 +85,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background p-8">
       <Header />
+      <ADEMonitor serviceOrders={serviceOrders} />
       <ServiceOrderForm 
         form={form}
         isOpen={isOpen}
