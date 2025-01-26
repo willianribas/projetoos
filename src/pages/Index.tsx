@@ -5,6 +5,7 @@ import SearchBar from "@/components/SearchBar";
 import ServiceOrderForm from "@/components/ServiceOrderForm";
 import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
+import Statistics from "@/components/Statistics";
 import { useToast } from "@/hooks/use-toast";
 
 interface ServiceOrder {
@@ -20,6 +21,7 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [serviceOrders, setServiceOrders] = useState<ServiceOrder[]>([]);
   const [showTable, setShowTable] = useState(false);
+  const [showStats, setShowStats] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
   const { toast } = useToast();
 
@@ -81,13 +83,24 @@ const Index = () => {
         statusOptions={statusOptions}
       />
       <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <QuickActions setShowTable={setShowTable} showTable={showTable} />
+      <QuickActions 
+        setShowTable={setShowTable} 
+        showTable={showTable}
+        setShowStats={setShowStats}
+        showStats={showStats}
+      />
       {(showTable || searchQuery) && (
         <ServiceOrderTable 
           serviceOrders={filteredOrders}
           getStatusColor={getStatusColor}
           statusOptions={statusOptions}
           onUpdateServiceOrder={handleUpdateServiceOrder}
+        />
+      )}
+      {showStats && (
+        <Statistics 
+          serviceOrders={serviceOrders}
+          statusOptions={statusOptions}
         />
       )}
     </div>
