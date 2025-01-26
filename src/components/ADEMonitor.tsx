@@ -60,16 +60,16 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                   key={index}
                   className="hover:bg-primary/5 transition-colors duration-200"
                 >
-                  <TableCell className="w-[150px] text-left">
+                  <TableCell className="w-[150px]">
                     {order.numeroos}
                   </TableCell>
-                  <TableCell className="w-[150px] text-left">
+                  <TableCell className="w-[150px]">
                     {order.patrimonio}
                   </TableCell>
-                  <TableCell className="w-[200px] text-left">
+                  <TableCell className="w-[200px]">
                     {order.equipamento}
                   </TableCell>
-                  <TableCell className="w-[120px] text-left">
+                  <TableCell className="w-[120px]">
                     0 dias
                   </TableCell>
                 </TableRow>
