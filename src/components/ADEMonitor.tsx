@@ -40,10 +40,26 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="text-muted-foreground">Número OS</TableHead>
-                <TableHead className="text-muted-foreground">Patrimônio</TableHead>
-                <TableHead className="text-muted-foreground">Equipamento</TableHead>
-                <TableHead className="text-muted-foreground">Dias em ADE</TableHead>
+                <TableHead className="w-[150px] text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    Número OS
+                  </div>
+                </TableHead>
+                <TableHead className="w-[150px] text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    Patrimônio
+                  </div>
+                </TableHead>
+                <TableHead className="w-[200px] text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    Equipamento
+                  </div>
+                </TableHead>
+                <TableHead className="w-[120px] text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    Dias em ADE
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
