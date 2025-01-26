@@ -6,6 +6,8 @@ import { Moon, Sun, FileDown } from "lucide-react";
 import ServiceOrderPDF from "./ServiceOrderPDF";
 import { ServiceOrder } from "@/types";
 import { Toggle } from "@/components/ui/toggle";
+import { BlobProvider } from "@react-pdf/renderer";
+import React from "react";
 
 interface SettingsProps {
   serviceOrders: ServiceOrder[];
@@ -32,17 +34,26 @@ const Settings = ({ serviceOrders }: SettingsProps) => {
         </div>
         <div className="flex items-center justify-between">
           <span className="text-sm">Exportar OS</span>
-          <PDFDownloadLink
-            document={<ServiceOrderPDF serviceOrders={serviceOrders} />}
-            fileName="ordens-servico.pdf"
-          >
-            {({ loading }): React.ReactElement => (
-              <Button variant="outline" disabled={loading} type="button">
+          <BlobProvider document={<ServiceOrderPDF serviceOrders={serviceOrders} />}>
+            {({ blob, url, loading }) => (
+              <Button 
+                variant="outline" 
+                disabled={loading} 
+                type="button"
+                onClick={() => {
+                  if (url) {
+                    const link = document.createElement('a');
+                    link.href = url;
+                    link.download = 'ordens-servico.pdf';
+                    link.click();
+                  }
+                }}
+              >
                 <FileDown className="mr-2 h-4 w-4" />
                 {loading ? "Gerando PDF..." : "Exportar PDF"}
               </Button>
             )}
-          </PDFDownloadLink>
+          </BlobProvider>
         </div>
       </CardContent>
     </Card>
