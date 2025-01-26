@@ -34,6 +34,7 @@ export const statusOptions = [
 export default function ServiceOrderContent() {
   const form = useForm<ServiceOrder>();
   const [searchQuery, setSearchQuery] = useState("");
+  const [searchField, setSearchField] = useState("all");
   const [showTable, setShowTable] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -66,6 +67,7 @@ export default function ServiceOrderContent() {
   const filteredOrders = filterServiceOrders({
     serviceOrders,
     searchQuery,
+    searchField,
     selectedStatus,
   });
 
@@ -82,7 +84,12 @@ export default function ServiceOrderContent() {
         onSubmit={onSubmit}
         statusOptions={statusOptions}
       />
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <SearchBar 
+        searchQuery={searchQuery} 
+        setSearchQuery={setSearchQuery}
+        searchField={searchField}
+        setSearchField={setSearchField}
+      />
       <QuickActions 
         setShowTable={setShowTable} 
         showTable={showTable}
