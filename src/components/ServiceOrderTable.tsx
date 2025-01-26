@@ -24,6 +24,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 interface ServiceOrder {
@@ -43,13 +44,15 @@ interface ServiceOrderTableProps {
     color: string;
   }>;
   onUpdateServiceOrder: (index: number, updatedOrder: ServiceOrder) => void;
+  onDeleteServiceOrder: (index: number) => void;
 }
 
 const ServiceOrderTable = ({ 
   serviceOrders, 
   getStatusColor, 
   statusOptions,
-  onUpdateServiceOrder 
+  onUpdateServiceOrder,
+  onDeleteServiceOrder
 }: ServiceOrderTableProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<{order: ServiceOrder, index: number} | null>(null);
@@ -68,6 +71,11 @@ const ServiceOrderTable = ({
     }
   };
 
+  const handleDelete = (e: React.MouseEvent, index: number) => {
+    e.stopPropagation(); // Prevent row click event
+    onDeleteServiceOrder(index);
+  };
+
   return (
     <>
       <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm">
@@ -83,6 +91,7 @@ const ServiceOrderTable = ({
                 <TableHead>Equipamento</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Observação</TableHead>
+                <TableHead className="w-[50px]">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -101,6 +110,16 @@ const ServiceOrderTable = ({
                     </span>
                   </TableCell>
                   <TableCell>{order.observacao}</TableCell>
+                  <TableCell>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="hover:bg-destructive/90 hover:text-destructive-foreground"
+                      onClick={(e) => handleDelete(e, index)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

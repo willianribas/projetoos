@@ -56,6 +56,15 @@ const Index = () => {
     });
   };
 
+  const handleDeleteServiceOrder = (index: number) => {
+    const newOrders = serviceOrders.filter((_, i) => i !== index);
+    setServiceOrders(newOrders);
+    toast({
+      title: "Ordem de Serviço excluída",
+      description: "A OS foi removida com sucesso!",
+    });
+  };
+
   const getStatusColor = (status: string) => {
     const statusOption = statusOptions.find(option => option.value === status);
     return statusOption?.color || "text-muted-foreground";
@@ -95,6 +104,7 @@ const Index = () => {
           getStatusColor={getStatusColor}
           statusOptions={statusOptions}
           onUpdateServiceOrder={handleUpdateServiceOrder}
+          onDeleteServiceOrder={handleDeleteServiceOrder}
         />
       )}
       {showStats && (
