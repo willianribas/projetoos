@@ -63,7 +63,7 @@ const ServiceOrderPDF = ({ serviceOrders }: ServiceOrderPDFProps) => (
         {serviceOrders.map((order, index) => (
           <View style={styles.tableRow} key={index}>
             <View style={styles.tableCol}>
-              <Text style={styles.tableCell}>{order.numeroOS}</Text>
+              <Text style={styles.tableCell}>{order.numeroos}</Text>
             </View>
             <View style={styles.tableCol}>
               <Text style={styles.tableCell}>{order.patrimonio}</Text>

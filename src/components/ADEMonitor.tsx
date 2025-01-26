@@ -36,7 +36,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
           <TableBody>
             {adeOrders.map((order, index) => (
               <TableRow key={index}>
-                <TableCell>{order.numeroOS}</TableCell>
+                <TableCell>{order.numeroos}</TableCell>
                 <TableCell>{order.patrimonio}</TableCell>
                 <TableCell>{order.equipamento}</TableCell>
                 <TableCell>0 dias</TableCell>

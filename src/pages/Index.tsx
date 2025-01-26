@@ -31,12 +31,7 @@ const Index = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      
-      // Transform the data to match the frontend format
-      return data.map((order: ServiceOrder) => ({
-        ...order,
-        numeroOS: order.numeroos // Map the database field to the frontend field
-      }));
+      return data;
     },
   });
 
@@ -46,7 +41,7 @@ const Index = () => {
       const { data, error } = await supabase
         .from('service_orders')
         .insert({
-          numeroos: serviceOrder.numeroOS,
+          numeroos: serviceOrder.numeroos,
           patrimonio: serviceOrder.patrimonio,
           equipamento: serviceOrder.equipamento,
           status: serviceOrder.status,
@@ -56,10 +51,7 @@ const Index = () => {
         .single();
 
       if (error) throw error;
-      return {
-        ...data,
-        numeroOS: data.numeroos
-      };
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
@@ -86,7 +78,7 @@ const Index = () => {
       const { data: updatedData, error } = await supabase
         .from('service_orders')
         .update({
-          numeroos: data.numeroOS,
+          numeroos: data.numeroos,
           patrimonio: data.patrimonio,
           equipamento: data.equipamento,
           status: data.status,
@@ -97,10 +89,7 @@ const Index = () => {
         .single();
 
       if (error) throw error;
-      return {
-        ...updatedData,
-        numeroOS: updatedData.numeroos
-      };
+      return updatedData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
@@ -177,7 +166,7 @@ const Index = () => {
   const filteredOrders = serviceOrders.filter((order) => {
     const searchLower = searchQuery.toLowerCase();
     return (
-      (order.numeroOS?.toLowerCase() || "").includes(searchLower) ||
+      (order.numeroos?.toLowerCase() || "").includes(searchLower) ||
       (order.patrimonio?.toLowerCase() || "").includes(searchLower) ||
       (order.equipamento?.toLowerCase() || "").includes(searchLower) ||
       (order.status?.toLowerCase() || "").includes(searchLower) ||
