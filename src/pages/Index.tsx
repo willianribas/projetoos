@@ -10,7 +10,7 @@ import Statistics from "@/components/Statistics";
 import ADEMonitor from "@/components/ADEMonitor";
 import { useToast } from "@/hooks/use-toast";
 import { ServiceOrder } from "@/types";
-import { getServiceOrders, createServiceOrder, updateServiceOrder, deleteServiceOrder } from "@/lib/supabase";
+import { supabase } from "@/integrations/supabase/client";
 
 const Index = () => {
   const form = useForm();
@@ -24,12 +24,29 @@ const Index = () => {
   // Fetch service orders
   const { data: serviceOrders = [] } = useQuery({
     queryKey: ['serviceOrders'],
-    queryFn: getServiceOrders,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('service_orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      return data;
+    },
   });
 
   // Create mutation
   const createMutation = useMutation({
-    mutationFn: createServiceOrder,
+    mutationFn: async (serviceOrder: Omit<ServiceOrder, 'id'>) => {
+      const { data, error } = await supabase
+        .from('service_orders')
+        .insert(serviceOrder)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return data;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
       toast({
@@ -51,8 +68,17 @@ const Index = () => {
 
   // Update mutation
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: number; data: Partial<ServiceOrder> }) => 
-      updateServiceOrder(id, data),
+    mutationFn: async ({ id, data }: { id: number; data: Partial<ServiceOrder> }) => {
+      const { data: updatedData, error } = await supabase
+        .from('service_orders')
+        .update(data)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      return updatedData;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
       toast({
@@ -72,7 +98,14 @@ const Index = () => {
 
   // Delete mutation
   const deleteMutation = useMutation({
-    mutationFn: deleteServiceOrder,
+    mutationFn: async (id: number) => {
+      const { error } = await supabase
+        .from('service_orders')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
       toast({
