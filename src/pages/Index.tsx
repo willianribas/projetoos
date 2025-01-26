@@ -51,32 +51,36 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8">
+    <div className="min-h-screen bg-background p-8">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Sistema OS</h1>
-        <p className="text-gray-600">Sistema de Gerenciamento de Ordens de Serviço</p>
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent mb-2">
+          Sistema OS
+        </h1>
+        <p className="text-muted-foreground">
+          Sistema de Gerenciamento de Ordens de Serviço
+        </p>
       </div>
 
       {/* Search Bar */}
       <div className="mb-8 flex gap-2">
         <Input 
           placeholder="Buscar OS, patrimônio ou equipamento..." 
-          className="max-w-xl"
+          className="max-w-xl bg-card/50 border-muted"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />
-        <Button>
+        <Button className="bg-primary hover:bg-primary/90">
           <Search className="mr-2" />
           Buscar
         </Button>
       </div>
 
       {/* Nova OS Form */}
-      <Card className="mb-8">
+      <Card className="mb-8 border-muted bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ClipboardList className="h-5 w-5 text-blue-500" />
+            <ClipboardList className="h-5 w-5 text-blue-400" />
             Nova Ordem de Serviço
           </CardTitle>
         </CardHeader>
@@ -91,7 +95,7 @@ const Index = () => {
                     <FormItem>
                       <FormLabel>Número OS</FormLabel>
                       <FormControl>
-                        <Input placeholder="Digite o número da OS" {...field} />
+                        <Input placeholder="Digite o número da OS" className="bg-background/50" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -104,7 +108,7 @@ const Index = () => {
                     <FormItem>
                       <FormLabel>Patrimônio</FormLabel>
                       <FormControl>
-                        <Input placeholder="Digite o número do patrimônio" {...field} />
+                        <Input placeholder="Digite o número do patrimônio" className="bg-background/50" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -117,7 +121,7 @@ const Index = () => {
                     <FormItem>
                       <FormLabel>Equipamento</FormLabel>
                       <FormControl>
-                        <Input placeholder="Digite o equipamento" {...field} />
+                        <Input placeholder="Digite o equipamento" className="bg-background/50" {...field} />
                       </FormControl>
                     </FormItem>
                   )}
@@ -131,7 +135,7 @@ const Index = () => {
                       <FormLabel>Status</FormLabel>
                       <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger className="bg-background/50">
                             <SelectValue placeholder="Selecione o status" />
                           </SelectTrigger>
                         </FormControl>
@@ -157,7 +161,7 @@ const Index = () => {
                     <FormControl>
                       <Textarea 
                         placeholder="Digite as observações da OS"
-                        className="min-h-[100px]"
+                        className="min-h-[100px] bg-background/50"
                         {...field}
                       />
                     </FormControl>
@@ -165,7 +169,7 @@ const Index = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full">
+              <Button type="submit" className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700">
                 Salvar OS
               </Button>
             </form>
@@ -175,48 +179,56 @@ const Index = () => {
 
       {/* Quick Actions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow border-muted bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ClipboardList className="h-5 w-5 text-green-500" />
+              <ClipboardList className="h-5 w-5 text-blue-400" />
               Ordens de Serviços
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full" onClick={() => setShowTable(!showTable)}>
+            <Button 
+              variant="outline" 
+              className="w-full hover:bg-primary/10"
+              onClick={() => setShowTable(!showTable)}
+            >
               Ordem de Serviços Salvas
             </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow border-muted bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Wrench className="h-5 w-5 text-orange-500" />
+              <Wrench className="h-5 w-5 text-purple-400" />
               Serviços
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">Gerenciar Serviços</Button>
+            <Button variant="outline" className="w-full hover:bg-primary/10">
+              Gerenciar Serviços
+            </Button>
           </CardContent>
         </Card>
 
-        <Card className="hover:shadow-lg transition-shadow">
+        <Card className="hover:shadow-lg transition-shadow border-muted bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Settings className="h-5 w-5 text-gray-500" />
+              <Settings className="h-5 w-5 text-gray-400" />
               Configurações
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">Ajustar Sistema</Button>
+            <Button variant="outline" className="w-full hover:bg-primary/10">
+              Ajustar Sistema
+            </Button>
           </CardContent>
         </Card>
       </div>
 
       {/* Table of Service Orders */}
       {showTable && (
-        <Card className="mt-8">
+        <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm">
           <CardHeader>
             <CardTitle>Ordens de Serviço Registradas</CardTitle>
           </CardHeader>
