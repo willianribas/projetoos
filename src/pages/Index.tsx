@@ -3,9 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   ClipboardList, 
   Settings, 
-  Users, 
-  Search,
-  Wrench
+  Wrench,
+  Search
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -156,7 +155,7 @@ const Index = () => {
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5 text-green-500" />
+              <ClipboardList className="h-5 w-5 text-green-500" />
               Ordens de Serviços
             </CardTitle>
           </CardHeader>
