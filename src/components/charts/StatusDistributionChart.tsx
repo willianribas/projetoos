@@ -37,13 +37,13 @@ const StatusDistributionChart = ({
   const getStatusColor = (color: string) => {
     const colorMap: Record<string, string> = {
       "blue-900": "#1e3a8a",
-      "[#F97316]": "#F97316",
+      "[#F97316]": "#F97316", // AVT status
       "[#9b87f5]": "#9b87f5",
       "[#ea384c]": "#ea384c",
       "pink-500": "#ec4899",
       "[#33C3F0]": "#33C3F0",
       "[#22c55e]": "#22c55e",
-      "[#F97316]": "#F97316",
+      "[#f59e0b]": "#f59e0b", // Changed color for E.E status to amber-500
     };
     return colorMap[color] || "#666666";
   };
