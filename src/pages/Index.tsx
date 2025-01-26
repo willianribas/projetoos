@@ -5,8 +5,6 @@ import {
   Settings, 
   Users, 
   Search,
-  DollarSign,
-  FileText,
   Wrench
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -21,13 +19,13 @@ const Index = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const statusOptions = [
-    { value: "ADE", label: "ADE - Aguardando Decisão" },
-    { value: "AVT", label: "AVT - Avaliação Técnica" },
-    { value: "EXT", label: "EXT - Externa" },
-    { value: "A.M", label: "A.M - Aguardando Material" },
+    { value: "ADE", label: "ADE - Aguardando Disponibilidade" },
+    { value: "AVT", label: "AVT - Aguardando vinda técnica" },
+    { value: "EXT", label: "EXT - Serviço Externo" },
+    { value: "A.M", label: "A.M - Aquisição de Material" },
     { value: "INST", label: "INST - Instalação" },
-    { value: "M.S", label: "M.S - Manutenção Solicitada" },
-    { value: "OSP", label: "OSP - OS Pendente" }
+    { value: "M.S", label: "M.S - Material Solicitado" },
+    { value: "OSP", label: "OSP - Ordem de Serviço Concluída" }
   ];
 
   return (
