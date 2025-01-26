@@ -31,10 +31,16 @@ export const statusOptions = [
   { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]", icon: Hammer }
 ];
 
+interface SearchCriteria {
+  field: string;
+  value: string;
+}
+
 export default function ServiceOrderContent() {
   const form = useForm<ServiceOrder>();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchField, setSearchField] = useState("all");
+  const [searchCriteria, setSearchCriteria] = useState<SearchCriteria[]>([]);
   const [showTable, setShowTable] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -69,6 +75,7 @@ export default function ServiceOrderContent() {
     searchQuery,
     searchField,
     selectedStatus,
+    searchCriteria,
   });
 
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
@@ -89,6 +96,8 @@ export default function ServiceOrderContent() {
         setSearchQuery={setSearchQuery}
         searchField={searchField}
         setSearchField={setSearchField}
+        searchCriteria={searchCriteria}
+        setSearchCriteria={setSearchCriteria}
       />
       <QuickActions 
         setShowTable={setShowTable} 
@@ -98,7 +107,7 @@ export default function ServiceOrderContent() {
         serviceOrders={serviceOrders}
       />
 
-      {(showTable || searchQuery) && (
+      {(showTable || searchQuery || searchCriteria.length > 0) && (
         <div className="space-y-4 overflow-x-auto pb-4">
           <ServiceOrderTable 
             serviceOrders={paginatedOrders}
