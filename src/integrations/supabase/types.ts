@@ -9,6 +9,50 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      service_order_history: {
+        Row: {
+          action: string
+          changed_at: string
+          equipamento: string
+          id: number
+          numeroos: string
+          observacao: string | null
+          patrimonio: string
+          service_order_id: number | null
+          status: string
+        }
+        Insert: {
+          action: string
+          changed_at?: string
+          equipamento: string
+          id?: number
+          numeroos: string
+          observacao?: string | null
+          patrimonio: string
+          service_order_id?: number | null
+          status: string
+        }
+        Update: {
+          action?: string
+          changed_at?: string
+          equipamento?: string
+          id?: number
+          numeroos?: string
+          observacao?: string | null
+          patrimonio?: string
+          service_order_id?: number | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_history_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_orders: {
         Row: {
           created_at: string

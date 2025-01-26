@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, FileDown, Moon, Sun, Upload, Database } from "lucide-react";
+import { Settings, FileDown, Moon, Sun, Upload, Database, History } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { useTheme } from "next-themes";
 import { BlobProvider } from "@react-pdf/renderer";
@@ -10,6 +10,7 @@ import { ServiceOrder } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { ServiceOrderHistory } from "./ServiceOrderHistory";
 
 interface SettingsPanelProps {
   showSettings: boolean;
@@ -21,6 +22,7 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const [showHistory, setShowHistory] = React.useState(false);
 
   const handleExportDatabase = async () => {
     try {
@@ -170,6 +172,17 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
             </div>
           </div>
         </div>
+        <div className="flex items-center justify-between">
+          <span className="text-sm">Histórico de Alterações</span>
+          <Button
+            variant="outline"
+            onClick={() => setShowHistory(!showHistory)}
+          >
+            <History className="mr-2 h-4 w-4" />
+            {showHistory ? "Ocultar Histórico" : "Ver Histórico"}
+          </Button>
+        </div>
+        {showHistory && <ServiceOrderHistory />}
       </CardContent>
     </Card>
   );
