@@ -119,7 +119,7 @@ const ServiceOrderTable = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
+                <TableHead className="w-[90px] text-center text-foreground/90 font-semibold whitespace-nowrap">
                   <div className="flex items-center justify-center gap-2">
                     <Hash className="h-4 w-4" />
                     Número OS
@@ -131,7 +131,7 @@ const ServiceOrderTable = ({
                     Patrimônio
                   </div>
                 </TableHead>
-                <TableHead className="w-[250px] text-center text-foreground/90 font-semibold">
+                <TableHead className="w-[300px] text-center text-foreground/90 font-semibold">
                   <div className="flex items-center justify-center gap-2">
                     <Settings2 className="h-4 w-4" />
                     Equipamento
@@ -143,13 +143,13 @@ const ServiceOrderTable = ({
                     Observação
                   </div>
                 </TableHead>
-                <TableHead className="w-[120px] text-center text-foreground/90 font-semibold">
+                <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
                   <div className="flex items-center justify-center gap-2">
                     <ActivitySquare className="h-4 w-4" />
                     Status
                   </div>
                 </TableHead>
-                <TableHead className="w-[80px] text-center text-foreground/90 font-semibold">
+                <TableHead className="w-[70px] text-center text-foreground/90 font-semibold">
                   <div className="flex items-center justify-center gap-2">
                     <GripHorizontal className="h-4 w-4" />
                     Ações
