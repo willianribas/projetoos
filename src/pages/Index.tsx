@@ -25,7 +25,7 @@ const Index = () => {
     { value: "A.M", label: "A.M - Aquisição de Material" },
     { value: "INST", label: "INST - Instalação" },
     { value: "M.S", label: "M.S - Material Solicitado" },
-    { value: "OSP", label: "OSP - Ordem de Serviço Concluída" }
+    { value: "OSP", label: "OSP - Ordem de Serviço Pronta" }
   ];
 
   return (
