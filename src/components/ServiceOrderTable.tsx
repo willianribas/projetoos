@@ -21,13 +21,6 @@ import {
   MessageSquare, 
   GripHorizontal,
   Filter,
-  Clock,
-  CalendarClock,
-  ShoppingCart,
-  Wrench,
-  Package,
-  CheckCircle2,
-  Hammer
 } from "lucide-react";
 
 interface ServiceOrderTableProps {
@@ -142,8 +135,8 @@ const ServiceOrderTable = ({
                     Equipamento
                   </div>
                 </TableHead>
-                <TableHead>
-                  <div className="flex items-center gap-0">
+                <TableHead className="-ml-4">
+                  <div className="flex items-center">
                     <ActivitySquare className="h-4 w-4 mr-1" />
                     Status
                   </div>
