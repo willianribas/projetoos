@@ -107,10 +107,10 @@ const ServiceOrderTable = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[120px]">Número OS</TableHead>
-                <TableHead className="w-[120px]">Patrimônio</TableHead>
-                <TableHead className="w-[150px]">Equipamento</TableHead>
-                <TableHead className="w-[120px]">Status</TableHead>
+                <TableHead>Número OS</TableHead>
+                <TableHead>Patrimônio</TableHead>
+                <TableHead>Equipamento</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Observação</TableHead>
                 <TableHead className="w-[50px]">Ações</TableHead>
               </TableRow>
