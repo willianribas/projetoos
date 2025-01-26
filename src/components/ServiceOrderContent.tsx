@@ -6,6 +6,7 @@ import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
 import { useServiceOrders } from "./ServiceOrderProvider";
+import { ServiceOrder } from "@/types";
 
 export const statusOptions = [
   { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-blue-900" },
@@ -19,7 +20,7 @@ export const statusOptions = [
 ];
 
 export default function ServiceOrderContent() {
-  const form = useForm();
+  const form = useForm<ServiceOrder>();
   const [searchQuery, setSearchQuery] = useState("");
   const [showTable, setShowTable] = useState(false);
   const [showStats, setShowStats] = useState(false);
@@ -32,7 +33,7 @@ export default function ServiceOrderContent() {
     return statusOption?.color || "text-muted-foreground";
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: Omit<ServiceOrder, "id" | "created_at">) => {
     createServiceOrder(data);
     form.reset();
     setIsOpen(false);
