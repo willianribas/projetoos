@@ -37,7 +37,7 @@ const Settings = ({ serviceOrders }: SettingsProps) => {
             fileName="ordens-servico.pdf"
           >
             {({ loading }) => (
-              <Button variant="outline" disabled={loading}>
+              <Button variant="outline" disabled={loading} type="button">
                 <FileDown className="mr-2 h-4 w-4" />
                 {loading ? "Gerando PDF..." : "Exportar PDF"}
               </Button>
