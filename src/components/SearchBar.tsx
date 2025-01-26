@@ -9,8 +9,8 @@ interface SearchBarProps {
 
 const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
   return (
-    <div className="mb-8 animate-fade-in">
-      <div className="relative max-w-xl">
+    <div className="mb-4 sm:mb-8 animate-fade-in">
+      <div className="relative max-w-xl mx-auto sm:mx-0">
         <Input 
           placeholder="Buscar OS, patrimônio ou equipamento..." 
           className="pl-10 bg-card/50 backdrop-blur-sm border-muted transition-all duration-200 hover:shadow-md focus:shadow-lg text-foreground placeholder:text-muted-foreground/70"

@@ -92,7 +92,7 @@ export default function ServiceOrderContent() {
       />
 
       {(showTable || searchQuery) && (
-        <div className="space-y-4">
+        <div className="space-y-4 overflow-x-auto pb-4">
           <ServiceOrderTable 
             serviceOrders={paginatedOrders}
             getStatusColor={getStatusColor}
