@@ -135,7 +135,7 @@ const ServiceOrderTable = ({
                     Equipamento
                   </div>
                 </TableHead>
-                <TableHead className="-ml-12">
+                <TableHead className="-ml-24">
                   <div className="flex items-center">
                     <ActivitySquare className="h-4 w-4 mr-1" />
                     Status
