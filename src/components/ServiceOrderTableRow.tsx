@@ -27,6 +27,9 @@ const ServiceOrderTableRow = ({
       <TableCell className="text-center font-medium">{order.numeroos}</TableCell>
       <TableCell className="text-center font-medium">{order.patrimonio}</TableCell>
       <TableCell className="text-center font-medium">{order.equipamento}</TableCell>
+      <TableCell className="text-center font-medium max-w-[400px] truncate">
+        {order.observacao}
+      </TableCell>
       <TableCell className="text-center">
         <span
           className={`${getStatusColor(order.status)} border rounded px-2 py-1 font-semibold inline-block`}
@@ -34,9 +37,6 @@ const ServiceOrderTableRow = ({
         >
           {order.status}
         </span>
-      </TableCell>
-      <TableCell className="text-center font-medium max-w-[400px] truncate">
-        {order.observacao}
       </TableCell>
       <TableCell className="text-center">
         <Button

@@ -131,22 +131,22 @@ const ServiceOrderTable = ({
                     Patrimônio
                   </div>
                 </TableHead>
-                <TableHead className="w-[150px] text-center text-foreground/90 font-semibold">
+                <TableHead className="w-[250px] text-center text-foreground/90 font-semibold">
                   <div className="flex items-center justify-center gap-2">
                     <Settings2 className="h-4 w-4" />
                     Equipamento
-                  </div>
-                </TableHead>
-                <TableHead className="w-[120px] text-center text-foreground/90 font-semibold">
-                  <div className="flex items-center justify-center gap-2">
-                    <ActivitySquare className="h-4 w-4" />
-                    Status
                   </div>
                 </TableHead>
                 <TableHead className="text-center text-foreground/90 font-semibold">
                   <div className="flex items-center justify-center gap-2">
                     <MessageSquare className="h-4 w-4" />
                     Observação
+                  </div>
+                </TableHead>
+                <TableHead className="w-[120px] text-center text-foreground/90 font-semibold">
+                  <div className="flex items-center justify-center gap-2">
+                    <ActivitySquare className="h-4 w-4" />
+                    Status
                   </div>
                 </TableHead>
                 <TableHead className="w-[80px] text-center text-foreground/90 font-semibold">
