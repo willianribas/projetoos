@@ -25,14 +25,16 @@ interface ServiceOrderFormProps {
 const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: ServiceOrderFormProps) => {
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-8">
-      <Card className="border-muted bg-card/50 backdrop-blur-sm">
+      <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="flex items-center gap-2">
             <ClipboardList className="h-5 w-5 text-blue-400" />
-            Nova Ordem de Serviço
+            <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+              Nova Ordem de Serviço
+            </span>
           </CardTitle>
           <CollapsibleTrigger asChild>
-            <Button variant="ghost" size="sm" className="w-9 p-0">
+            <Button variant="ghost" size="sm" className="w-9 p-0 hover:bg-primary/10">
               {isOpen ? (
                 <ChevronUp className="h-4 w-4 text-muted-foreground" />
               ) : (
