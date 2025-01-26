@@ -7,11 +7,28 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ServiceOrder } from "@/types";
 import ServiceOrderTableRow from "./ServiceOrderTableRow";
 import EditServiceOrderDialog from "./EditServiceOrderDialog";
 import DeleteServiceOrderDialog from "./DeleteServiceOrderDialog";
-import { Hash, Building2, Settings2, ActivitySquare, MessageSquare, GripHorizontal } from "lucide-react";
+import { 
+  Hash, 
+  Building2, 
+  Settings2, 
+  ActivitySquare, 
+  MessageSquare, 
+  GripHorizontal,
+  Filter,
+  Clock,
+  CalendarClock,
+  ShoppingCart,
+  Wrench,
+  Package,
+  CheckCircle2,
+  Hammer
+} from "lucide-react";
 
 interface ServiceOrderTableProps {
   serviceOrders: ServiceOrder[];
@@ -20,6 +37,7 @@ interface ServiceOrderTableProps {
     value: string;
     label: string;
     color: string;
+    icon: any;
   }>;
   onUpdateServiceOrder: (index: number, updatedOrder: ServiceOrder) => void;
   onDeleteServiceOrder: (index: number) => void;
@@ -40,6 +58,7 @@ const ServiceOrderTable = ({
   } | null>(null);
   const [editedOrder, setEditedOrder] = useState<ServiceOrder | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
   const handleRowClick = (order: ServiceOrder, index: number) => {
     setSelectedOrder({ order, index });
@@ -71,8 +90,35 @@ const ServiceOrderTable = ({
   return (
     <>
       <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm">
-        <CardHeader>
+        <CardHeader className="space-y-4">
           <CardTitle>Ordens de Serviço Registradas</CardTitle>
+          <ScrollArea className="w-full whitespace-nowrap">
+            <div className="flex space-x-2 pb-4">
+              <Badge
+                variant={selectedStatus === null ? "default" : "outline"}
+                className="cursor-pointer flex items-center gap-1"
+                onClick={() => setSelectedStatus(null)}
+              >
+                <Filter className="h-3 w-3" />
+                Todos
+              </Badge>
+              {statusOptions.map((status) => {
+                const Icon = status.icon;
+                return (
+                  <Badge
+                    key={status.value}
+                    variant={selectedStatus === status.value ? "default" : "outline"}
+                    className={`cursor-pointer flex items-center gap-1 ${selectedStatus === status.value ? "bg-primary" : ""}`}
+                    onClick={() => setSelectedStatus(status.value)}
+                  >
+                    <Icon className="h-3 w-3" />
+                    {status.value}
+                  </Badge>
+                );
+              })}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </CardHeader>
         <CardContent>
           <Table>
@@ -117,16 +163,18 @@ const ServiceOrderTable = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {serviceOrders.map((order, index) => (
-                <ServiceOrderTableRow
-                  key={index}
-                  order={order}
-                  index={index}
-                  getStatusColor={getStatusColor}
-                  onRowClick={handleRowClick}
-                  onDelete={handleDelete}
-                />
-              ))}
+              {serviceOrders
+                .filter(order => selectedStatus ? order.status === selectedStatus : true)
+                .map((order, index) => (
+                  <ServiceOrderTableRow
+                    key={index}
+                    order={order}
+                    index={index}
+                    getStatusColor={getStatusColor}
+                    onRowClick={handleRowClick}
+                    onDelete={handleDelete}
+                  />
+                ))}
             </TableBody>
           </Table>
         </CardContent>
