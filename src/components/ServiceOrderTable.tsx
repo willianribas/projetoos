@@ -32,10 +32,10 @@ const ServiceOrderTable = ({ serviceOrders, getStatusColor }: ServiceOrderTableP
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Número OS</TableHead>
-              <TableHead>Patrimônio</TableHead>
-              <TableHead>Equipamento</TableHead>
-              <TableHead>Status</TableHead>
+              <TableHead className="w-[100px]">Número OS</TableHead>
+              <TableHead className="w-[120px]">Patrimônio</TableHead>
+              <TableHead className="w-[150px]">Equipamento</TableHead>
+              <TableHead className="w-[100px]">Status</TableHead>
               <TableHead>Observação</TableHead>
             </TableRow>
           </TableHeader>
