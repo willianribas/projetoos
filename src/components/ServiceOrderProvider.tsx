@@ -30,7 +30,7 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       return data as ServiceOrder[];
     },
     staleTime: 1000 * 60 * 5, // Data considerada fresh por 5 minutos
-    cacheTime: 1000 * 60 * 30, // Cache mantido por 30 minutos
+    gcTime: 1000 * 60 * 30, // Cache mantido por 30 minutos (anteriormente cacheTime)
     refetchOnWindowFocus: false, // Não refetch ao focar na janela
     refetchOnMount: true, // Refetch ao montar o componente
   });
