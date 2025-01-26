@@ -8,6 +8,7 @@ import Statistics from "@/components/Statistics";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { ServiceOrder } from "@/types";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
 import {
   Pagination,
   PaginationContent,
@@ -48,6 +49,7 @@ export default function ServiceOrderContent() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const itemsPerPage = 10;
+  const { toast } = useToast();
   
   const { serviceOrders, createServiceOrder, updateServiceOrder, deleteServiceOrder } = useServiceOrders();
 
@@ -60,6 +62,35 @@ export default function ServiceOrderContent() {
     createServiceOrder(data);
     form.reset();
     setIsOpen(false);
+    toast({
+      title: "Ordem de Serviço criada",
+      description: "A ordem de serviço foi criada com sucesso!",
+      className: "bg-green-500 text-white",
+    });
+  };
+
+  const handleUpdateServiceOrder = (index: number, updatedOrder: ServiceOrder) => {
+    const order = serviceOrders[index];
+    if (order) {
+      updateServiceOrder(order.id, updatedOrder);
+      toast({
+        title: "Ordem de Serviço atualizada",
+        description: "As alterações foram salvas com sucesso!",
+        className: "bg-blue-500 text-white",
+      });
+    }
+  };
+
+  const handleDeleteServiceOrder = (index: number) => {
+    const order = serviceOrders[index];
+    if (order) {
+      deleteServiceOrder(order.id);
+      toast({
+        title: "Ordem de Serviço excluída",
+        description: "A ordem de serviço foi excluída com sucesso!",
+        className: "bg-red-500 text-white",
+      });
+    }
   };
 
   const filteredOrders = serviceOrders.filter((order) => {
@@ -111,18 +142,8 @@ export default function ServiceOrderContent() {
             serviceOrders={paginatedOrders}
             getStatusColor={getStatusColor}
             statusOptions={statusOptions}
-            onUpdateServiceOrder={(index, updatedOrder) => {
-              const order = serviceOrders[index];
-              if (order) {
-                updateServiceOrder(order.id, updatedOrder);
-              }
-            }}
-            onDeleteServiceOrder={(index) => {
-              const order = serviceOrders[index];
-              if (order) {
-                deleteServiceOrder(order.id);
-              }
-            }}
+            onUpdateServiceOrder={handleUpdateServiceOrder}
+            onDeleteServiceOrder={handleDeleteServiceOrder}
           />
           
           {totalPages > 1 && (
