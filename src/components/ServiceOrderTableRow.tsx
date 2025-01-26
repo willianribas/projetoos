@@ -21,8 +21,12 @@ const ServiceOrderTableRow = ({
 }: ServiceOrderTableRowProps) => {
   return (
     <TableRow
-      className="cursor-pointer hover:bg-muted/60 text-foreground/90"
+      className="cursor-pointer hover:bg-muted/60 text-foreground/90 animate-fade-in"
       onClick={() => onRowClick(order, index)}
+      style={{
+        animationDelay: `${index * 50}ms`,
+        animationFillMode: "both"
+      }}
     >
       <TableCell className="text-center font-medium">{order.numeroos}</TableCell>
       <TableCell className="text-center font-medium">{order.patrimonio}</TableCell>
@@ -32,7 +36,7 @@ const ServiceOrderTableRow = ({
       </TableCell>
       <TableCell className="text-center">
         <span
-          className={`${getStatusColor(order.status)} border rounded px-2 py-1 font-semibold inline-block`}
+          className={`${getStatusColor(order.status)} border rounded px-2 py-1 font-semibold inline-block transition-colors duration-200`}
           style={{ borderColor: "currentColor" }}
         >
           {order.status}
@@ -42,7 +46,7 @@ const ServiceOrderTableRow = ({
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-destructive/90 hover:text-destructive-foreground mx-auto"
+          className="hover:bg-destructive/90 hover:text-destructive-foreground mx-auto transition-colors duration-200"
           onClick={(e) => onDelete(e, index)}
         >
           <Trash2 className="h-4 w-4" />
