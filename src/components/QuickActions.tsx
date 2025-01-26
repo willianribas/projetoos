@@ -80,39 +80,51 @@ const QuickActions = ({
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="text-sm">Tema</span>
-            <Toggle
-              pressed={theme === "dark"}
-              onPressedChange={(pressed) => setTheme(pressed ? "dark" : "light")}
-              aria-label="Toggle theme"
-            >
-              {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-            </Toggle>
-          </div>
-          <div className="flex items-center justify-between">
-            <span className="text-sm">Exportar OS</span>
-            <BlobProvider document={<ServiceOrderPDF serviceOrders={serviceOrders} />}>
-              {({ url, loading }) => (
-                <Button 
-                  variant="outline" 
-                  disabled={loading} 
-                  type="button"
-                  onClick={() => {
-                    if (url) {
-                      const link = document.createElement('a');
-                      link.href = url;
-                      link.download = 'ordens-servico.pdf';
-                      link.click();
-                    }
-                  }}
+          <Button 
+            variant="outline" 
+            className="w-full hover:bg-primary/10"
+            onClick={() => setShowSettings(!showSettings)}
+          >
+            Definir Configurações
+          </Button>
+          
+          {showSettings && (
+            <div className="space-y-4 pt-4 border-t">
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Tema</span>
+                <Toggle
+                  pressed={theme === "dark"}
+                  onPressedChange={(pressed) => setTheme(pressed ? "dark" : "light")}
+                  aria-label="Toggle theme"
                 >
-                  <FileDown className="mr-2 h-4 w-4" />
-                  {loading ? "Gerando PDF..." : "Exportar PDF"}
-                </Button>
-              )}
-            </BlobProvider>
-          </div>
+                  {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                </Toggle>
+              </div>
+              <div className="flex items-center justify-between">
+                <span className="text-sm">Exportar OS</span>
+                <BlobProvider document={<ServiceOrderPDF serviceOrders={serviceOrders} />}>
+                  {({ url, loading }) => (
+                    <Button 
+                      variant="outline" 
+                      disabled={loading} 
+                      type="button"
+                      onClick={() => {
+                        if (url) {
+                          const link = document.createElement('a');
+                          link.href = url;
+                          link.download = 'ordens-servico.pdf';
+                          link.click();
+                        }
+                      }}
+                    >
+                      <FileDown className="mr-2 h-4 w-4" />
+                      {loading ? "Gerando PDF..." : "Exportar PDF"}
+                    </Button>
+                  )}
+                </BlobProvider>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
