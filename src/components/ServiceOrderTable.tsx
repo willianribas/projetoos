@@ -117,13 +117,13 @@ const ServiceOrderTable = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>
+                <TableHead className="w-[120px]">
                   <div className="flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     Número OS
                   </div>
                 </TableHead>
-                <TableHead>
+                <TableHead className="w-[120px]">
                   <div className="flex items-center gap-2">
                     <Building2 className="h-4 w-4" />
                     Patrimônio
@@ -135,7 +135,7 @@ const ServiceOrderTable = ({
                     Equipamento
                   </div>
                 </TableHead>
-                <TableHead className="-ml-4">
+                <TableHead className="-ml-8">
                   <div className="flex items-center">
                     <ActivitySquare className="h-4 w-4 mr-1" />
                     Status
