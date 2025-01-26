@@ -9,6 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { ServiceOrder } from "@/types";
+import StatusDistributionChart from "./charts/StatusDistributionChart";
 
 interface StatisticsProps {
   serviceOrders: ServiceOrder[];
@@ -40,6 +41,11 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
 
   return (
     <div className="space-y-6">
+      <StatusDistributionChart 
+        serviceOrders={serviceOrders} 
+        statusOptions={statusOptions} 
+      />
+
       <Card className="border-muted bg-card/50 backdrop-blur-sm">
         <CardHeader>
           <CardTitle>Estatísticas por Status</CardTitle>
