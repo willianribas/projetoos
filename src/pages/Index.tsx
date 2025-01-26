@@ -42,10 +42,20 @@ const Index = () => {
     form.reset();
   };
 
+  const filteredOrders = serviceOrders.filter((order) => {
+    const searchLower = searchQuery.toLowerCase();
+    return (
+      order.numeroOS.toLowerCase().includes(searchLower) ||
+      order.patrimonio.toLowerCase().includes(searchLower) ||
+      order.equipamento.toLowerCase().includes(searchLower) ||
+      order.status.toLowerCase().includes(searchLower) ||
+      order.observacao.toLowerCase().includes(searchLower)
+    );
+  });
+
   return (
     <div className="min-h-screen bg-background p-8">
       <Header />
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <ServiceOrderForm 
         form={form}
         isOpen={isOpen}
@@ -53,10 +63,11 @@ const Index = () => {
         onSubmit={onSubmit}
         statusOptions={statusOptions}
       />
+      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
       <QuickActions setShowTable={setShowTable} showTable={showTable} />
-      {showTable && (
+      {(showTable || searchQuery) && (
         <ServiceOrderTable 
-          serviceOrders={serviceOrders}
+          serviceOrders={filteredOrders}
           getStatusColor={getStatusColor}
         />
       )}
