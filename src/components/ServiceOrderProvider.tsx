@@ -29,6 +29,10 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       return data as ServiceOrder[];
     },
+    staleTime: 1000 * 60 * 5, // Data considerada fresh por 5 minutos
+    cacheTime: 1000 * 60 * 30, // Cache mantido por 30 minutos
+    refetchOnWindowFocus: false, // Não refetch ao focar na janela
+    refetchOnMount: true, // Refetch ao montar o componente
   });
 
   const createMutation = useMutation({
@@ -74,8 +78,12 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       return updatedData;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
+    onSuccess: (newData) => {
+      queryClient.setQueryData(['serviceOrders'], (oldData: ServiceOrder[] | undefined) => {
+        if (!oldData) return [newData];
+        return oldData.map(item => item.id === newData.id ? newData : item);
+      });
+      
       toast({
         title: "Ordem de Serviço atualizada",
         description: "As alterações foram salvas com sucesso!",
@@ -102,9 +110,14 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
         .eq('id', id);
 
       if (error) throw error;
+      return id;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
+    onSuccess: (deletedId) => {
+      queryClient.setQueryData(['serviceOrders'], (oldData: ServiceOrder[] | undefined) => {
+        if (!oldData) return [];
+        return oldData.filter(item => item.id !== deletedId);
+      });
+      
       toast({
         title: "Ordem de Serviço excluída",
         description: "A OS foi removida com sucesso!",
