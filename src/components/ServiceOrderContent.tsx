@@ -7,16 +7,8 @@ import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { ServiceOrder } from "@/types";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
+import ServiceOrderPagination from "./pagination/ServiceOrderPagination";
+import { filterServiceOrders, getStatusColor } from "./filters/ServiceOrderFilters";
 import { 
   Clock, 
   CalendarClock, 
@@ -51,11 +43,6 @@ export default function ServiceOrderContent() {
   
   const { serviceOrders, createServiceOrder, updateServiceOrder, deleteServiceOrder } = useServiceOrders();
 
-  const getStatusColor = (status: string) => {
-    const statusOption = statusOptions.find(option => option.value === status);
-    return statusOption?.color || "text-muted-foreground";
-  };
-
   const onSubmit = (data: Omit<ServiceOrder, "id" | "created_at">) => {
     createServiceOrder(data);
     form.reset();
@@ -76,30 +63,15 @@ export default function ServiceOrderContent() {
     }
   };
 
-  const filteredOrders = serviceOrders.filter((order) => {
-    const searchLower = searchQuery.toLowerCase();
-    const matchesSearch = (
-      (order.numeroos?.toLowerCase() || "").includes(searchLower) ||
-      (order.patrimonio?.toLowerCase() || "").includes(searchLower) ||
-      (order.equipamento?.toLowerCase() || "").includes(searchLower) ||
-      (order.status?.toLowerCase() || "").includes(searchLower) ||
-      (order.observacao?.toLowerCase() || "").includes(searchLower)
-    );
-    
-    if (selectedStatus) {
-      return matchesSearch && order.status === selectedStatus;
-    }
-    
-    return matchesSearch;
+  const filteredOrders = filterServiceOrders({
+    serviceOrders,
+    searchQuery,
+    selectedStatus,
   });
 
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
 
   return (
     <div className="space-y-4">
@@ -130,65 +102,11 @@ export default function ServiceOrderContent() {
           />
           
           {totalPages > 1 && (
-            <Pagination className="justify-center">
-              <PaginationContent>
-                <PaginationItem>
-                  <PaginationPrevious 
-                    onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
-                
-                {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
-                  let pageNumber;
-                  if (totalPages <= 5) {
-                    pageNumber = i + 1;
-                  } else {
-                    if (currentPage <= 3) {
-                      pageNumber = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      pageNumber = totalPages - 4 + i;
-                    } else {
-                      pageNumber = currentPage - 2 + i;
-                    }
-                  }
-
-                  return (
-                    <PaginationItem key={pageNumber}>
-                      <PaginationLink
-                        onClick={() => handlePageChange(pageNumber)}
-                        isActive={currentPage === pageNumber}
-                      >
-                        {pageNumber}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
-                })}
-
-                {totalPages > 5 && currentPage < totalPages - 2 && (
-                  <>
-                    <PaginationItem>
-                      <PaginationEllipsis />
-                    </PaginationItem>
-                    <PaginationItem>
-                      <PaginationLink
-                        onClick={() => handlePageChange(totalPages)}
-                        isActive={currentPage === totalPages}
-                      >
-                        {totalPages}
-                      </PaginationLink>
-                    </PaginationItem>
-                  </>
-                )}
-
-                <PaginationItem>
-                  <PaginationNext
-                    onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                  />
-                </PaginationItem>
-              </PaginationContent>
-            </Pagination>
+            <ServiceOrderPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
           )}
         </div>
       )}
