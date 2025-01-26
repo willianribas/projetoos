@@ -6,7 +6,6 @@ import ServiceOrderForm from "@/components/ServiceOrderForm";
 import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
-import Settings from "@/components/Settings";
 import { useToast } from "@/hooks/use-toast";
 
 interface ServiceOrder {
@@ -92,7 +91,7 @@ const Index = () => {
         onSubmit={onSubmit}
         statusOptions={statusOptions}
       />
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <div className="space-y-4">
           <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
           <QuickActions 
@@ -100,6 +99,7 @@ const Index = () => {
             showTable={showTable}
             setShowStats={setShowStats}
             showStats={showStats}
+            serviceOrders={serviceOrders}
           />
           {(showTable || searchQuery) && (
             <ServiceOrderTable 
@@ -116,9 +116,6 @@ const Index = () => {
               statusOptions={statusOptions}
             />
           )}
-        </div>
-        <div>
-          <Settings serviceOrders={serviceOrders} />
         </div>
       </div>
     </div>
