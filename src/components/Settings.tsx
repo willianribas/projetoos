@@ -36,7 +36,7 @@ const Settings = ({ serviceOrders }: SettingsProps) => {
             document={<ServiceOrderPDF serviceOrders={serviceOrders} />}
             fileName="ordens-servico.pdf"
           >
-            {({ loading }) => (
+            {({ loading }): React.ReactElement => (
               <Button variant="outline" disabled={loading} type="button">
                 <FileDown className="mr-2 h-4 w-4" />
                 {loading ? "Gerando PDF..." : "Exportar PDF"}
