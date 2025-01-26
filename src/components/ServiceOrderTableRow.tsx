@@ -24,23 +24,25 @@ const ServiceOrderTableRow = ({
       className="cursor-pointer hover:bg-muted/60 text-foreground/90"
       onClick={() => onRowClick(order, index)}
     >
-      <TableCell className="font-medium">{order.numeroos}</TableCell>
-      <TableCell className="font-medium">{order.patrimonio}</TableCell>
-      <TableCell className="font-medium">{order.equipamento}</TableCell>
-      <TableCell>
+      <TableCell className="text-center font-medium">{order.numeroos}</TableCell>
+      <TableCell className="text-center font-medium">{order.patrimonio}</TableCell>
+      <TableCell className="text-center font-medium">{order.equipamento}</TableCell>
+      <TableCell className="text-center">
         <span
-          className={`${getStatusColor(order.status)} border rounded px-2 py-1 font-semibold`}
+          className={`${getStatusColor(order.status)} border rounded px-2 py-1 font-semibold inline-block`}
           style={{ borderColor: "currentColor" }}
         >
           {order.status}
         </span>
       </TableCell>
-      <TableCell className="font-medium">{order.observacao}</TableCell>
-      <TableCell>
+      <TableCell className="text-center font-medium max-w-[400px] truncate">
+        {order.observacao}
+      </TableCell>
+      <TableCell className="text-center">
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-destructive/90 hover:text-destructive-foreground"
+          className="hover:bg-destructive/90 hover:text-destructive-foreground mx-auto"
           onClick={(e) => onDelete(e, index)}
         >
           <Trash2 className="h-4 w-4" />

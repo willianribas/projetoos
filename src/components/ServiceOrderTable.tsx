@@ -119,38 +119,38 @@ const ServiceOrderTable = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[120px] text-foreground/90 font-semibold">
-                  <div className="flex items-center gap-2">
+                <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
+                  <div className="flex items-center justify-center gap-2">
                     <Hash className="h-4 w-4" />
                     Número OS
                   </div>
                 </TableHead>
-                <TableHead className="w-[120px] text-foreground/90 font-semibold">
-                  <div className="flex items-center gap-2">
+                <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
+                  <div className="flex items-center justify-center gap-2">
                     <Building2 className="h-4 w-4" />
                     Patrimônio
                   </div>
                 </TableHead>
-                <TableHead className="text-foreground/90 font-semibold">
-                  <div className="flex items-center gap-2">
+                <TableHead className="w-[150px] text-center text-foreground/90 font-semibold">
+                  <div className="flex items-center justify-center gap-2">
                     <Settings2 className="h-4 w-4" />
                     Equipamento
                   </div>
                 </TableHead>
-                <TableHead className="-ml-24 text-foreground/90 font-semibold">
-                  <div className="flex items-center">
-                    <ActivitySquare className="h-4 w-4 mr-1" />
+                <TableHead className="w-[120px] text-center text-foreground/90 font-semibold">
+                  <div className="flex items-center justify-center gap-2">
+                    <ActivitySquare className="h-4 w-4" />
                     Status
                   </div>
                 </TableHead>
-                <TableHead className="text-foreground/90 font-semibold">
-                  <div className="flex items-center gap-2">
+                <TableHead className="text-center text-foreground/90 font-semibold">
+                  <div className="flex items-center justify-center gap-2">
                     <MessageSquare className="h-4 w-4" />
                     Observação
                   </div>
                 </TableHead>
-                <TableHead className="w-[50px] text-foreground/90 font-semibold">
-                  <div className="flex items-center gap-2">
+                <TableHead className="w-[80px] text-center text-foreground/90 font-semibold">
+                  <div className="flex items-center justify-center gap-2">
                     <GripHorizontal className="h-4 w-4" />
                     Ações
                   </div>
