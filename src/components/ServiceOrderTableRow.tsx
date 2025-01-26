@@ -21,7 +21,9 @@ const ServiceOrderTableRow = ({
 }: ServiceOrderTableRowProps) => {
   return (
     <TableRow
-      className="cursor-pointer hover:bg-muted/60 text-foreground/90 animate-fade-in"
+      className={`cursor-pointer hover:bg-muted/60 text-foreground/90 animate-fade-in ${
+        index % 2 === 0 ? "bg-background" : "bg-muted/30"
+      }`}
       onClick={() => onRowClick(order, index)}
       style={{
         animationDelay: `${index * 50}ms`,
