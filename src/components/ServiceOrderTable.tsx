@@ -82,14 +82,14 @@ const ServiceOrderTable = ({
 
   return (
     <>
-      <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm">
+      <Card className="mt-8 border-none bg-[#0A0A0A] text-white">
         <CardHeader className="space-y-4">
-          <CardTitle>Ordens de Serviço Registradas</CardTitle>
+          <CardTitle className="text-left text-xl font-medium">Ordens de Serviço Registradas</CardTitle>
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex space-x-2 pb-4">
               <Badge
                 variant={selectedStatus === null ? "default" : "outline"}
-                className="cursor-pointer flex items-center gap-1"
+                className="cursor-pointer flex items-center gap-1 hover:bg-primary/20"
                 onClick={() => setSelectedStatus(null)}
               >
                 <Filter className="h-3 w-3" />
@@ -101,7 +101,9 @@ const ServiceOrderTable = ({
                   <Badge
                     key={status.value}
                     variant={selectedStatus === status.value ? "default" : "outline"}
-                    className={`cursor-pointer flex items-center gap-1 ${selectedStatus === status.value ? "bg-primary" : ""}`}
+                    className={`cursor-pointer flex items-center gap-1 hover:bg-primary/20 ${
+                      selectedStatus === status.value ? "bg-primary" : ""
+                    }`}
                     onClick={() => setSelectedStatus(status.value)}
                   >
                     <Icon className="h-3 w-3" />
