@@ -24,10 +24,10 @@ const ServiceOrderTableRow = ({
       className="cursor-pointer hover:bg-muted/60"
       onClick={() => onRowClick(order, index)}
     >
-      <TableCell className="w-[120px]">{order.numeroos}</TableCell>
-      <TableCell className="w-[120px]">{order.patrimonio}</TableCell>
-      <TableCell className="w-[150px]">{order.equipamento}</TableCell>
-      <TableCell className="w-[120px]">
+      <TableCell>{order.numeroos}</TableCell>
+      <TableCell>{order.patrimonio}</TableCell>
+      <TableCell>{order.equipamento}</TableCell>
+      <TableCell>
         <span
           className={`${getStatusColor(order.status)} border rounded px-2 py-1`}
           style={{ borderColor: "currentColor" }}
@@ -35,8 +35,8 @@ const ServiceOrderTableRow = ({
           {order.status}
         </span>
       </TableCell>
-      <TableCell className="min-w-[300px]">{order.observacao}</TableCell>
-      <TableCell className="w-[50px]">
+      <TableCell>{order.observacao}</TableCell>
+      <TableCell>
         <Button
           variant="ghost"
           size="icon"
