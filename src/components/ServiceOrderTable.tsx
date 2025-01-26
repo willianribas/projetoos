@@ -14,6 +14,16 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -55,8 +65,10 @@ const ServiceOrderTable = ({
   onDeleteServiceOrder
 }: ServiceOrderTableProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<{order: ServiceOrder, index: number} | null>(null);
   const [editedOrder, setEditedOrder] = useState<ServiceOrder | null>(null);
+  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
 
   const handleRowClick = (order: ServiceOrder, index: number) => {
     setSelectedOrder({order, index});
@@ -73,7 +85,16 @@ const ServiceOrderTable = ({
 
   const handleDelete = (e: React.MouseEvent, index: number) => {
     e.stopPropagation(); // Prevent row click event
-    onDeleteServiceOrder(index);
+    setDeleteIndex(index);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (deleteIndex !== null) {
+      onDeleteServiceOrder(deleteIndex);
+      setIsDeleteDialogOpen(false);
+      setDeleteIndex(null);
+    }
   };
 
   return (
@@ -194,6 +215,26 @@ const ServiceOrderTable = ({
           )}
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+            <AlertDialogDescription>
+              Tem certeza que deseja excluir esta Ordem de Serviço? Esta ação não pode ser desfeita.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={confirmDelete}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Excluir
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 };
