@@ -5,9 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ClipboardList } from "lucide-react";
+import { Clock, ChevronUp, ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { ChevronUp, ChevronDown } from "lucide-react";
 import { UseFormReturn } from "react-hook-form";
 
 interface ServiceOrderFormProps {
@@ -28,8 +27,8 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
       <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="flex items-center gap-2">
-            <ClipboardList className="h-5 w-5 text-blue-400" />
-            <span className="bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            <Clock className="h-5 w-5 text-blue-400" />
+            <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
               Nova Ordem de Serviço
             </span>
           </CardTitle>

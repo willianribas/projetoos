@@ -37,7 +37,7 @@ export default function ServiceOrderContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showTable, setShowTable] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false); // Changed to false to start minimized
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const itemsPerPage = 10;
