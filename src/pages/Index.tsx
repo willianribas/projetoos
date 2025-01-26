@@ -7,7 +7,8 @@ import {
   Search,
   DollarSign,
   FileText,
-  ArrowRight
+  ArrowRight,
+  Wrench
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
@@ -61,7 +62,7 @@ const Index = () => {
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <ArrowRight className="h-5 w-5 text-orange-500" />
+              <Wrench className="h-5 w-5 text-orange-500" />
               Serviços
             </CardTitle>
           </CardHeader>
