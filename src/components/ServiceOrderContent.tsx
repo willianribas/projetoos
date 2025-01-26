@@ -50,6 +50,27 @@ export default function ServiceOrderContent() {
   
   const { serviceOrders, createServiceOrder, updateServiceOrder, deleteServiceOrder } = useServiceOrders();
 
+  // Reset page when filters change
+  const handleSearchQueryChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
+  };
+
+  const handleSearchFieldChange = (field: string) => {
+    setSearchField(field);
+    setCurrentPage(1);
+  };
+
+  const handleSearchCriteriaChange = (criteria: SearchCriteria[]) => {
+    setSearchCriteria(criteria);
+    setCurrentPage(1);
+  };
+
+  const handleStatusChange = (status: string | null) => {
+    setSelectedStatus(status);
+    setCurrentPage(1);
+  };
+
   const onSubmit = (data: Omit<ServiceOrder, "id" | "created_at">) => {
     createServiceOrder(data);
     form.reset();
@@ -93,11 +114,11 @@ export default function ServiceOrderContent() {
       />
       <SearchBar 
         searchQuery={searchQuery} 
-        setSearchQuery={setSearchQuery}
+        setSearchQuery={handleSearchQueryChange}
         searchField={searchField}
-        setSearchField={setSearchField}
+        setSearchField={handleSearchFieldChange}
         searchCriteria={searchCriteria}
-        setSearchCriteria={setSearchCriteria}
+        setSearchCriteria={handleSearchCriteriaChange}
       />
       <QuickActions 
         setShowTable={setShowTable} 
@@ -115,6 +136,8 @@ export default function ServiceOrderContent() {
             statusOptions={statusOptions}
             onUpdateServiceOrder={handleUpdateServiceOrder}
             onDeleteServiceOrder={handleDeleteServiceOrder}
+            selectedStatus={selectedStatus}
+            onStatusChange={handleStatusChange}
           />
           
           {totalPages > 1 && (

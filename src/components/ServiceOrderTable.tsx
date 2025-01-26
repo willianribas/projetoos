@@ -34,6 +34,8 @@ interface ServiceOrderTableProps {
   }>;
   onUpdateServiceOrder: (index: number, updatedOrder: ServiceOrder) => void;
   onDeleteServiceOrder: (index: number) => void;
+  selectedStatus: string | null;
+  onStatusChange: (status: string | null) => void;
 }
 
 const ServiceOrderTable = ({
@@ -42,6 +44,8 @@ const ServiceOrderTable = ({
   statusOptions,
   onUpdateServiceOrder,
   onDeleteServiceOrder,
+  selectedStatus,
+  onStatusChange,
 }: ServiceOrderTableProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -51,7 +55,6 @@ const ServiceOrderTable = ({
   } | null>(null);
   const [editedOrder, setEditedOrder] = useState<ServiceOrder | null>(null);
   const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
   const handleRowClick = (order: ServiceOrder, index: number) => {
     setSelectedOrder({ order, index });
@@ -90,7 +93,7 @@ const ServiceOrderTable = ({
               <Badge
                 variant={selectedStatus === null ? "default" : "outline"}
                 className="cursor-pointer flex items-center gap-1 font-medium"
-                onClick={() => setSelectedStatus(null)}
+                onClick={() => onStatusChange(null)}
               >
                 <Filter className="h-3 w-3" />
                 Todos
@@ -104,7 +107,7 @@ const ServiceOrderTable = ({
                     className={`cursor-pointer flex items-center gap-1 font-medium ${
                       selectedStatus === status.value ? "bg-primary text-primary-foreground" : ""
                     }`}
-                    onClick={() => setSelectedStatus(status.value)}
+                    onClick={() => onStatusChange(status.value)}
                   >
                     <Icon className="h-3 w-3" />
                     {status.value}
@@ -158,18 +161,16 @@ const ServiceOrderTable = ({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {serviceOrders
-                .filter(order => selectedStatus ? order.status === selectedStatus : true)
-                .map((order, index) => (
-                  <ServiceOrderTableRow
-                    key={index}
-                    order={order}
-                    index={index}
-                    getStatusColor={getStatusColor}
-                    onRowClick={handleRowClick}
-                    onDelete={handleDelete}
-                  />
-                ))}
+              {serviceOrders.map((order, index) => (
+                <ServiceOrderTableRow
+                  key={index}
+                  order={order}
+                  index={index}
+                  getStatusColor={getStatusColor}
+                  onRowClick={handleRowClick}
+                  onDelete={handleDelete}
+                />
+              ))}
             </TableBody>
           </Table>
         </CardContent>
