@@ -18,7 +18,10 @@ export const getServiceOrders = async () => {
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error fetching service orders:', error);
+    throw error;
+  }
   return data;
 };
 
@@ -29,7 +32,10 @@ export const createServiceOrder = async (serviceOrder: Omit<ServiceOrder, 'id'>)
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error creating service order:', error);
+    throw error;
+  }
   return data;
 };
 
@@ -41,7 +47,10 @@ export const updateServiceOrder = async (id: number, serviceOrder: Partial<Servi
     .select()
     .single();
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error updating service order:', error);
+    throw error;
+  }
   return data;
 };
 
@@ -51,5 +60,8 @@ export const deleteServiceOrder = async (id: number) => {
     .delete()
     .eq('id', id);
 
-  if (error) throw error;
+  if (error) {
+    console.error('Error deleting service order:', error);
+    throw error;
+  }
 };
