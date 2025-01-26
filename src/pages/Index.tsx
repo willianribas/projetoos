@@ -31,13 +31,13 @@ const Index = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      return data as ServiceOrder[];
     },
   });
 
   // Create mutation
   const createMutation = useMutation({
-    mutationFn: async (serviceOrder: Omit<ServiceOrder, 'id'>) => {
+    mutationFn: async (serviceOrder: Omit<ServiceOrder, 'id' | 'created_at'>) => {
       const { data, error } = await supabase
         .from('service_orders')
         .insert({
@@ -146,7 +146,7 @@ const Index = () => {
     { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]" }
   ];
 
-  const onSubmit = (data: Omit<ServiceOrder, 'id'>) => {
+  const onSubmit = (data: Omit<ServiceOrder, 'id' | 'created_at'>) => {
     createMutation.mutate(data);
   };
 
