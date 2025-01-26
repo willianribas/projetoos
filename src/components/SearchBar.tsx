@@ -9,11 +9,11 @@ interface SearchBarProps {
 
 const SearchBar = ({ searchQuery, setSearchQuery }: SearchBarProps) => {
   return (
-    <div className="mb-8">
+    <div className="mb-8 animate-fade-in">
       <div className="relative max-w-xl">
         <Input 
           placeholder="Buscar OS, patrimônio ou equipamento..." 
-          className="pl-10 bg-card/50 backdrop-blur-sm border-muted"
+          className="pl-10 bg-card/50 backdrop-blur-sm border-muted transition-all duration-200 hover:shadow-md focus:shadow-lg"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />

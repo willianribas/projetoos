@@ -18,7 +18,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   }
 
   return (
-    <Card className="mb-8 border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300">
+    <Card className="mb-8 border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-blue-400 animate-pulse" />
@@ -36,20 +36,20 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
         </Button>
       </CardHeader>
       {!isMinimized && (
-        <CardContent>
+        <CardContent className="animate-accordion-down">
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="w-[150px] text-left text-muted-foreground">
+                <TableHead className="w-[150px] text-muted-foreground">
                   Número OS
                 </TableHead>
-                <TableHead className="w-[150px] text-left text-muted-foreground">
+                <TableHead className="w-[150px] text-muted-foreground">
                   Patrimônio
                 </TableHead>
-                <TableHead className="w-[200px] text-left text-muted-foreground">
+                <TableHead className="w-[200px] text-muted-foreground">
                   Equipamento
                 </TableHead>
-                <TableHead className="w-[120px] text-left text-muted-foreground">
+                <TableHead className="w-[120px] text-muted-foreground">
                   Dias em ADE
                 </TableHead>
               </TableRow>

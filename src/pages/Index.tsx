@@ -7,11 +7,11 @@ const IndexContent = () => {
   const { serviceOrders } = useServiceOrders();
   
   return (
-    <>
+    <div className="space-y-6 animate-fade-in">
       <Header />
       <ADEMonitor serviceOrders={serviceOrders} />
       <ServiceOrderContent />
-    </>
+    </div>
   );
 };
 
