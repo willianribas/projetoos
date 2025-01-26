@@ -9,6 +9,7 @@ import ServiceOrderPDF from "./ServiceOrderPDF";
 import { ServiceOrder } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface QuickActionsProps {
   setShowTable: (show: boolean) => void;
@@ -29,6 +30,7 @@ const QuickActions = ({
   const [showSettings, setShowSettings] = React.useState(false);
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
 
   const handleExportDatabase = async () => {
     try {
@@ -87,6 +89,9 @@ const QuickActions = ({
         .insert(importedData.map(({ id, ...rest }) => rest)); // Remove IDs to auto-generate new ones
 
       if (insertError) throw insertError;
+
+      // Invalidar o cache do React Query para forçar uma nova busca dos dados
+      await queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
 
       toast({
         title: "Dados importados com sucesso!",
