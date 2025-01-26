@@ -45,11 +45,11 @@ const Index = () => {
   const filteredOrders = serviceOrders.filter((order) => {
     const searchLower = searchQuery.toLowerCase();
     return (
-      order.numeroOS.toLowerCase().includes(searchLower) ||
-      order.patrimonio.toLowerCase().includes(searchLower) ||
-      order.equipamento.toLowerCase().includes(searchLower) ||
-      order.status.toLowerCase().includes(searchLower) ||
-      order.observacao.toLowerCase().includes(searchLower)
+      (order.numeroOS?.toLowerCase() || "").includes(searchLower) ||
+      (order.patrimonio?.toLowerCase() || "").includes(searchLower) ||
+      (order.equipamento?.toLowerCase() || "").includes(searchLower) ||
+      (order.status?.toLowerCase() || "").includes(searchLower) ||
+      (order.observacao?.toLowerCase() || "").includes(searchLower)
     );
   });
 
