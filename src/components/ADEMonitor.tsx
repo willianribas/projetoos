@@ -40,25 +40,17 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
           <Table>
             <TableHeader>
               <TableRow className="hover:bg-transparent">
-                <TableHead className="w-[150px] text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    Número OS
-                  </div>
+                <TableHead className="w-[150px] text-left text-muted-foreground">
+                  Número OS
                 </TableHead>
-                <TableHead className="w-[150px] text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    Patrimônio
-                  </div>
+                <TableHead className="w-[150px] text-left text-muted-foreground">
+                  Patrimônio
                 </TableHead>
-                <TableHead className="w-[200px] text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    Equipamento
-                  </div>
+                <TableHead className="w-[200px] text-left text-muted-foreground">
+                  Equipamento
                 </TableHead>
-                <TableHead className="w-[120px] text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    Dias em ADE
-                  </div>
+                <TableHead className="w-[120px] text-left text-muted-foreground">
+                  Dias em ADE
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -68,25 +60,17 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                   key={index}
                   className="hover:bg-primary/5 transition-colors duration-200"
                 >
-                  <TableCell className="w-[150px]">
-                    <div className="flex items-center gap-2">
-                      {order.numeroos}
-                    </div>
+                  <TableCell className="w-[150px] text-left">
+                    {order.numeroos}
                   </TableCell>
-                  <TableCell className="w-[150px]">
-                    <div className="flex items-center gap-2">
-                      {order.patrimonio}
-                    </div>
+                  <TableCell className="w-[150px] text-left">
+                    {order.patrimonio}
                   </TableCell>
-                  <TableCell className="w-[200px]">
-                    <div className="flex items-center gap-2">
-                      {order.equipamento}
-                    </div>
+                  <TableCell className="w-[200px] text-left">
+                    {order.equipamento}
                   </TableCell>
-                  <TableCell className="w-[120px]">
-                    <div className="flex items-center gap-2">
-                      0 dias
-                    </div>
+                  <TableCell className="w-[120px] text-left">
+                    0 dias
                   </TableCell>
                 </TableRow>
               ))}
