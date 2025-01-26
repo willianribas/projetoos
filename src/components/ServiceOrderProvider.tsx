@@ -47,6 +47,8 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       toast({
         title: "Ordem de Serviço criada",
         description: "A OS foi registrada com sucesso!",
+        className: "bg-green-500 text-white",
+        duration: 3000,
       });
     },
     onError: (error) => {
@@ -54,6 +56,7 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
         title: "Erro ao criar OS",
         description: "Ocorreu um erro ao criar a ordem de serviço.",
         variant: "destructive",
+        duration: 3000,
       });
       console.error('Error creating service order:', error);
     },
@@ -76,6 +79,8 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       toast({
         title: "Ordem de Serviço atualizada",
         description: "As alterações foram salvas com sucesso!",
+        className: "bg-blue-500 text-white",
+        duration: 3000,
       });
     },
     onError: (error) => {
@@ -83,6 +88,7 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
         title: "Erro ao atualizar OS",
         description: "Ocorreu um erro ao atualizar a ordem de serviço.",
         variant: "destructive",
+        duration: 3000,
       });
       console.error('Error updating service order:', error);
     },
@@ -102,6 +108,8 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       toast({
         title: "Ordem de Serviço excluída",
         description: "A OS foi removida com sucesso!",
+        className: "bg-red-500 text-white",
+        duration: 3000,
       });
     },
     onError: (error) => {
@@ -109,6 +117,7 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
         title: "Erro ao excluir OS",
         description: "Ocorreu um erro ao excluir a ordem de serviço.",
         variant: "destructive",
+        duration: 3000,
       });
       console.error('Error deleting service order:', error);
     },
