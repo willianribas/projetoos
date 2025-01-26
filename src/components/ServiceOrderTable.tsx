@@ -45,8 +45,10 @@ const ServiceOrderTable = ({ serviceOrders, getStatusColor }: ServiceOrderTableP
                 <TableCell>{order.numeroOS}</TableCell>
                 <TableCell>{order.patrimonio}</TableCell>
                 <TableCell>{order.equipamento}</TableCell>
-                <TableCell className={getStatusColor(order.status)}>
-                  {order.status}
+                <TableCell>
+                  <span className={`${getStatusColor(order.status)} border rounded px-2 py-1`} style={{ borderColor: 'currentColor' }}>
+                    {order.status}
+                  </span>
                 </TableCell>
                 <TableCell>{order.observacao}</TableCell>
               </TableRow>
