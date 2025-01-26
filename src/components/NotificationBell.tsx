@@ -9,7 +9,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { RealtimePostgresUpdatePayload } from "@supabase/supabase-js";
 import { Database } from "@/integrations/supabase/types";
 
 type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
@@ -35,12 +34,15 @@ const NotificationBell = () => {
           schema: 'public',
           table: 'service_orders',
         },
-        (payload: RealtimePostgresUpdatePayload<ServiceOrder>) => {
-          if (payload.old_record && payload.new_record && 
-              payload.old_record.status !== payload.new_record.status) {
+        (payload) => {
+          const oldStatus = payload.old?.status;
+          const newStatus = payload.new?.status;
+          const orderNumber = payload.new?.numeroos;
+          
+          if (oldStatus && newStatus && orderNumber && oldStatus !== newStatus) {
             const notification = {
               id: new Date().getTime().toString(),
-              message: `OS ${payload.new_record.numeroos} mudou de ${payload.old_record.status} para ${payload.new_record.status}`,
+              message: `OS ${orderNumber} mudou de ${oldStatus} para ${newStatus}`,
               timestamp: new Date(),
             };
             
