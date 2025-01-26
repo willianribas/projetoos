@@ -36,14 +36,7 @@ import {
 } from "@/components/ui/select";
 import { Trash2 } from "lucide-react";
 import { useState } from "react";
-
-interface ServiceOrder {
-  numeroOS: string;
-  patrimonio: string;
-  equipamento: string;
-  status: string;
-  observacao: string;
-}
+import { ServiceOrder } from "@/types";
 
 interface ServiceOrderTableProps {
   serviceOrders: ServiceOrder[];
@@ -84,7 +77,7 @@ const ServiceOrderTable = ({
   };
 
   const handleDelete = (e: React.MouseEvent, index: number) => {
-    e.stopPropagation(); // Prevent row click event
+    e.stopPropagation();
     setDeleteIndex(index);
     setIsDeleteDialogOpen(true);
   };
@@ -122,7 +115,7 @@ const ServiceOrderTable = ({
                   className="cursor-pointer hover:bg-muted/60"
                   onClick={() => handleRowClick(order, index)}
                 >
-                  <TableCell>{order.numeroOS}</TableCell>
+                  <TableCell>{order.numeroos}</TableCell>
                   <TableCell>{order.patrimonio}</TableCell>
                   <TableCell>{order.equipamento}</TableCell>
                   <TableCell>
@@ -158,8 +151,8 @@ const ServiceOrderTable = ({
               <div className="space-y-2">
                 <label>Número OS</label>
                 <Input
-                  value={editedOrder.numeroOS}
-                  onChange={(e) => setEditedOrder({...editedOrder, numeroOS: e.target.value})}
+                  value={editedOrder.numeroos}
+                  onChange={(e) => setEditedOrder({...editedOrder, numeroos: e.target.value})}
                 />
               </div>
               <div className="space-y-2">
@@ -201,7 +194,7 @@ const ServiceOrderTable = ({
               <div className="space-y-2">
                 <label>Observação</label>
                 <Textarea
-                  value={editedOrder.observacao}
+                  value={editedOrder.observacao || ''}
                   onChange={(e) => setEditedOrder({...editedOrder, observacao: e.target.value})}
                 />
               </div>

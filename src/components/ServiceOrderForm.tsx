@@ -49,7 +49,7 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
-                    name="numeroOS"
+                    name="numeroos"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Número OS</FormLabel>
