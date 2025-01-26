@@ -144,7 +144,7 @@ const Index = () => {
               />
 
               <Button type="submit" className="w-full">
-                Criar Nova OS
+                Salvar OS
               </Button>
             </form>
           </Form>
