@@ -29,10 +29,10 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       if (error) throw error;
       return data as ServiceOrder[];
     },
-    staleTime: 1000 * 60 * 5, // Data considerada fresh por 5 minutos
-    gcTime: 1000 * 60 * 30, // Cache mantido por 30 minutos (anteriormente cacheTime)
-    refetchOnWindowFocus: false, // Não refetch ao focar na janela
-    refetchOnMount: true, // Refetch ao montar o componente
+    staleTime: 1000 * 60 * 5,
+    gcTime: 1000 * 60 * 30,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
   });
 
   const createMutation = useMutation({
@@ -51,7 +51,8 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       toast({
         title: "Ordem de Serviço criada",
         description: "A OS foi registrada com sucesso!",
-        className: "bg-green-500 text-white",
+        variant: "default",
+        className: "bg-green-500 text-white border-none",
         duration: 3000,
       });
     },
@@ -87,7 +88,8 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       toast({
         title: "Ordem de Serviço atualizada",
         description: "As alterações foram salvas com sucesso!",
-        className: "bg-blue-500 text-white",
+        variant: "default",
+        className: "bg-blue-500 text-white border-none",
         duration: 3000,
       });
     },
@@ -121,7 +123,8 @@ export function ServiceOrderProvider({ children }: { children: ReactNode }) {
       toast({
         title: "Ordem de Serviço excluída",
         description: "A OS foi removida com sucesso!",
-        className: "bg-red-500 text-white",
+        variant: "default",
+        className: "bg-red-500 text-white border-none",
         duration: 3000,
       });
     },
