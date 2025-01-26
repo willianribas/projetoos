@@ -17,10 +17,12 @@ const IndexContent = () => {
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background p-8">
-      <ServiceOrderProvider>
-        <IndexContent />
-      </ServiceOrderProvider>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 p-8">
+      <div className="max-w-7xl mx-auto">
+        <ServiceOrderProvider>
+          <IndexContent />
+        </ServiceOrderProvider>
+      </div>
     </div>
   );
 };

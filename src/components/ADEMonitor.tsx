@@ -18,17 +18,19 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   }
 
   return (
-    <Card className="mb-8 border-muted bg-card/50 backdrop-blur-sm">
+    <Card className="mb-8 border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
-          <Clock className="h-5 w-5 text-blue-400" />
-          Monitor de ADE
+          <Clock className="h-5 w-5 text-blue-400 animate-pulse" />
+          <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            Monitor de ADE
+          </span>
         </CardTitle>
         <Button
           variant="ghost"
           size="icon"
           onClick={() => setIsMinimized(!isMinimized)}
-          className="h-8 w-8"
+          className="h-8 w-8 hover:bg-primary/10"
         >
           <Minimize2 className="h-4 w-4" />
         </Button>
@@ -37,17 +39,20 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
         <CardContent>
           <Table>
             <TableHeader>
-              <TableRow>
-                <TableHead>Número OS</TableHead>
-                <TableHead>Patrimônio</TableHead>
-                <TableHead>Equipamento</TableHead>
-                <TableHead>Dias em ADE</TableHead>
+              <TableRow className="hover:bg-transparent">
+                <TableHead className="text-muted-foreground">Número OS</TableHead>
+                <TableHead className="text-muted-foreground">Patrimônio</TableHead>
+                <TableHead className="text-muted-foreground">Equipamento</TableHead>
+                <TableHead className="text-muted-foreground">Dias em ADE</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {adeOrders.map((order, index) => (
-                <TableRow key={index}>
-                  <TableCell>{order.numeroos}</TableCell>
+                <TableRow 
+                  key={index}
+                  className="hover:bg-primary/5 transition-colors duration-200"
+                >
+                  <TableCell className="font-medium">{order.numeroos}</TableCell>
                   <TableCell>{order.patrimonio}</TableCell>
                   <TableCell>{order.equipamento}</TableCell>
                   <TableCell>0 dias</TableCell>
