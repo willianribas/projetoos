@@ -112,6 +112,13 @@ export default function ServiceOrderContent() {
         onSubmit={onSubmit}
         statusOptions={statusOptions}
       />
+      <QuickActions 
+        setShowTable={setShowTable} 
+        showTable={showTable}
+        setShowStats={setShowStats}
+        showStats={showStats}
+        serviceOrders={serviceOrders}
+      />
       <SearchBar 
         searchQuery={searchQuery} 
         setSearchQuery={handleSearchQueryChange}
@@ -119,13 +126,6 @@ export default function ServiceOrderContent() {
         setSearchField={handleSearchFieldChange}
         searchCriteria={searchCriteria}
         setSearchCriteria={handleSearchCriteriaChange}
-      />
-      <QuickActions 
-        setShowTable={setShowTable} 
-        showTable={showTable}
-        setShowStats={setShowStats}
-        showStats={showStats}
-        serviceOrders={serviceOrders}
       />
 
       {(showTable || searchQuery || searchCriteria.length > 0) && (
