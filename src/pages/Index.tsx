@@ -5,6 +5,7 @@ import SearchBar from "@/components/SearchBar";
 import ServiceOrderForm from "@/components/ServiceOrderForm";
 import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
+import { useToast } from "@/components/ui/use-toast";
 
 interface ServiceOrder {
   numeroOS: string;
@@ -20,6 +21,7 @@ const Index = () => {
   const [serviceOrders, setServiceOrders] = useState<ServiceOrder[]>([]);
   const [showTable, setShowTable] = useState(false);
   const [isOpen, setIsOpen] = useState(true);
+  const { toast } = useToast();
 
   const statusOptions = [
     { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-[#221F26]" },
@@ -37,9 +39,23 @@ const Index = () => {
     return statusOption?.color || "text-muted-foreground";
   };
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (data: ServiceOrder) => {
     setServiceOrders([...serviceOrders, data]);
     form.reset();
+    toast({
+      title: "Ordem de Serviço criada",
+      description: "A OS foi registrada com sucesso!",
+    });
+  };
+
+  const handleUpdateServiceOrder = (index: number, updatedOrder: ServiceOrder) => {
+    const newOrders = [...serviceOrders];
+    newOrders[index] = updatedOrder;
+    setServiceOrders(newOrders);
+    toast({
+      title: "Ordem de Serviço atualizada",
+      description: "As alterações foram salvas com sucesso!",
+    });
   };
 
   const filteredOrders = serviceOrders.filter((order) => {
@@ -69,6 +85,8 @@ const Index = () => {
         <ServiceOrderTable 
           serviceOrders={filteredOrders}
           getStatusColor={getStatusColor}
+          statusOptions={statusOptions}
+          onUpdateServiceOrder={handleUpdateServiceOrder}
         />
       )}
     </div>
