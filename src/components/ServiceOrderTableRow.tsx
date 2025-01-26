@@ -21,21 +21,21 @@ const ServiceOrderTableRow = ({
 }: ServiceOrderTableRowProps) => {
   return (
     <TableRow
-      className="cursor-pointer hover:bg-muted/60"
+      className="cursor-pointer hover:bg-muted/60 text-foreground/90"
       onClick={() => onRowClick(order, index)}
     >
-      <TableCell>{order.numeroos}</TableCell>
-      <TableCell>{order.patrimonio}</TableCell>
-      <TableCell>{order.equipamento}</TableCell>
+      <TableCell className="font-medium">{order.numeroos}</TableCell>
+      <TableCell className="font-medium">{order.patrimonio}</TableCell>
+      <TableCell className="font-medium">{order.equipamento}</TableCell>
       <TableCell>
         <span
-          className={`${getStatusColor(order.status)} border rounded px-2 py-1`}
+          className={`${getStatusColor(order.status)} border rounded px-2 py-1 font-semibold`}
           style={{ borderColor: "currentColor" }}
         >
           {order.status}
         </span>
       </TableCell>
-      <TableCell>{order.observacao}</TableCell>
+      <TableCell className="font-medium">{order.observacao}</TableCell>
       <TableCell>
         <Button
           variant="ghost"

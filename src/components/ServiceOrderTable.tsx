@@ -84,12 +84,12 @@ const ServiceOrderTable = ({
     <>
       <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm">
         <CardHeader className="space-y-4">
-          <CardTitle>Ordens de Serviço Registradas</CardTitle>
+          <CardTitle className="text-foreground font-bold">Ordens de Serviço Registradas</CardTitle>
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex space-x-2 pb-4">
               <Badge
                 variant={selectedStatus === null ? "default" : "outline"}
-                className="cursor-pointer flex items-center gap-1"
+                className="cursor-pointer flex items-center gap-1 font-medium"
                 onClick={() => setSelectedStatus(null)}
               >
                 <Filter className="h-3 w-3" />
@@ -101,7 +101,9 @@ const ServiceOrderTable = ({
                   <Badge
                     key={status.value}
                     variant={selectedStatus === status.value ? "default" : "outline"}
-                    className={`cursor-pointer flex items-center gap-1 ${selectedStatus === status.value ? "bg-primary" : ""}`}
+                    className={`cursor-pointer flex items-center gap-1 font-medium ${
+                      selectedStatus === status.value ? "bg-primary text-primary-foreground" : ""
+                    }`}
                     onClick={() => setSelectedStatus(status.value)}
                   >
                     <Icon className="h-3 w-3" />
@@ -117,37 +119,37 @@ const ServiceOrderTable = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="w-[120px]">
+                <TableHead className="w-[120px] text-foreground/90 font-semibold">
                   <div className="flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     Número OS
                   </div>
                 </TableHead>
-                <TableHead className="w-[120px]">
+                <TableHead className="w-[120px] text-foreground/90 font-semibold">
                   <div className="flex items-center gap-2">
                     <Building2 className="h-4 w-4" />
                     Patrimônio
                   </div>
                 </TableHead>
-                <TableHead>
+                <TableHead className="text-foreground/90 font-semibold">
                   <div className="flex items-center gap-2">
                     <Settings2 className="h-4 w-4" />
                     Equipamento
                   </div>
                 </TableHead>
-                <TableHead className="-ml-24">
+                <TableHead className="-ml-24 text-foreground/90 font-semibold">
                   <div className="flex items-center">
                     <ActivitySquare className="h-4 w-4 mr-1" />
                     Status
                   </div>
                 </TableHead>
-                <TableHead>
+                <TableHead className="text-foreground/90 font-semibold">
                   <div className="flex items-center gap-2">
                     <MessageSquare className="h-4 w-4" />
                     Observação
                   </div>
                 </TableHead>
-                <TableHead className="w-[50px]">
+                <TableHead className="w-[50px] text-foreground/90 font-semibold">
                   <div className="flex items-center gap-2">
                     <GripHorizontal className="h-4 w-4" />
                     Ações
