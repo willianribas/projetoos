@@ -11,6 +11,7 @@ import { ServiceOrder } from "@/types";
 import ServiceOrderTableRow from "./ServiceOrderTableRow";
 import EditServiceOrderDialog from "./EditServiceOrderDialog";
 import DeleteServiceOrderDialog from "./DeleteServiceOrderDialog";
+import { Hash, Building2, Settings2, ActivitySquare, MessageSquare, GripHorizontal } from "lucide-react";
 
 interface ServiceOrderTableProps {
   serviceOrders: ServiceOrder[];
@@ -77,12 +78,42 @@ const ServiceOrderTable = ({
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Número OS</TableHead>
-                <TableHead>Patrimônio</TableHead>
-                <TableHead>Equipamento</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Observação</TableHead>
-                <TableHead className="w-[50px]">Ações</TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <Hash className="h-4 w-4" />
+                    Número OS
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <Building2 className="h-4 w-4" />
+                    Patrimônio
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <Settings2 className="h-4 w-4" />
+                    Equipamento
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <ActivitySquare className="h-4 w-4" />
+                    Status
+                  </div>
+                </TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="h-4 w-4" />
+                    Observação
+                  </div>
+                </TableHead>
+                <TableHead className="w-[50px]">
+                  <div className="flex items-center gap-2">
+                    <GripHorizontal className="h-4 w-4" />
+                    Ações
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
