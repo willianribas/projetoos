@@ -7,10 +7,8 @@ import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { ServiceOrder } from "@/types";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { 
-  Filter, 
   Clock, 
   CalendarClock, 
   Building2, 
@@ -37,7 +35,7 @@ export default function ServiceOrderContent() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showTable, setShowTable] = useState(false);
   const [showStats, setShowStats] = useState(false);
-  const [isOpen, setIsOpen] = useState(false); // Changed to false to start minimized
+  const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const itemsPerPage = 10;
@@ -72,7 +70,6 @@ export default function ServiceOrderContent() {
     return matchesSearch;
   });
 
-  // Pagination logic
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
@@ -95,37 +92,6 @@ export default function ServiceOrderContent() {
         serviceOrders={serviceOrders}
       />
 
-      {/* Status Filter */}
-      {(showTable || searchQuery) && (
-        <ScrollArea className="w-full whitespace-nowrap">
-          <div className="flex space-x-2 pb-4">
-            <Badge
-              variant={selectedStatus === null ? "default" : "outline"}
-              className="cursor-pointer flex items-center gap-1"
-              onClick={() => setSelectedStatus(null)}
-            >
-              <Filter className="h-3 w-3" />
-              Todos
-            </Badge>
-            {statusOptions.map((status) => {
-              const Icon = status.icon;
-              return (
-                <Badge
-                  key={status.value}
-                  variant={selectedStatus === status.value ? "default" : "outline"}
-                  className={`cursor-pointer flex items-center gap-1 ${selectedStatus === status.value ? "bg-primary" : ""}`}
-                  onClick={() => setSelectedStatus(status.value)}
-                >
-                  <Icon className="h-3 w-3" />
-                  {status.value}
-                </Badge>
-              );
-            })}
-          </div>
-          <ScrollBar orientation="horizontal" />
-        </ScrollArea>
-      )}
-
       {(showTable || searchQuery) && (
         <>
           <ServiceOrderTable 
@@ -146,7 +112,6 @@ export default function ServiceOrderContent() {
             }}
           />
           
-          {/* Pagination Controls */}
           {totalPages > 1 && (
             <div className="flex justify-center space-x-2 mt-4">
               <button
