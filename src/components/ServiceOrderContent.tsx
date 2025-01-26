@@ -9,16 +9,27 @@ import { useServiceOrders } from "./ServiceOrderProvider";
 import { ServiceOrder } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { 
+  Filter, 
+  Clock, 
+  CalendarClock, 
+  Building2, 
+  ShoppingCart, 
+  Wrench, 
+  Package, 
+  CheckCircle2, 
+  Hammer 
+} from "lucide-react";
 
 export const statusOptions = [
-  { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-blue-900" },
-  { value: "AVT", label: "AVT - Aguardando vinda técnica", color: "text-[#F97316]" },
-  { value: "EXT", label: "EXT - Serviço Externo", color: "text-[#9b87f5]" },
-  { value: "A.M", label: "A.M - Aquisição de Material", color: "text-[#ea384c]" },
-  { value: "INST", label: "INST - Instalação", color: "text-pink-500" },
-  { value: "M.S", label: "M.S - Material Solicitado", color: "text-[#33C3F0]" },
-  { value: "OSP", label: "OSP - Ordem de Serviço Pronta", color: "text-[#22c55e]" },
-  { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]" }
+  { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-blue-900", icon: Clock },
+  { value: "AVT", label: "AVT - Aguardando vinda técnica", color: "text-[#F97316]", icon: CalendarClock },
+  { value: "EXT", label: "EXT - Serviço Externo", color: "text-[#9b87f5]", icon: Building2 },
+  { value: "A.M", label: "A.M - Aquisição de Material", color: "text-[#ea384c]", icon: ShoppingCart },
+  { value: "INST", label: "INST - Instalação", color: "text-pink-500", icon: Wrench },
+  { value: "M.S", label: "M.S - Material Solicitado", color: "text-[#33C3F0]", icon: Package },
+  { value: "OSP", label: "OSP - Ordem de Serviço Pronta", color: "text-[#22c55e]", icon: CheckCircle2 },
+  { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]", icon: Hammer }
 ];
 
 export default function ServiceOrderContent() {
@@ -90,21 +101,26 @@ export default function ServiceOrderContent() {
           <div className="flex space-x-2 pb-4">
             <Badge
               variant={selectedStatus === null ? "default" : "outline"}
-              className="cursor-pointer"
+              className="cursor-pointer flex items-center gap-1"
               onClick={() => setSelectedStatus(null)}
             >
+              <Filter className="h-3 w-3" />
               Todos
             </Badge>
-            {statusOptions.map((status) => (
-              <Badge
-                key={status.value}
-                variant={selectedStatus === status.value ? "default" : "outline"}
-                className={`cursor-pointer ${selectedStatus === status.value ? "bg-primary" : ""}`}
-                onClick={() => setSelectedStatus(status.value)}
-              >
-                {status.value}
-              </Badge>
-            ))}
+            {statusOptions.map((status) => {
+              const Icon = status.icon;
+              return (
+                <Badge
+                  key={status.value}
+                  variant={selectedStatus === status.value ? "default" : "outline"}
+                  className={`cursor-pointer flex items-center gap-1 ${selectedStatus === status.value ? "bg-primary" : ""}`}
+                  onClick={() => setSelectedStatus(status.value)}
+                >
+                  <Icon className="h-3 w-3" />
+                  {status.value}
+                </Badge>
+              );
+            })}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
