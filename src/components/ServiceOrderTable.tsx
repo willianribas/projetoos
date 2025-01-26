@@ -143,7 +143,7 @@ const ServiceOrderTable = ({
                   </div>
                 </TableHead>
                 <TableHead>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     <ActivitySquare className="h-4 w-4" />
                     Status
                   </div>
