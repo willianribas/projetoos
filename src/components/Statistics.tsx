@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { ServiceOrder } from "@/types";
 import StatusDistributionChart from "./charts/StatusDistributionChart";
+import TimelineChart from "./charts/TimelineChart";
 
 interface StatisticsProps {
   serviceOrders: ServiceOrder[];
@@ -41,10 +42,13 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
 
   return (
     <div className="space-y-6">
-      <StatusDistributionChart 
-        serviceOrders={serviceOrders} 
-        statusOptions={statusOptions} 
-      />
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <StatusDistributionChart 
+          serviceOrders={serviceOrders} 
+          statusOptions={statusOptions} 
+        />
+        <TimelineChart serviceOrders={serviceOrders} />
+      </div>
 
       <Card className="border-muted bg-card/50 backdrop-blur-sm">
         <CardHeader>
