@@ -282,7 +282,7 @@ const Index = () => {
                     <TableCell>{order.patrimonio}</TableCell>
                     <TableCell>{order.equipamento}</TableCell>
                     <TableCell className={getStatusColor(order.status)}>
-                      {statusOptions.find(opt => opt.value === order.status)?.label || order.status}
+                      {order.status}
                     </TableCell>
                     <TableCell>{order.observacao}</TableCell>
                   </TableRow>
