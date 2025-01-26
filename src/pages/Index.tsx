@@ -7,12 +7,29 @@ import {
   Search,
   DollarSign,
   FileText,
-  ArrowRight,
   Wrench
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { useState } from "react";
 
 const Index = () => {
+  const form = useForm();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const statusOptions = [
+    { value: "ADE", label: "ADE - Aguardando Decisão" },
+    { value: "AVT", label: "AVT - Avaliação Técnica" },
+    { value: "EXT", label: "EXT - Externa" },
+    { value: "A.M", label: "A.M - Aguardando Material" },
+    { value: "INST", label: "INST - Instalação" },
+    { value: "M.S", label: "M.S - Manutenção Solicitada" },
+    { value: "OSP", label: "OSP - OS Pendente" }
+  ];
+
   return (
     <div className="min-h-screen bg-gray-50 p-8">
       {/* Header */}
@@ -24,8 +41,10 @@ const Index = () => {
       {/* Search Bar */}
       <div className="mb-8 flex gap-2">
         <Input 
-          placeholder="Buscar OS, cliente ou serviço..." 
+          placeholder="Buscar OS, patrimônio ou equipamento..." 
           className="max-w-xl"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
         />
         <Button>
           <Search className="mr-2" />
@@ -33,20 +52,109 @@ const Index = () => {
         </Button>
       </div>
 
-      {/* Quick Actions Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <ClipboardList className="h-5 w-5 text-blue-500" />
-              Nova OS
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button className="w-full">Criar Nova OS</Button>
-          </CardContent>
-        </Card>
+      {/* Nova OS Form */}
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-blue-500" />
+            Nova Ordem de Serviço
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Form {...form}>
+            <form className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="numeroOS"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Número OS</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Digite o número da OS" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
+                <FormField
+                  control={form.control}
+                  name="patrimonio"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Patrimônio</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Digite o número do patrimônio" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="equipamento"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Equipamento</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Digite o equipamento" {...field} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="status"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Status</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {statusOptions.map((status) => (
+                            <SelectItem key={status.value} value={status.value}>
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name="observacao"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Observação</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Digite as observações da OS"
+                        className="min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
+
+              <Button type="submit" className="w-full">
+                Criar Nova OS
+              </Button>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+
+      {/* Quick Actions Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card className="hover:shadow-lg transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -68,33 +176,6 @@ const Index = () => {
           </CardHeader>
           <CardContent>
             <Button variant="outline" className="w-full">Gerenciar Serviços</Button>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Secondary Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <DollarSign className="h-5 w-5 text-emerald-500" />
-              Financeiro
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full">Ver Relatórios</Button>
-          </CardContent>
-        </Card>
-
-        <Card className="hover:shadow-lg transition-shadow">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5 text-purple-500" />
-              Relatórios
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Button variant="outline" className="w-full">Gerar Relatórios</Button>
           </CardContent>
         </Card>
 
