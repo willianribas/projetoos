@@ -30,7 +30,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       bgColor: "bg-green-50 dark:bg-green-950",
     },
     {
-      title: "OS Pendentes",
+      title: "OS Pendentes - ADE",
       value: pendingOrders,
       icon: Clock,
       color: "text-orange-500",
