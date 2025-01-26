@@ -40,14 +40,20 @@ const Index = () => {
   const [isOpen, setIsOpen] = useState(true);
 
   const statusOptions = [
-    { value: "ADE", label: "ADE - Aguardando Disponibilidade" },
-    { value: "AVT", label: "AVT - Aguardando vinda técnica" },
-    { value: "EXT", label: "EXT - Serviço Externo" },
-    { value: "A.M", label: "A.M - Aquisição de Material" },
-    { value: "INST", label: "INST - Instalação" },
-    { value: "M.S", label: "M.S - Material Solicitado" },
-    { value: "OSP", label: "OSP - Ordem de Serviço Pronta" }
+    { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-[#221F26]" },
+    { value: "AVT", label: "AVT - Aguardando vinda técnica", color: "text-[#F97316]" },
+    { value: "EXT", label: "EXT - Serviço Externo", color: "text-[#9b87f5]" },
+    { value: "A.M", label: "A.M - Aquisição de Material", color: "text-[#ea384c]" },
+    { value: "INST", label: "INST - Instalação", color: "text-muted-foreground" },
+    { value: "M.S", label: "M.S - Material Solicitado", color: "text-[#33C3F0]" },
+    { value: "OSP", label: "OSP - Ordem de Serviço Pronta", color: "text-[#22c55e]" },
+    { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]" }
   ];
+
+  const getStatusColor = (status: string) => {
+    const statusOption = statusOptions.find(option => option.value === status);
+    return statusOption?.color || "text-muted-foreground";
+  };
 
   const onSubmit = (data: any) => {
     setServiceOrders([...serviceOrders, data]);
@@ -108,68 +114,72 @@ const Index = () => {
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="numeroOS"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Número OS</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Digite o número da OS" className="bg-background/50" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="numeroOS"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Número OS</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Digite o número da OS" className="bg-background/50" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="patrimonio"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Patrimônio</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Digite o número do patrimônio" className="bg-background/50" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="patrimonio"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Patrimônio</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Digite o número do patrimônio" className="bg-background/50" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="equipamento"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Equipamento</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Digite o equipamento" className="bg-background/50" {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="equipamento"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Equipamento</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Digite o equipamento" className="bg-background/50" {...field} />
+                          </FormControl>
+                        </FormItem>
+                      )}
+                    />
 
-                <FormField
-                  control={form.control}
-                  name="status"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Status</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
-                        <FormControl>
-                          <SelectTrigger className="bg-background/50">
-                            <SelectValue placeholder="Selecione o status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {statusOptions.map((status) => (
-                            <SelectItem key={status.value} value={status.value}>
-                              {status.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
+                    <FormField
+                      control={form.control}
+                      name="status"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Status</FormLabel>
+                          <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <FormControl>
+                              <SelectTrigger className="bg-background/50">
+                                <SelectValue placeholder="Selecione o status" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {statusOptions.map((status) => (
+                                <SelectItem 
+                                  key={status.value} 
+                                  value={status.value}
+                                  className={status.color}
+                                >
+                                  {status.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormItem>
+                      )}
+                    />
                   </div>
 
                   <FormField
@@ -271,7 +281,9 @@ const Index = () => {
                     <TableCell>{order.numeroOS}</TableCell>
                     <TableCell>{order.patrimonio}</TableCell>
                     <TableCell>{order.equipamento}</TableCell>
-                    <TableCell>{order.status}</TableCell>
+                    <TableCell className={getStatusColor(order.status)}>
+                      {statusOptions.find(opt => opt.value === order.status)?.label || order.status}
+                    </TableCell>
                     <TableCell>{order.observacao}</TableCell>
                   </TableRow>
                 ))}
