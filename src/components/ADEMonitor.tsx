@@ -68,10 +68,26 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                   key={index}
                   className="hover:bg-primary/5 transition-colors duration-200"
                 >
-                  <TableCell className="font-medium">{order.numeroos}</TableCell>
-                  <TableCell>{order.patrimonio}</TableCell>
-                  <TableCell>{order.equipamento}</TableCell>
-                  <TableCell>0 dias</TableCell>
+                  <TableCell className="w-[150px]">
+                    <div className="flex items-center gap-2">
+                      {order.numeroos}
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-[150px]">
+                    <div className="flex items-center gap-2">
+                      {order.patrimonio}
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-[200px]">
+                    <div className="flex items-center gap-2">
+                      {order.equipamento}
+                    </div>
+                  </TableCell>
+                  <TableCell className="w-[120px]">
+                    <div className="flex items-center gap-2">
+                      0 dias
+                    </div>
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>
