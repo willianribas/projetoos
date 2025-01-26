@@ -49,7 +49,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                 <TableHead className="w-[200px] text-muted-foreground">
                   Equipamento
                 </TableHead>
-                <TableHead className="text-right w-[120px] text-muted-foreground">
+                <TableHead className="w-[120px] text-muted-foreground">
                   Dias em ADE
                 </TableHead>
               </TableRow>
@@ -69,7 +69,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                   <TableCell className="w-[200px]">
                     {order.equipamento}
                   </TableCell>
-                  <TableCell className="text-right w-[120px]">
+                  <TableCell className="w-[120px]">
                     0 dias
                   </TableCell>
                 </TableRow>
