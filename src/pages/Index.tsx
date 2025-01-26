@@ -157,11 +157,11 @@ const Index = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="h-5 w-5 text-green-500" />
-              Clientes
+              Ordens de Serviços
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <Button variant="outline" className="w-full">Gerenciar Clientes</Button>
+            <Button variant="outline" className="w-full">Ordem de Serviços Salvas</Button>
           </CardContent>
         </Card>
 
