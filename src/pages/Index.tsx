@@ -6,6 +6,7 @@ import ServiceOrderForm from "@/components/ServiceOrderForm";
 import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
+import Settings from "@/components/Settings";
 import { useToast } from "@/hooks/use-toast";
 
 interface ServiceOrder {
@@ -91,28 +92,35 @@ const Index = () => {
         onSubmit={onSubmit}
         statusOptions={statusOptions}
       />
-      <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
-      <QuickActions 
-        setShowTable={setShowTable} 
-        showTable={showTable}
-        setShowStats={setShowStats}
-        showStats={showStats}
-      />
-      {(showTable || searchQuery) && (
-        <ServiceOrderTable 
-          serviceOrders={filteredOrders}
-          getStatusColor={getStatusColor}
-          statusOptions={statusOptions}
-          onUpdateServiceOrder={handleUpdateServiceOrder}
-          onDeleteServiceOrder={handleDeleteServiceOrder}
-        />
-      )}
-      {showStats && (
-        <Statistics 
-          serviceOrders={serviceOrders}
-          statusOptions={statusOptions}
-        />
-      )}
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_300px] gap-4">
+        <div className="space-y-4">
+          <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+          <QuickActions 
+            setShowTable={setShowTable} 
+            showTable={showTable}
+            setShowStats={setShowStats}
+            showStats={showStats}
+          />
+          {(showTable || searchQuery) && (
+            <ServiceOrderTable 
+              serviceOrders={filteredOrders}
+              getStatusColor={getStatusColor}
+              statusOptions={statusOptions}
+              onUpdateServiceOrder={handleUpdateServiceOrder}
+              onDeleteServiceOrder={handleDeleteServiceOrder}
+            />
+          )}
+          {showStats && (
+            <Statistics 
+              serviceOrders={serviceOrders}
+              statusOptions={statusOptions}
+            />
+          )}
+        </div>
+        <div>
+          <Settings serviceOrders={serviceOrders} />
+        </div>
+      </div>
     </div>
   );
 };
