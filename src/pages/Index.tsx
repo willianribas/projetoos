@@ -1,15 +1,25 @@
 import Header from "@/components/Header";
 import ADEMonitor from "@/components/ADEMonitor";
 import ServiceOrderContent from "@/components/ServiceOrderContent";
-import { ServiceOrderProvider } from "@/components/ServiceOrderProvider";
+import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
+
+const IndexContent = () => {
+  const { serviceOrders } = useServiceOrders();
+  
+  return (
+    <>
+      <Header />
+      <ADEMonitor serviceOrders={serviceOrders} />
+      <ServiceOrderContent />
+    </>
+  );
+};
 
 const Index = () => {
   return (
     <div className="min-h-screen bg-background p-8">
       <ServiceOrderProvider>
-        <Header />
-        <ADEMonitor />
-        <ServiceOrderContent />
+        <IndexContent />
       </ServiceOrderProvider>
     </div>
   );
