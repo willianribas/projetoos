@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import { ServiceOrder } from "@/types";
-import { useServiceOrders } from "@/hooks/queries/useServiceOrders";
+import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
 import { useCreateServiceOrder } from "@/hooks/mutations/useCreateServiceOrder";
 import { useUpdateServiceOrder } from "@/hooks/mutations/useUpdateServiceOrder";
 import { useDeleteServiceOrder } from "@/hooks/mutations/useDeleteServiceOrder";
@@ -16,7 +16,7 @@ interface ServiceOrderContextType {
 const ServiceOrderContext = createContext<ServiceOrderContextType | undefined>(undefined);
 
 export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: serviceOrders = [], isLoading } = useServiceOrders();
+  const { data: serviceOrders = [], isLoading } = useServiceOrdersQuery();
   const createMutation = useCreateServiceOrder();
   const updateMutation = useUpdateServiceOrder();
   const deleteMutation = useDeleteServiceOrder();

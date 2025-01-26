@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ServiceOrder } from "@/types";
 
-export const useServiceOrders = () => {
+export const useServiceOrdersQuery = () => {
   return useQuery({
     queryKey: ["service_orders"],
     queryFn: async () => {
