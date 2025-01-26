@@ -31,7 +31,12 @@ const Index = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      return data;
+      
+      // Transform the data to match the frontend format
+      return data.map((order: ServiceOrder) => ({
+        ...order,
+        numeroOS: order.numeroos // Map the database field to the frontend field
+      }));
     },
   });
 
@@ -40,12 +45,21 @@ const Index = () => {
     mutationFn: async (serviceOrder: Omit<ServiceOrder, 'id'>) => {
       const { data, error } = await supabase
         .from('service_orders')
-        .insert(serviceOrder)
+        .insert({
+          numeroos: serviceOrder.numeroOS,
+          patrimonio: serviceOrder.patrimonio,
+          equipamento: serviceOrder.equipamento,
+          status: serviceOrder.status,
+          observacao: serviceOrder.observacao
+        })
         .select()
         .single();
 
       if (error) throw error;
-      return data;
+      return {
+        ...data,
+        numeroOS: data.numeroos
+      };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
@@ -71,13 +85,22 @@ const Index = () => {
     mutationFn: async ({ id, data }: { id: number; data: Partial<ServiceOrder> }) => {
       const { data: updatedData, error } = await supabase
         .from('service_orders')
-        .update(data)
+        .update({
+          numeroos: data.numeroOS,
+          patrimonio: data.patrimonio,
+          equipamento: data.equipamento,
+          status: data.status,
+          observacao: data.observacao
+        })
         .eq('id', id)
         .select()
         .single();
 
       if (error) throw error;
-      return updatedData;
+      return {
+        ...updatedData,
+        numeroOS: updatedData.numeroos
+      };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });

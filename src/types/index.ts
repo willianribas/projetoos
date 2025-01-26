@@ -1,9 +1,9 @@
 export interface ServiceOrder {
   id: number;
-  numeroOS: string;
+  numeroos: string;
   patrimonio: string;
   equipamento: string;
   status: string;
-  observacao: string;
+  observacao: string | null;
   created_at?: string;
 }
