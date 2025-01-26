@@ -11,6 +11,7 @@ import {
 import { ServiceOrder } from "@/types";
 import StatusDistributionChart from "./charts/StatusDistributionChart";
 import TimelineChart from "./charts/TimelineChart";
+import MetricsHighlight from "./charts/MetricsHighlight";
 
 interface StatisticsProps {
   serviceOrders: ServiceOrder[];
@@ -42,6 +43,8 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
 
   return (
     <div className="space-y-6">
+      <MetricsHighlight serviceOrders={serviceOrders} />
+      
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <StatusDistributionChart 
           serviceOrders={serviceOrders} 
