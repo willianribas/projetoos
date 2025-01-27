@@ -28,18 +28,10 @@ const Auth = () => {
 
       navigate("/");
     } catch (error: any) {
-      let message = "Ocorreu um erro inesperado";
-      
-      if (error.message === "Invalid login credentials") {
-        message = "Email ou senha inválidos";
-      } else if (error.message.includes("Email rate limit exceeded")) {
-        message = "Muitas tentativas. Tente novamente mais tarde";
-      }
-
       toast({
         variant: "destructive",
         title: "Erro ao fazer login",
-        description: message,
+        description: error.message,
       });
     } finally {
       setLoading(false);
@@ -85,7 +77,6 @@ const Auth = () => {
                 required
                 className="w-full"
                 placeholder="Digite sua senha"
-                minLength={6}
               />
             </div>
           </div>
