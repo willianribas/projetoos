@@ -23,6 +23,8 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppRoutes = () => (
   <Routes>
+    {/* Redireciona a rota base para /auth */}
+    <Route path="" element={<Navigate to="/auth" replace />} />
     <Route path="/auth" element={<Auth />} />
     <Route
       path="/"
