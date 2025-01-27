@@ -5,6 +5,7 @@ import ServiceOrderForm from "@/components/ServiceOrderForm";
 import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
+import Footer from "@/components/Footer";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { ServiceOrder } from "@/types";
 import ServiceOrderPagination from "./pagination/ServiceOrderPagination";
@@ -156,6 +157,8 @@ export default function ServiceOrderContent() {
           statusOptions={statusOptions}
         />
       )}
+
+      <Footer />
     </div>
   );
 }
