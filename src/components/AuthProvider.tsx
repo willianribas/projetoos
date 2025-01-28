@@ -38,10 +38,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (session?.user) {
             console.log("Usuário autenticado:", session.user);
             setUser(session.user);
+            if (window.location.pathname === "/auth") {
+              navigate("/");
+            }
           } else {
-            console.log("Nenhum usuário autenticado, redirecionando para /auth");
+            console.log("Nenhum usuário autenticado");
             setUser(null);
-            navigate("/auth");
+            if (window.location.pathname !== "/auth") {
+              navigate("/auth");
+            }
           }
         }
       } catch (error) {

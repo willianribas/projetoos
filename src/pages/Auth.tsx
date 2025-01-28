@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Boxes } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -16,50 +16,52 @@ const Auth = () => {
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (loading) return;
-    
-    console.log("Iniciando tentativa de login com email:", email);
-    setLoading(true);
-
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: email.trim(),
-        password: password.trim(),
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
       });
 
-      console.log("Resposta do login:", { data, error });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data?.user) {
-        console.log("Login bem-sucedido, redirecionando...");
-        toast({
-          title: "Login realizado com sucesso!",
-          duration: 2000,
-        });
-        navigate("/");
-      } else {
-        console.log("Login falhou - sem dados do usuário");
-        throw new Error("Falha no login - dados do usuário não encontrados");
-      }
-    } catch (error: any) {
-      console.error("Erro detalhado do login:", error);
-      
-      let errorMessage = "Ocorreu um erro ao fazer login. Tente novamente.";
-      
-      if (error.message === "Invalid login credentials") {
-        errorMessage = "Email ou senha incorretos. Por favor, verifique suas credenciais.";
-      } else if (error.message.includes("Email not confirmed")) {
-        errorMessage = "Email não confirmado. Por favor, verifique sua caixa de entrada.";
-      }
+      if (error) throw error;
 
       toast({
+        title: "Login realizado com sucesso!",
+        description: "Você será redirecionado para a página principal.",
+      });
+
+      navigate("/", { replace: true });
+    } catch (error: any) {
+      toast({
         variant: "destructive",
-        title: "Erro no login",
-        description: errorMessage,
-        duration: 4000,
+        title: "Erro ao fazer login",
+        description: error.message,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Cadastro realizado com sucesso!",
+        description: "Você já pode fazer login.",
+      });
+    } catch (error: any) {
+      toast({
+        variant: "destructive",
+        title: "Erro ao cadastrar",
+        description: error.message,
       });
     } finally {
       setLoading(false);
@@ -67,59 +69,83 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="text-center">
-          <div className="flex items-center justify-center gap-3 mb-3">
-            <Boxes className="h-12 w-12 text-blue-500" />
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Sistema OS
-            </h1>
-          </div>
-          <p className="text-foreground/90 text-lg">
-            Sistema de Gerenciamento de Ordens de Serviço
-          </p>
-        </div>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background/95 to-background/90 p-4">
+      <Card className="w-full max-w-md border-muted bg-card/50 backdrop-blur-sm">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold">Bem-vindo</CardTitle>
+          <CardDescription>
+            Faça login ou crie sua conta para continuar
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="login" className="space-y-4">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="login">Login</TabsTrigger>
+              <TabsTrigger value="register">Cadastro</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="login">
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div className="space-y-2">
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
+                  <Input
+                    type="password"
+                    placeholder="Senha"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={loading}
+                >
+                  {loading ? "Entrando..." : "Entrar"}
+                </Button>
+              </form>
+            </TabsContent>
 
-        <form onSubmit={handleLogin} className="mt-8 space-y-6 bg-card/50 backdrop-blur-sm p-8 rounded-lg shadow-sm">
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                disabled={loading}
-                className="w-full"
-                placeholder="Digite seu email"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                disabled={loading}
-                className="w-full"
-                placeholder="Digite sua senha"
-              />
-            </div>
-          </div>
-
-          <Button
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-600"
-            disabled={loading}
-          >
-            {loading ? "Entrando..." : "Entrar"}
-          </Button>
-        </form>
-      </div>
+            <TabsContent value="register">
+              <form onSubmit={handleSignUp} className="space-y-4">
+                <div className="space-y-2">
+                  <Input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
+                  <Input
+                    type="password"
+                    placeholder="Senha"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    disabled={loading}
+                    required
+                  />
+                </div>
+                <Button 
+                  type="submit" 
+                  className="w-full" 
+                  disabled={loading}
+                >
+                  {loading ? "Cadastrando..." : "Cadastrar"}
+                </Button>
+              </form>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
     </div>
   );
 };
