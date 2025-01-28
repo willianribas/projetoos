@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Settings, FileDown, Moon, Sun, Upload, Database, History, TestTube } from "lucide-react";
@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { ServiceOrderHistory } from "./ServiceOrderHistory";
+import StatusSelector from "../StatusSelector";
 
 interface SettingsPanelProps {
   showSettings: boolean;
@@ -22,7 +23,20 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
-  const [showHistory, setShowHistory] = React.useState(false);
+  const [showHistory, setShowHistory] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+
+  const handleStatusToggle = (status: string) => {
+    setSelectedStatuses(prev => 
+      prev.includes(status)
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const filteredOrders = selectedStatuses.length > 0
+    ? serviceOrders.filter(order => selectedStatuses.includes(order.status))
+    : serviceOrders;
 
   const handleExportDatabase = async () => {
     try {
@@ -129,9 +143,16 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
             {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
           </Toggle>
         </div>
+        <div className="space-y-2">
+          <span className="text-sm block">Filtrar Status para Exportação PDF</span>
+          <StatusSelector
+            selectedStatuses={selectedStatuses}
+            onStatusToggle={handleStatusToggle}
+          />
+        </div>
         <div className="flex items-center justify-between">
           <span className="text-sm">Exportar OS</span>
-          <BlobProvider document={<ServiceOrderPDF serviceOrders={serviceOrders} />}>
+          <BlobProvider document={<ServiceOrderPDF serviceOrders={filteredOrders} />}>
             {({ url, loading }) => (
               <Button 
                 variant="outline" 
@@ -143,6 +164,12 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
                     link.href = url;
                     link.download = 'ordens-servico.pdf';
                     link.click();
+                    toast({
+                      title: "PDF exportado com sucesso!",
+                      description: selectedStatuses.length > 0
+                        ? `Filtrado por ${selectedStatuses.join(", ")}`
+                        : "Todas as ordens de serviço incluídas",
+                    });
                   }
                 }}
               >
@@ -152,6 +179,7 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
             )}
           </BlobProvider>
         </div>
+        
         <div className="flex items-center justify-between">
           <span className="text-sm">Backup do Banco</span>
           <div className="flex gap-2">

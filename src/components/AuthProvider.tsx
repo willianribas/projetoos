@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
 import { useToast } from "@/components/ui/use-toast";
+import { useSessionTimeout } from "@/hooks/useSessionTimeout";
 
 interface AuthContextType {
   user: User | null;
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const resetTimeout = useSessionTimeout();
 
   useEffect(() => {
     const initializeAuth = async () => {
@@ -28,13 +30,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session?.user) {
-          console.log("Usuário autenticado:", session.user);
           setUser(session.user);
+          resetTimeout();
           if (window.location.pathname === "/auth") {
             navigate("/");
           }
         } else {
-          console.log("Nenhum usuário autenticado");
           setUser(null);
           if (window.location.pathname !== "/auth") {
             navigate("/auth");
@@ -52,10 +53,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     initializeAuth();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      console.log("Mudança no estado de autenticação:", event, session);
-      
       if (session?.user) {
         setUser(session.user);
+        resetTimeout();
         if (window.location.pathname === "/auth") {
           toast({
             title: "Login realizado com sucesso!",
@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       subscription.unsubscribe();
     };
-  }, [navigate, toast]);
+  }, [navigate, toast, resetTimeout]);
 
   const signOut = async () => {
     try {
