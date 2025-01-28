@@ -18,28 +18,48 @@ const Auth = () => {
     e.preventDefault();
     if (loading) return;
     
+    console.log("Iniciando tentativa de login com email:", email);
     setLoading(true);
 
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+        email: email.trim(),
+        password: password.trim(),
       });
+
+      console.log("Resposta do login:", { data, error });
 
       if (error) {
         throw error;
       }
 
       if (data?.user) {
+        console.log("Login bem-sucedido, redirecionando...");
+        toast({
+          title: "Login realizado com sucesso!",
+          duration: 2000,
+        });
         navigate("/");
+      } else {
+        console.log("Login falhou - sem dados do usuário");
+        throw new Error("Falha no login - dados do usuário não encontrados");
       }
     } catch (error: any) {
+      console.error("Erro detalhado do login:", error);
+      
+      let errorMessage = "Ocorreu um erro ao fazer login. Tente novamente.";
+      
+      if (error.message === "Invalid login credentials") {
+        errorMessage = "Email ou senha incorretos. Por favor, verifique suas credenciais.";
+      } else if (error.message.includes("Email not confirmed")) {
+        errorMessage = "Email não confirmado. Por favor, verifique sua caixa de entrada.";
+      }
+
       toast({
         variant: "destructive",
-        title: "Erro ao fazer login",
-        description: error.message === "Invalid login credentials" 
-          ? "Email ou senha incorretos"
-          : "Ocorreu um erro ao fazer login. Tente novamente.",
+        title: "Erro no login",
+        description: errorMessage,
+        duration: 4000,
       });
     } finally {
       setLoading(false);

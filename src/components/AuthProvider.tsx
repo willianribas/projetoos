@@ -25,17 +25,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        console.log("Inicializando autenticação...");
+        const { data: { session }, error } = await supabase.auth.getSession();
         
+        if (error) {
+          console.error("Erro ao obter sessão:", error);
+          throw error;
+        }
+
         if (mounted) {
-          setUser(session?.user ?? null);
-          if (!session?.user) {
+          console.log("Sessão atual:", session);
+          if (session?.user) {
+            console.log("Usuário autenticado:", session.user);
+            setUser(session.user);
+          } else {
+            console.log("Nenhum usuário autenticado, redirecionando para /auth");
+            setUser(null);
             navigate("/auth");
           }
         }
       } catch (error) {
-        console.error("Error initializing auth:", error);
+        console.error("Erro ao inicializar auth:", error);
         if (mounted) {
+          setUser(null);
           navigate("/auth");
         }
       } finally {
@@ -47,16 +59,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initializeAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Mudança no estado de autenticação:", event, session);
+      
       if (mounted) {
-        setUser(session?.user ?? null);
-        if (!session?.user) {
+        if (session?.user) {
+          console.log("Novo usuário autenticado:", session.user);
+          setUser(session.user);
+          if (window.location.pathname === "/auth") {
+            navigate("/");
+          }
+        } else {
+          console.log("Usuário deslogado");
+          setUser(null);
           navigate("/auth");
         }
       }
     });
 
     return () => {
+      console.log("Limpando provider de autenticação");
       mounted = false;
       subscription.unsubscribe();
     };
@@ -64,11 +86,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signOut = async () => {
     try {
-      await supabase.auth.signOut();
+      console.log("Iniciando logout...");
+      const { error } = await supabase.auth.signOut();
+      if (error) throw error;
+      
+      console.log("Logout realizado com sucesso");
       setUser(null);
       navigate("/auth");
     } catch (error) {
-      console.error("Error signing out:", error);
+      console.error("Erro ao fazer logout:", error);
       navigate("/auth");
     }
   };
