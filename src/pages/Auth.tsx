@@ -19,19 +19,25 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
-      navigate("/");
+      if (data?.user) {
+        navigate("/");
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Erro ao fazer login",
-        description: error.message,
+        description: error.message === "Invalid login credentials" 
+          ? "Email ou senha incorretos"
+          : "Ocorreu um erro ao fazer login. Tente novamente.",
       });
     } finally {
       setLoading(false);

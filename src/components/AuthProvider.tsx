@@ -21,33 +21,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Initialize session from local storage
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-      setLoading(false);
-      
-      // If no session, redirect to auth
-      if (!session?.user) {
-        navigate("/auth");
-      }
-    });
-
-    // Listen for auth state changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      
-      // Handle session changes
-      if (!session?.user) {
-        navigate("/auth");
-      } else {
-        // Ensure we have a valid session
-        const { data: { session: currentSession } } = await supabase.auth.getSession();
-        if (!currentSession) {
-          await supabase.auth.signOut();
+    const initializeAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        setUser(session?.user ?? null);
+        
+        if (!session?.user) {
           navigate("/auth");
         }
+      } catch (error) {
+        console.error("Error initializing auth:", error);
+        navigate("/auth");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      setUser(session?.user ?? null);
+      
+      if (!session?.user) {
+        navigate("/auth");
       }
     });
 
@@ -59,10 +55,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const signOut = async () => {
     try {
       await supabase.auth.signOut();
+      setUser(null);
       navigate("/auth");
     } catch (error) {
       console.error("Error signing out:", error);
-      // Force navigation to auth page even if signOut fails
       navigate("/auth");
     }
   };
