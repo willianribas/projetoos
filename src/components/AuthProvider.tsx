@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { useToast } from "@/components/ui/use-toast";
 
 interface AuthContextType {
   user: User | null;
@@ -19,6 +20,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   useEffect(() => {
     let mounted = true;
@@ -39,12 +41,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             console.log("Usuário autenticado:", session.user);
             setUser(session.user);
             if (window.location.pathname === "/auth") {
+              console.log("Redirecionando para página principal...");
               navigate("/");
             }
           } else {
             console.log("Nenhum usuário autenticado");
             setUser(null);
             if (window.location.pathname !== "/auth") {
+              console.log("Redirecionando para login...");
               navigate("/auth");
             }
           }
@@ -64,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     initializeAuth();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Mudança no estado de autenticação:", event, session);
       
       if (mounted) {
@@ -72,6 +76,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("Novo usuário autenticado:", session.user);
           setUser(session.user);
           if (window.location.pathname === "/auth") {
+            toast({
+              title: "Login realizado com sucesso!",
+              description: "Redirecionando para a página principal...",
+              duration: 3000,
+            });
             navigate("/");
           }
         } else {
@@ -87,7 +96,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       mounted = false;
       subscription.unsubscribe();
     };
-  }, [navigate]);
+  }, [navigate, toast]);
 
   const signOut = async () => {
     try {

@@ -15,27 +15,38 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   
   if (!user) {
+    console.log("Usuário não autenticado, redirecionando para /auth");
     return <Navigate to="/auth" replace />;
   }
 
+  console.log("Usuário autenticado, renderizando rota protegida");
   return <>{children}</>;
 };
 
-const AppRoutes = () => (
-  <Routes>
-    {/* Redireciona a rota base para /auth */}
-    <Route path="" element={<Navigate to="/auth" replace />} />
-    <Route path="/auth" element={<Auth />} />
-    <Route
-      path="/"
-      element={
-        <ProtectedRoute>
-          <Index />
-        </ProtectedRoute>
-      }
-    />
-  </Routes>
-);
+const AppRoutes = () => {
+  const { user } = useAuth();
+  console.log("Estado atual do usuário:", user);
+
+  return (
+    <Routes>
+      <Route 
+        path="/" 
+        element={
+          <ProtectedRoute>
+            <Index />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/auth" 
+        element={
+          user ? <Navigate to="/" replace /> : <Auth />
+        } 
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
 
 const App = () => (
   <ThemeProvider defaultTheme="dark" attribute="class">
