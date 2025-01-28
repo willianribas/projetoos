@@ -13,6 +13,9 @@ const IndexContent = () => {
         <ADEMonitor serviceOrders={serviceOrders} />
         <ServiceOrderContent />
       </div>
+      <footer className="mt-8 py-4 text-sm text-muted-foreground text-center border-t">
+        © {new Date().getFullYear()} Sistema OS. Todos os direitos reservados.
+      </footer>
     </div>
   );
 };
