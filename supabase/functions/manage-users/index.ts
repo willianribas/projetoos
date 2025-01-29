@@ -18,7 +18,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { action, userId, newPassword } = await req.json()
+    const { action, userId, newPassword, email, password } = await req.json()
 
     // Verificar se o usuário que fez a requisição é admin
     const authHeader = req.headers.get('Authorization')
@@ -42,6 +42,30 @@ serve(async (req) => {
 
     let result = {}
     switch (action) {
+      case 'create':
+        if (!email || !password) {
+          throw new Error('Email e senha são obrigatórios')
+        }
+        const { data: userData, error: createError } = await supabase.auth.admin.createUser({
+          email,
+          password,
+          email_confirm: true,
+        })
+        
+        if (createError) throw createError
+        
+        if (userData.user) {
+          const { error: roleError } = await supabase.from('user_roles').insert({
+            user_id: userData.user.id,
+            role: 'user'
+          })
+          
+          if (roleError) throw roleError
+        }
+        
+        result = { user: userData.user }
+        break
+
       case 'update-password':
         if (!userId || !newPassword) {
           throw new Error('ID do usuário e nova senha são obrigatórios')
