@@ -28,16 +28,9 @@ const IndexContent = () => {
 const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 pl-16 p-4 sm:p-8">
-          <div className="max-w-7xl mx-auto">
-            <ServiceOrderProvider>
-              <IndexContent />
-            </ServiceOrderProvider>
-          </div>
-        </div>
-      </div>
+      <ServiceOrderProvider>
+        <IndexContent />
+      </ServiceOrderProvider>
     </div>
   );
 };
