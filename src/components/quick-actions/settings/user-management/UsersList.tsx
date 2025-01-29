@@ -12,6 +12,8 @@ import { User } from "@supabase/supabase-js";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Key, Trash2, UserCog } from "lucide-react";
 
+type AppRole = 'admin' | 'user';
+
 const ChangePasswordDialog = ({ user }: { user: User }) => {
   const [newPassword, setNewPassword] = useState("");
   const { toast } = useToast();
@@ -77,8 +79,8 @@ const ChangePasswordDialog = ({ user }: { user: User }) => {
   );
 };
 
-const ChangeRoleDialog = ({ user, currentRole }: { user: User; currentRole: string }) => {
-  const [role, setRole] = useState(currentRole);
+const ChangeRoleDialog = ({ user, currentRole }: { user: User; currentRole: AppRole }) => {
+  const [role, setRole] = useState<AppRole>(currentRole);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -124,7 +126,7 @@ const ChangeRoleDialog = ({ user, currentRole }: { user: User; currentRole: stri
         <div className="space-y-4 py-4">
           <div className="space-y-2">
             <Label>Tipo de Permissão</Label>
-            <Select value={role} onValueChange={setRole}>
+            <Select value={role} onValueChange={(value: AppRole) => setRole(value)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
@@ -166,7 +168,7 @@ export const UsersList = () => {
 
         const usersWithRoles = usersData.users.map((user: User) => ({
           ...user,
-          role: rolesData.find((r: any) => r.user_id === user.id)?.role || 'user'
+          role: (rolesData.find((r: any) => r.user_id === user.id)?.role || 'user') as AppRole
         }));
 
         return usersWithRoles;
