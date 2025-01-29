@@ -5,6 +5,7 @@ export interface ServiceOrder {
   equipamento: string;
   status: string;
   observacao: string | null;
-  created_at?: string;
+  created_at: string;
   user_id?: string;
+  priority?: 'normal' | 'critical';
 }

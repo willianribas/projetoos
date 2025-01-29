@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DatabaseBackup } from "@/components/quick-actions/settings/DatabaseBackup";
 import { ExportPDF } from "@/components/quick-actions/settings/ExportPDF";
+import { ExportExcel } from "@/components/quick-actions/settings/ExportExcel";
 import { HistoryToggle } from "@/components/quick-actions/settings/HistoryToggle";
 import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
 import { UserManagementContainer } from "@/components/quick-actions/settings/UserManagementContainer";
@@ -20,9 +21,7 @@ const Settings = () => {
   const { data: serviceOrders = [] } = useServiceOrdersQuery();
   const { user } = useAuth();
   
-  // Since we're in the settings page, we'll show a message when history is enabled
-  // but no specific service order is selected
-  const serviceOrderId = -1; // Using -1 to indicate no specific service order selected
+  const serviceOrderId = -1;
 
   return (
     <SidebarProvider>
@@ -42,6 +41,10 @@ const Settings = () => {
                   />
                   <DatabaseBackup />
                   <ExportPDF 
+                    serviceOrders={serviceOrders}
+                    statusOptions={statusOptions}
+                  />
+                  <ExportExcel 
                     serviceOrders={serviceOrders}
                     statusOptions={statusOptions}
                   />
