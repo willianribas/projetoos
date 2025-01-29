@@ -12,9 +12,16 @@ serve(async (req) => {
   }
 
   try {
-    const supabase = createClient(
+    // Create Supabase client with service role key for admin operations
+    const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
     )
 
     const { action, userId, newPassword, email, password } = await req.json()
@@ -29,7 +36,7 @@ serve(async (req) => {
       )
     }
 
-    const { data: { user: requestUser }, error: authError } = await supabase.auth.getUser(token)
+    const { data: { user: requestUser }, error: authError } = await supabaseAdmin.auth.getUser(token)
     
     if (authError || requestUser?.email !== 'williann.dev@gmail.com') {
       return new Response(
@@ -48,27 +55,25 @@ serve(async (req) => {
           )
         }
 
-        // Verificar se o usuário já existe
-        const { data: existingUser } = await supabase
-          .from('user_roles')
-          .select('user_id')
-          .eq('user_id', (await supabase.auth.admin.listUsers()).data.users.find(u => u.email === email)?.id)
-          .single()
-
-        if (existingUser) {
+        // Check if user already exists
+        const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers()
+        const userExists = existingUsers.users.some(u => u.email === email)
+        
+        if (userExists) {
           return new Response(
             JSON.stringify({ error: 'Um usuário com este email já está registrado' }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
           )
         }
 
-        const { data: userData, error: createError } = await supabase.auth.admin.createUser({
+        const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
           email,
           password,
           email_confirm: true,
         })
         
         if (createError) {
+          console.error('Error creating user:', createError)
           return new Response(
             JSON.stringify({ error: createError.message }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
@@ -76,14 +81,17 @@ serve(async (req) => {
         }
         
         if (userData.user) {
-          const { error: roleError } = await supabase.from('user_roles').insert({
-            user_id: userData.user.id,
-            role: 'user'
-          })
+          const { error: roleError } = await supabaseAdmin
+            .from('user_roles')
+            .insert({
+              user_id: userData.user.id,
+              role: 'user'
+            })
           
           if (roleError) {
-            // Se houver erro ao criar a role, deletar o usuário criado
-            await supabase.auth.admin.deleteUser(userData.user.id)
+            console.error('Error creating user role:', roleError)
+            // If role creation fails, delete the created user
+            await supabaseAdmin.auth.admin.deleteUser(userData.user.id)
             return new Response(
               JSON.stringify({ error: 'Erro ao criar permissões do usuário' }),
               { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
@@ -101,11 +109,12 @@ serve(async (req) => {
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
           )
         }
-        const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(
+        const { data: updateData, error: updateError } = await supabaseAdmin.auth.admin.updateUserById(
           userId,
           { password: newPassword }
         )
         if (updateError) {
+          console.error('Error updating password:', updateError)
           return new Response(
             JSON.stringify({ error: updateError.message }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
@@ -122,37 +131,40 @@ serve(async (req) => {
           )
         }
 
-        // Primeiro, deletar o registro na tabela user_roles
-        const { error: deleteRoleError } = await supabase
-          .from('user_roles')
-          .delete()
-          .eq('user_id', userId)
+        try {
+          // First, delete user role using service role client
+          const { error: deleteRoleError } = await supabaseAdmin
+            .from('user_roles')
+            .delete()
+            .eq('user_id', userId)
 
-        if (deleteRoleError) {
-          console.error('Error deleting user role:', deleteRoleError)
+          if (deleteRoleError) {
+            console.error('Error deleting user role:', deleteRoleError)
+            throw new Error('Erro ao deletar permissões do usuário')
+          }
+
+          // Then delete the user
+          const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId)
+          
+          if (deleteError) {
+            console.error('Error deleting user:', deleteError)
+            throw new Error(deleteError.message)
+          }
+
+          result = { success: true }
+        } catch (error) {
+          console.error('Delete operation failed:', error)
           return new Response(
-            JSON.stringify({ error: 'Erro ao deletar permissões do usuário' }),
+            JSON.stringify({ error: error.message }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
           )
         }
-
-        // Depois, deletar o usuário
-        const { error: deleteError } = await supabase.auth.admin.deleteUser(userId)
-        
-        if (deleteError) {
-          console.error('Error deleting user:', deleteError)
-          return new Response(
-            JSON.stringify({ error: deleteError.message }),
-            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-          )
-        }
-
-        result = { success: true }
         break
 
       case 'list':
-        const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
+        const { data: { users }, error: listError } = await supabaseAdmin.auth.admin.listUsers()
         if (listError) {
+          console.error('Error listing users:', listError)
           return new Response(
             JSON.stringify({ error: listError.message }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
