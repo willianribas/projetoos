@@ -1,6 +1,6 @@
 import { ServiceOrder } from "@/types";
-import { ServiceOrderTable } from "@/components/ServiceOrderTable";
-import { ServiceOrderPagination } from "@/components/pagination/ServiceOrderPagination";
+import ServiceOrderTable from "@/components/ServiceOrderTable";
+import ServiceOrderPagination from "@/components/pagination/ServiceOrderPagination";
 import { getStatusColor } from "@/components/filters/ServiceOrderFilters";
 import { statusOptions } from "../ServiceOrderContent";
 

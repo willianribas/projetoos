@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Settings } from "lucide-react";
 import { ServiceOrder } from "@/types";
-import { ThemeToggle } from "./settings/ThemeToggle";
-import { ExportPDF } from "./settings/ExportPDF";
-import { DatabaseBackup } from "./settings/DatabaseBackup";
-import { HistoryToggle } from "./settings/HistoryToggle";
+import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
+import { ExportPDF } from "@/components/quick-actions/settings/ExportPDF";
+import { DatabaseBackup } from "@/components/quick-actions/settings/DatabaseBackup";
+import { HistoryToggle } from "@/components/quick-actions/settings/HistoryToggle";
 import { Button } from "@/components/ui/button";
-import { UserManagementContainer } from "./settings/UserManagementContainer";
+import { UserManagementContainer } from "@/components/quick-actions/settings/user-management/UserManagementContainer";
 import { useAuth } from "@/components/AuthProvider";
-import { statusOptions } from "../ServiceOrderContent";
-import { ChangeOwnPasswordDialog } from "./settings/user-management/dialogs/ChangeOwnPasswordDialog";
+import { statusOptions } from "@/components/ServiceOrderContent";
+import { ChangeOwnPasswordDialog } from "@/components/quick-actions/settings/user-management/dialogs/ChangeOwnPasswordDialog";
 
 interface SettingsPanelProps {
   showSettings: boolean;
