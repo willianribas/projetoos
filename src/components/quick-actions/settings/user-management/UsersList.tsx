@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
@@ -6,11 +6,11 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Key, Trash2 } from "lucide-react";
-import { useState } from "react";
+import { Key, Trash2, UserCog } from "lucide-react";
 
 const ChangePasswordDialog = ({ user }: { user: User }) => {
   const [newPassword, setNewPassword] = useState("");
@@ -77,34 +77,34 @@ const ChangePasswordDialog = ({ user }: { user: User }) => {
   );
 };
 
-const DeleteUserDialog = ({ user, onDelete }: { user: User; onDelete: () => void }) => {
+const ChangeRoleDialog = ({ user, currentRole }: { user: User; currentRole: string }) => {
+  const [role, setRole] = useState(currentRole);
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
-  const handleDelete = async () => {
+  const handleChangeRole = async () => {
     try {
-      const { data, error } = await supabase.functions.invoke('manage-users', {
-        body: {
-          action: 'delete',
-          userId: user.id,
-        }
-      });
+      const { data, error } = await supabase
+        .from('user_roles')
+        .update({ role })
+        .eq('user_id', user.id);
 
       if (error) throw error;
 
       toast({
-        title: "Usuário excluído",
-        description: "O usuário foi excluído com sucesso",
+        title: "Permissão atualizada",
+        description: "A permissão do usuário foi atualizada com sucesso",
       });
 
-      onDelete();
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       setIsOpen(false);
     } catch (error: any) {
-      console.error("Error deleting user:", error);
+      console.error("Error updating role:", error);
       toast({
         variant: "destructive",
-        title: "Erro ao excluir usuário",
-        description: error.message || "Não foi possível excluir o usuário",
+        title: "Erro ao atualizar permissão",
+        description: error.message || "Não foi possível atualizar a permissão",
       });
     }
   };
@@ -112,21 +112,31 @@ const DeleteUserDialog = ({ user, onDelete }: { user: User; onDelete: () => void
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
-          <Trash2 className="h-4 w-4 mr-1" />
-          Excluir
+        <Button variant="outline" size="sm" className="mr-2">
+          <UserCog className="h-4 w-4 mr-1" />
+          Alterar Permissão
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Confirmar Exclusão</DialogTitle>
+          <DialogTitle>Alterar Permissão</DialogTitle>
         </DialogHeader>
-        <div className="py-4">
-          <p>Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.</p>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label>Tipo de Permissão</Label>
+            <Select value={role} onValueChange={setRole}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="admin">Administrador</SelectItem>
+                <SelectItem value="user">Usuário</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
-          <Button variant="destructive" onClick={handleDelete}>Excluir</Button>
+          <Button onClick={handleChangeRole}>Atualizar Permissão</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -142,14 +152,24 @@ export const UsersList = () => {
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const { data, error } = await supabase.functions.invoke('manage-users', {
-          body: {
-            action: 'list'
-          }
+        const { data: usersData, error: usersError } = await supabase.functions.invoke('manage-users', {
+          body: { action: 'list' }
         });
 
-        if (error) throw error;
-        return data.users;
+        if (usersError) throw usersError;
+
+        const { data: rolesData, error: rolesError } = await supabase
+          .from('user_roles')
+          .select('user_id, role');
+
+        if (rolesError) throw rolesError;
+
+        const usersWithRoles = usersData.users.map((user: User) => ({
+          ...user,
+          role: rolesData.find((r: any) => r.user_id === user.id)?.role || 'user'
+        }));
+
+        return usersWithRoles;
       } catch (error: any) {
         console.error("Error fetching users:", error);
         toast({
@@ -162,10 +182,6 @@ export const UsersList = () => {
     },
     enabled: !!user && user.email === "williann.dev@gmail.com",
   });
-
-  const handleUserDeleted = () => {
-    queryClient.invalidateQueries({ queryKey: ["users"] });
-  };
 
   if (isLoading) {
     return (
@@ -181,11 +197,12 @@ export const UsersList = () => {
         <TableRow>
           <TableHead>Email</TableHead>
           <TableHead>Último Login</TableHead>
+          <TableHead>Permissão</TableHead>
           <TableHead>Ações</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users?.map((user: User) => (
+        {users?.map((user: any) => (
           <TableRow key={user.id}>
             <TableCell>{user.email}</TableCell>
             <TableCell>
@@ -193,9 +210,12 @@ export const UsersList = () => {
                 ? new Date(user.last_sign_in_at).toLocaleString()
                 : "Nunca"}
             </TableCell>
+            <TableCell>
+              {user.role === 'admin' ? 'Administrador' : 'Usuário'}
+            </TableCell>
             <TableCell className="space-x-2">
               <ChangePasswordDialog user={user} />
-              <DeleteUserDialog user={user} onDelete={handleUserDeleted} />
+              <ChangeRoleDialog user={user} currentRole={user.role} />
             </TableCell>
           </TableRow>
         ))}
