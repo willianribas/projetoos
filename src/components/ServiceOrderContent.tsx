@@ -50,7 +50,6 @@ export default function ServiceOrderContent() {
   
   const { serviceOrders, createServiceOrder, updateServiceOrder, deleteServiceOrder } = useServiceOrders();
 
-  // Reset page when filters change
   const handleSearchQueryChange = (query: string) => {
     setSearchQuery(query);
     setCurrentPage(1);
@@ -75,6 +74,9 @@ export default function ServiceOrderContent() {
     createServiceOrder(data);
     form.reset();
     setIsOpen(false);
+    // Após criar a OS, exibe automaticamente a tabela
+    setShowTable(true);
+    setShowStats(false);
   };
 
   const handleUpdateServiceOrder = (index: number, updatedOrder: ServiceOrder) => {
