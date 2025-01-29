@@ -13,6 +13,7 @@ import { SidebarBase } from "@/components/ui/sidebar";
 import { SidebarNavItem } from "./sidebar/SidebarNavItem";
 import { useSidebar } from "./ui/sidebar-context";
 import { Button } from "./ui/button";
+import { cn } from "@/lib/utils";
 
 const Sidebar = () => {
   const navigate = useNavigate();
