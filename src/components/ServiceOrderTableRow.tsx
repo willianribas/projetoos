@@ -1,8 +1,9 @@
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 import { ServiceOrder } from "@/types";
+import { Trash2, FlagTriangleRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface ServiceOrderTableRowProps {
   order: ServiceOrder;
@@ -21,26 +22,25 @@ const ServiceOrderTableRow = ({
 }: ServiceOrderTableRowProps) => {
   return (
     <TableRow
-      className={`cursor-pointer hover:bg-muted/60 text-foreground/90 animate-fade-in ${
-        index % 2 === 0 ? "bg-background" : "bg-muted/30"
-      }`}
+      key={order.id}
+      className="cursor-pointer hover:bg-muted/50"
       onClick={() => onRowClick(order, index)}
-      style={{
-        animationDelay: `${index * 50}ms`,
-        animationFillMode: "both"
-      }}
     >
-      <TableCell className="text-center font-medium">{order.numeroos}</TableCell>
-      <TableCell className="text-center font-medium">{order.patrimonio}</TableCell>
-      <TableCell className="text-center font-medium">{order.equipamento}</TableCell>
-      <TableCell className="text-center font-medium max-w-[400px] truncate">
+      <TableCell className="text-center font-medium">
+        <div className="flex items-center justify-center gap-2">
+          {order.numeroos}
+          {order.urgente && (
+            <FlagTriangleRight className="h-4 w-4 text-red-500" />
+          )}
+        </div>
+      </TableCell>
+      <TableCell className="text-center">{order.patrimonio}</TableCell>
+      <TableCell className="text-center">{order.equipamento}</TableCell>
+      <TableCell className="text-center max-w-[300px] truncate">
         {order.observacao}
       </TableCell>
       <TableCell className="text-center">
-        <span
-          className={`${getStatusColor(order.status)} border rounded px-2 py-1 font-semibold inline-block transition-colors duration-200`}
-          style={{ borderColor: "currentColor" }}
-        >
+        <span className={cn("px-2 py-1 rounded-lg text-xs font-medium", getStatusColor(order.status))}>
           {order.status}
         </span>
       </TableCell>
@@ -48,7 +48,7 @@ const ServiceOrderTableRow = ({
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-destructive/90 hover:text-destructive-foreground mx-auto transition-colors duration-200"
+          className="hover:bg-destructive/10 hover:text-destructive"
           onClick={(e) => onDelete(e, index)}
         >
           <Trash2 className="h-4 w-4" />
