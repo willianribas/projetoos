@@ -12,6 +12,7 @@ import Auth from "./pages/Auth";
 import Statistics from "./pages/Statistics";
 import Settings from "./pages/Settings";
 import ADEMonitorPage from "./pages/ADEMonitor";
+import DetailedServiceOrder from "./pages/DetailedServiceOrder";
 import { useAuth } from "./components/AuthProvider";
 
 const queryClient = new QueryClient();
@@ -62,6 +63,14 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute>
           <ADEMonitorPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/detailed-service-order"
+      element={
+        <ProtectedRoute>
+          <DetailedServiceOrder />
         </ProtectedRoute>
       }
     />

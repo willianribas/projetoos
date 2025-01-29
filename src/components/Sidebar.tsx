@@ -6,7 +6,8 @@ import {
   Settings, 
   LogOut, 
   Menu,
-  Clock 
+  Clock,
+  List 
 } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { SidebarBase } from "@/components/ui/sidebar";
@@ -26,6 +27,11 @@ const Sidebar = () => {
       title: "Ordem de Serviços",
       icon: ClipboardList,
       path: "/",
+    },
+    {
+      title: "OS Detalhada",
+      icon: List,
+      path: "/detailed-service-order",
     },
     {
       title: "Monitor ADE",
