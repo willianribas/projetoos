@@ -1,34 +1,36 @@
 import React from "react";
-import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
-import { SettingsPanel } from "@/components/quick-actions/SettingsPanel";
+import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import DatabaseBackup from "@/components/quick-actions/settings/DatabaseBackup";
+import ExportPDF from "@/components/quick-actions/settings/ExportPDF";
+import HistoryToggle from "@/components/quick-actions/settings/HistoryToggle";
+import ThemeToggle from "@/components/quick-actions/settings/ThemeToggle";
+import UserManagementContainer from "@/components/quick-actions/settings/UserManagementContainer";
 import Sidebar from "@/components/Sidebar";
+import { SidebarContent } from "@/components/ui/sidebar";
 
-const SettingsContent = () => {
-  const { serviceOrders } = useServiceOrders();
-
+const Settings = () => {
   return (
-    <div className="space-y-6 animate-fade-in">
-      <h1 className="text-3xl font-bold">Daily.Flow Sistema de Gerenciamento de Ordens de Serviços</h1>
-      <SettingsPanel showSettings={true} serviceOrders={serviceOrders} />
-    </div>
-  );
-};
-
-const SettingsPage = () => {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 pl-16 p-4 sm:p-8">
-          <div className="max-w-7xl mx-auto">
-            <ServiceOrderProvider>
-              <SettingsContent />
-            </ServiceOrderProvider>
-          </div>
+    <div className="flex min-h-screen w-full">
+      <Sidebar />
+      <SidebarContent>
+        <div className="p-4 sm:p-8">
+          <Card className="p-6 bg-card/50 backdrop-blur-sm">
+            <h2 className="text-2xl font-bold mb-6">Configurações</h2>
+            <ScrollArea className="h-[calc(100vh-12rem)]">
+              <div className="space-y-6">
+                <ThemeToggle />
+                <HistoryToggle />
+                <DatabaseBackup />
+                <ExportPDF />
+                <UserManagementContainer />
+              </div>
+            </ScrollArea>
+          </Card>
         </div>
-      </div>
+      </SidebarContent>
     </div>
   );
 };
 
-export default SettingsPage;
+export default Settings;

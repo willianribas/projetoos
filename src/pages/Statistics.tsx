@@ -1,33 +1,36 @@
 import React from "react";
-import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
 import Statistics from "@/components/Statistics";
+import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
 import Sidebar from "@/components/Sidebar";
+import { SidebarContent } from "@/components/ui/sidebar";
+
+const statusOptions = [
+  { value: "pendente", label: "Pendente", color: "text-yellow-500" },
+  { value: "em_andamento", label: "Em Andamento", color: "text-blue-500" },
+  { value: "concluido", label: "Concluído", color: "text-green-500" },
+  { value: "cancelado", label: "Cancelado", color: "text-red-500" },
+];
 
 const StatisticsContent = () => {
   const { serviceOrders } = useServiceOrders();
 
   return (
-    <div className="space-y-6 animate-fade-in">
-      <h1 className="text-3xl font-bold">Daily.Flow Sistema de Gerenciamento de Ordens de Serviços</h1>
-      <Statistics serviceOrders={serviceOrders} statusOptions={[]} />
+    <div className="flex min-h-screen w-full">
+      <Sidebar />
+      <SidebarContent>
+        <div className="p-4 sm:p-8">
+          <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
+        </div>
+      </SidebarContent>
     </div>
   );
 };
 
 const StatisticsPage = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 pl-16 p-4 sm:p-8">
-          <div className="max-w-7xl mx-auto">
-            <ServiceOrderProvider>
-              <StatisticsContent />
-            </ServiceOrderProvider>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ServiceOrderProvider>
+      <StatisticsContent />
+    </ServiceOrderProvider>
   );
 };
 
