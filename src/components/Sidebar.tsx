@@ -24,7 +24,7 @@ const Sidebar = () => {
 
   const menuItems = [
     {
-      title: "Ordem de Serviços",
+      title: "Início",
       icon: ClipboardList,
       path: "/",
     },
