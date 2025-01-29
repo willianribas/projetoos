@@ -1,15 +1,16 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ClipboardList, BarChart2, Settings, LogOut, Menu } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { useAuth } from "./AuthProvider";
 import { SidebarBase } from "@/components/ui/sidebar";
 import { SidebarNavItem } from "./sidebar/SidebarNavItem";
+import { useSidebar } from "./ui/sidebar-context";
 
 const Sidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
+  const { isOpen } = useSidebar();
 
   const menuItems = [
     {
@@ -50,6 +51,7 @@ const Sidebar = () => {
             icon={item.icon}
             title={item.title}
             isActive={location.pathname === item.path}
+            isOpen={isOpen}
             onClick={() => navigate(item.path)}
           />
         ))}
@@ -61,6 +63,7 @@ const Sidebar = () => {
             icon={item.icon}
             title={item.title}
             isActive={item.path ? location.pathname === item.path : false}
+            isOpen={isOpen}
             onClick={item.onClick || (() => navigate(item.path!))}
           />
         ))}
