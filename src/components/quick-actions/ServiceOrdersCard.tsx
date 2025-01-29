@@ -17,24 +17,24 @@ export const ServiceOrdersCard = ({
   setShowSettings,
 }: ServiceOrdersCardProps) => {
   return (
-    <Card className="hover:shadow-lg transition-shadow border-muted bg-card/50 backdrop-blur-sm animate-fade-in">
+    <Card className="hover:shadow-lg transition-all duration-300 border-muted bg-card/50 backdrop-blur-sm animate-fade-in">
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <ClipboardList className="h-5 w-5 text-blue-400" />
-          Ordens de Serviços
+          Ordens de Serviço
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Button 
           variant="outline" 
-          className="w-full hover:bg-primary/10"
+          className="w-full hover:bg-primary/10 transition-colors duration-200"
           onClick={() => {
             setShowTable(!showTable);
             setShowStats(false);
             setShowSettings(false);
           }}
         >
-          Ordem de Serviços Salvas
+          Visualizar OS
         </Button>
       </CardContent>
     </Card>

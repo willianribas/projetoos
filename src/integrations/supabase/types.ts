@@ -53,6 +53,7 @@ export type Database = {
           numeroos: string
           observacao: string | null
           patrimonio: string
+          priority: string | null
           service_order_id: number | null
           status: string
           user_id: string | null
@@ -65,6 +66,7 @@ export type Database = {
           numeroos: string
           observacao?: string | null
           patrimonio: string
+          priority?: string | null
           service_order_id?: number | null
           status: string
           user_id?: string | null
@@ -77,6 +79,7 @@ export type Database = {
           numeroos?: string
           observacao?: string | null
           patrimonio?: string
+          priority?: string | null
           service_order_id?: number | null
           status?: string
           user_id?: string | null
@@ -99,6 +102,7 @@ export type Database = {
           numeroos: string
           observacao: string | null
           patrimonio: string
+          priority: string | null
           status: string
           user_id: string | null
         }
@@ -109,6 +113,7 @@ export type Database = {
           numeroos: string
           observacao?: string | null
           patrimonio: string
+          priority?: string | null
           status: string
           user_id?: string | null
         }
@@ -119,6 +124,7 @@ export type Database = {
           numeroos?: string
           observacao?: string | null
           patrimonio?: string
+          priority?: string | null
           status?: string
           user_id?: string | null
         }
