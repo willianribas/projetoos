@@ -24,14 +24,14 @@ const Sidebar = () => {
       icon: BarChart2,
       path: "/statistics",
     },
-  ];
-
-  const bottomMenuItems = [
     {
       title: "Configurações",
       icon: Settings,
       path: "/settings",
     },
+  ];
+
+  const bottomMenuItems = [
     {
       title: "Sair",
       icon: LogOut,
@@ -39,17 +39,13 @@ const Sidebar = () => {
     },
   ];
 
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
   return (
     <SidebarBase>
       <div className="p-4 flex items-center gap-3">
         <Button 
           variant="ghost" 
           size="icon"
-          onClick={toggleSidebar}
+          onClick={() => setIsOpen(!isOpen)}
           className="p-0"
         >
           <Menu className="h-6 w-6 text-foreground/60" />
@@ -78,9 +74,9 @@ const Sidebar = () => {
             key={item.title}
             icon={item.icon}
             title={item.title}
-            isActive={item.path ? location.pathname === item.path : false}
+            isActive={false}
             isOpen={isOpen}
-            onClick={item.onClick || (() => navigate(item.path!))}
+            onClick={item.onClick || (() => {})}
           />
         ))}
       </div>

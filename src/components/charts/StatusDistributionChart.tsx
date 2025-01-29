@@ -34,20 +34,29 @@ const StatusDistributionChart = ({
       value: statusCount[status.value] || 0,
       color: status.color.replace("text-", ""),
     }))
-    .filter(item => item.value > 0); // Só mostra status que têm ordens
+    .filter(item => item.value > 0);
 
   const getStatusColor = (color: string) => {
-    const colorMap: Record<string, string> = {
-      "blue-900": "#1e3a8a",
-      "[#F97316]": "#F97316",
-      "[#9b87f5]": "#9b87f5",
-      "[#ea384c]": "#ea384c",
-      "pink-500": "#ec4899",
-      "[#33C3F0]": "#33C3F0",
-      "[#22c55e]": "#22c55e",
-      "[#f59e0b]": "#f59e0b",
-    };
-    return colorMap[color] || "#666666";
+    switch (color) {
+      case "blue-900":
+        return "#1e3a8a";
+      case "[#F97316]":
+        return "#F97316";
+      case "[#9b87f5]":
+        return "#9b87f5";
+      case "[#ea384c]":
+        return "#ea384c";
+      case "pink-500":
+        return "#ec4899";
+      case "[#33C3F0]":
+        return "#33C3F0";
+      case "[#22c55e]":
+        return "#22c55e";
+      case "[#f59e0b]":
+        return "#f59e0b";
+      default:
+        return "#666666";
+    }
   };
 
   const RADIAN = Math.PI / 180;

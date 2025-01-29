@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Clock, Minimize2 } from "lucide-react";
+import { Clock, Minimize2, Maximize2 } from "lucide-react";
 import { ServiceOrder } from "@/types";
 import { Button } from "@/components/ui/button";
 import { formatDistanceToNow } from 'date-fns';
@@ -18,7 +18,7 @@ const getColorByDays = (days: number): string => {
 };
 
 const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true); // Changed to true
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
 
   if (adeOrders.length === 0) {
@@ -47,7 +47,11 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
           onClick={() => setIsMinimized(!isMinimized)}
           className="h-8 w-8 hover:bg-primary/10"
         >
-          <Minimize2 className="h-4 w-4" />
+          {isMinimized ? (
+            <Maximize2 className="h-4 w-4" />
+          ) : (
+            <Minimize2 className="h-4 w-4" />
+          )}
         </Button>
       </CardHeader>
       {!isMinimized && (
