@@ -3,7 +3,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -73,6 +73,64 @@ const ChangePasswordDialog = ({ user }: { user: User }) => {
         </div>
         <DialogFooter>
           <Button onClick={handleChangePassword}>Atualizar Senha</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const DeleteAccountDialog = ({ user, onDelete }: { user: User; onDelete: () => void }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleDeleteAccount = async () => {
+    try {
+      const { error } = await supabase.functions.invoke('manage-users', {
+        body: {
+          action: 'delete',
+          userId: user.id,
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Conta excluída",
+        description: "A conta foi excluída com sucesso",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setIsOpen(false);
+      onDelete();
+    } catch (error: any) {
+      console.error("Error deleting account:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao excluir conta",
+        description: error.message || "Não foi possível excluir a conta",
+      });
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="destructive" size="sm">
+          <Trash2 className="h-4 w-4 mr-1" />
+          Excluir Conta
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Excluir Conta</DialogTitle>
+          <DialogDescription>
+            Tem certeza que deseja excluir esta conta? Esta ação não pode ser desfeita.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter>
+          <Button variant="outline" onClick={() => setIsOpen(false)}>Cancelar</Button>
+          <Button variant="destructive" onClick={handleDeleteAccount}>Excluir</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -218,6 +276,7 @@ export const UsersList = () => {
             <TableCell className="space-x-2">
               <ChangePasswordDialog user={user} />
               <ChangeRoleDialog user={user} currentRole={user.role} />
+              <DeleteAccountDialog user={user} onDelete={() => {}} />
             </TableCell>
           </TableRow>
         ))}

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ClipboardList, BarChart2, Settings, LogOut, Menu } from "lucide-react";
 import { useAuth } from "./AuthProvider";
@@ -40,7 +40,10 @@ const Sidebar = () => {
   ];
 
   return (
-    <SidebarBase>
+    <SidebarBase
+      onMouseEnter={() => setIsOpen(true)}
+      onMouseLeave={() => setIsOpen(false)}
+    >
       <div className="p-4 flex items-center gap-3">
         <Button 
           variant="ghost" 
