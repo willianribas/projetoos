@@ -10,6 +10,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Statistics from "./pages/Statistics";
 import Settings from "./pages/Settings";
+import ADEMonitorPage from "./pages/ADEMonitor";
 import { useAuth } from "./components/AuthProvider";
 
 const queryClient = new QueryClient();
@@ -51,7 +52,14 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     />
-    {/* Catch-all route to redirect to auth */}
+    <Route
+      path="/ade-monitor"
+      element={
+        <ProtectedRoute>
+          <ADEMonitorPage />
+        </ProtectedRoute>
+      }
+    />
     <Route path="*" element={<Auth />} />
   </Routes>
 );

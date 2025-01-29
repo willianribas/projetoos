@@ -1,6 +1,13 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ClipboardList, BarChart2, Settings, LogOut, Menu } from "lucide-react";
+import { 
+  ClipboardList, 
+  BarChart2, 
+  Settings, 
+  LogOut, 
+  Menu,
+  Clock 
+} from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { SidebarBase } from "@/components/ui/sidebar";
 import { SidebarNavItem } from "./sidebar/SidebarNavItem";
@@ -18,6 +25,11 @@ const Sidebar = () => {
       title: "Ordem de Serviços",
       icon: ClipboardList,
       path: "/",
+    },
+    {
+      title: "Monitor ADE",
+      icon: Clock,
+      path: "/ade-monitor",
     },
     {
       title: "Estatísticas",
