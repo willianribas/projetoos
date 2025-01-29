@@ -1,23 +1,24 @@
-import { ServiceOrder } from "@/types";
-
-interface SearchCriteria {
-  field: string;
-  value: string;
-}
-
-interface ServiceOrderFiltersProps {
-  serviceOrders: ServiceOrder[];
-  searchQuery: string;
-  searchField: string;
-  selectedStatus: string | null;
-  searchCriteria: SearchCriteria[];
-}
-
-const statusColors: Record<string, string> = {
-  'ADE': 'border-yellow-500 text-yellow-700 bg-yellow-50',
-  'FINALIZADO': 'border-green-500 text-green-700 bg-green-50',
-  'PENDENTE': 'border-red-500 text-red-700 bg-red-50',
-  'EM ANDAMENTO': 'border-blue-500 text-blue-700 bg-blue-50',
+export const getStatusColor = (status: string) => {
+  switch (status) {
+    case "ADE":
+      return "text-blue-900 border-blue-900";
+    case "AVT":
+      return "text-[#F97316] border-[#F97316]";
+    case "EXT":
+      return "text-[#9b87f5] border-[#9b87f5]";
+    case "A.M":
+      return "text-[#ea384c] border-[#ea384c]";
+    case "INST":
+      return "text-pink-500 border-pink-500";
+    case "M.S":
+      return "text-[#33C3F0] border-[#33C3F0]";
+    case "OSP":
+      return "text-[#22c55e] border-[#22c55e]";
+    case "E.E":
+      return "text-[#F97316] border-[#F97316]";
+    default:
+      return "text-gray-500 border-gray-500";
+  }
 };
 
 export const filterServiceOrders = ({
@@ -25,54 +26,24 @@ export const filterServiceOrders = ({
   searchQuery,
   searchField,
   selectedStatus,
-  searchCriteria = [],
-}: ServiceOrderFiltersProps) => {
+  searchCriteria,
+}: {
+  serviceOrders: any[];
+  searchQuery: string;
+  searchField: string;
+  selectedStatus: string | null;
+  searchCriteria: { field: string; value: string }[];
+}) => {
   return serviceOrders.filter((order) => {
-    const matchesCriteria = searchCriteria.length === 0 || searchCriteria.every(criteria => {
-      const searchLower = criteria.value.toLowerCase().trim();
-      const fieldContainsSearch = (field: string | null) => 
-        (field?.toLowerCase() || "").includes(searchLower);
+    const matchesQuery =
+      order[searchField].toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = selectedStatus
+      ? order.status === selectedStatus
+      : true;
+    const matchesCriteria = searchCriteria.every((criteria) =>
+      order[criteria.field].toLowerCase().includes(criteria.value.toLowerCase())
+    );
 
-      return criteria.field === "all"
-        ? (
-            fieldContainsSearch(order.numeroos) ||
-            fieldContainsSearch(order.patrimonio) ||
-            fieldContainsSearch(order.equipamento) ||
-            fieldContainsSearch(order.status) ||
-            fieldContainsSearch(order.observacao)
-          )
-        : fieldContainsSearch(order[criteria.field as keyof ServiceOrder] as string | null);
-    });
-
-    if (!matchesCriteria) return false;
-
-    const searchLower = searchQuery.toLowerCase().trim();
-    
-    if (!searchLower) {
-      return selectedStatus ? order.status === selectedStatus : true;
-    }
-
-    const fieldContainsSearch = (field: string | null) => 
-      (field?.toLowerCase() || "").includes(searchLower);
-
-    const matchesSearch = searchField === "all" 
-      ? (
-          fieldContainsSearch(order.numeroos) ||
-          fieldContainsSearch(order.patrimonio) ||
-          fieldContainsSearch(order.equipamento) ||
-          fieldContainsSearch(order.status) ||
-          fieldContainsSearch(order.observacao)
-        )
-      : fieldContainsSearch(order[searchField as keyof ServiceOrder] as string | null);
-    
-    if (selectedStatus) {
-      return matchesSearch && order.status === selectedStatus;
-    }
-    
-    return matchesSearch;
+    return matchesQuery && matchesStatus && matchesCriteria;
   });
-};
-
-export const getStatusColor = (status: string) => {
-  return statusColors[status] || 'border-gray-500 text-gray-700 bg-gray-50';
 };

@@ -37,7 +37,7 @@ const ServiceOrderTableRow = ({
       <TableCell className="text-center">
         <span 
           className={cn(
-            "px-3 py-1 rounded-md text-xs font-medium border-2 transition-colors",
+            "px-3 py-1 rounded-md text-xs font-medium border transition-colors",
             getStatusColor(order.status)
           )}
         >
