@@ -35,7 +35,7 @@ const ServiceOrderTableRow = ({
         {order.observacao}
       </TableCell>
       <TableCell className="text-center">
-        <span className={cn("px-2 py-1 rounded-lg text-xs font-medium", getStatusColor(order.status))}>
+        <span className={cn("px-2 py-1 rounded-md text-xs font-medium border", getStatusColor(order.status))}>
           {order.status}
         </span>
       </TableCell>
