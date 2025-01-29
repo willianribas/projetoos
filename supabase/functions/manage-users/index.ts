@@ -7,8 +7,9 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response(null, { headers: corsHeaders })
   }
 
   try {
@@ -38,19 +39,25 @@ serve(async (req) => {
       )
     }
 
-    let result
+    let result = {}
     switch (action) {
       case 'list':
         const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
-        result = { users, error: listError }
+        if (listError) throw listError
+        result = { users }
         break
       
       case 'create':
+        if (!email || !password) {
+          throw new Error('Email e senha são obrigatórios')
+        }
         const { data: userData, error: createError } = await supabase.auth.admin.createUser({
           email,
           password,
           email_confirm: true,
         })
+        
+        if (createError) throw createError
         
         if (userData.user) {
           await supabase.from('user_roles').insert({
@@ -59,7 +66,7 @@ serve(async (req) => {
           })
         }
         
-        result = { user: userData.user, error: createError }
+        result = { user: userData.user }
         break
 
       default:
@@ -72,6 +79,7 @@ serve(async (req) => {
     )
 
   } catch (error) {
+    console.error('Error:', error)
     return new Response(
       JSON.stringify({ error: error.message }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
