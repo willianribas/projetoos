@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Clock, ChevronUp, ChevronDown } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
 
 interface ServiceOrderFormProps {
@@ -47,12 +49,12 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                   <FormField
                     control={form.control}
                     name="numeroos"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="md:col-span-4">
                         <FormLabel>Número OS</FormLabel>
                         <FormControl>
                           <Input placeholder="Digite o número da OS" className="bg-background/50" {...field} />
@@ -65,7 +67,7 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
                     control={form.control}
                     name="patrimonio"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="md:col-span-4">
                         <FormLabel>Patrimônio</FormLabel>
                         <FormControl>
                           <Input placeholder="Digite o número do patrimônio" className="bg-background/50" {...field} />
@@ -76,9 +78,39 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
 
                   <FormField
                     control={form.control}
+                    name="priority"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-4">
+                        <FormLabel>Prioridade</FormLabel>
+                        <FormControl>
+                          <RadioGroup
+                            onValueChange={field.onChange}
+                            defaultValue={field.value || "normal"}
+                            className="flex gap-4"
+                          >
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="normal" id="normal" />
+                              <Label htmlFor="normal" className="text-green-500">
+                                Normal
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <RadioGroupItem value="critical" id="critical" />
+                              <Label htmlFor="critical" className="text-red-500">
+                                Crítico
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
                     name="equipamento"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="md:col-span-6">
                         <FormLabel>Equipamento</FormLabel>
                         <FormControl>
                           <Input placeholder="Digite o equipamento" className="bg-background/50" {...field} />
@@ -91,7 +123,7 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
                     control={form.control}
                     name="status"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="md:col-span-6">
                         <FormLabel>Status</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
