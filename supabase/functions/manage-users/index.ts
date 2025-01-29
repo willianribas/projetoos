@@ -32,6 +32,9 @@ serve(async (req) => {
     }
 
     const { data: { user: requestUser }, error: authError } = await supabase.auth.getUser(token)
+    
+    console.log('Request user:', requestUser)
+    
     if (authError || requestUser?.email !== 'williann.dev@gmail.com') {
       return new Response(
         JSON.stringify({ error: 'Não autorizado' }),
@@ -43,8 +46,11 @@ serve(async (req) => {
     switch (action) {
       case 'list':
         const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
-        if (listError) throw listError
-        result = { users }
+        if (listError) {
+          console.error('List users error:', listError)
+          throw listError
+        }
+        result = { users: users || [] }
         break
       
       case 'create':
@@ -57,13 +63,21 @@ serve(async (req) => {
           email_confirm: true,
         })
         
-        if (createError) throw createError
+        if (createError) {
+          console.error('Create user error:', createError)
+          throw createError
+        }
         
         if (userData.user) {
-          await supabase.from('user_roles').insert({
+          const { error: roleError } = await supabase.from('user_roles').insert({
             user_id: userData.user.id,
             role: 'user'
           })
+          
+          if (roleError) {
+            console.error('Create role error:', roleError)
+            throw roleError
+          }
         }
         
         result = { user: userData.user }
