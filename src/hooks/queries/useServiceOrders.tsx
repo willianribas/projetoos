@@ -12,14 +12,15 @@ export const useServiceOrdersQuery = () => {
       const { data, error } = await supabase
         .from("service_orders")
         .select("*")
+        .eq('user_id', user?.id)
         .order("created_at", { ascending: false });
 
       if (error) throw error;
       return data as ServiceOrder[];
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5,
-    gcTime: 1000 * 60 * 30,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 30, // 30 minutes
     refetchOnWindowFocus: false,
     refetchOnMount: true,
   });
