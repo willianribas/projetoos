@@ -79,8 +79,13 @@ const AppRoutes = () => (
 );
 
 const App = () => (
-  <ThemeProvider defaultTheme="dark" attribute="class">
-    <QueryClientProvider client={queryClient}>
+  <QueryClientProvider client={queryClient}>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem={true}
+      disableTransitionOnChange
+    >
       <TooltipProvider>
         <BrowserRouter>
           <AuthProvider>
@@ -92,8 +97,8 @@ const App = () => (
           </AuthProvider>
         </BrowserRouter>
       </TooltipProvider>
-    </QueryClientProvider>
-  </ThemeProvider>
+    </ThemeProvider>
+  </QueryClientProvider>
 );
 
 export default App;
