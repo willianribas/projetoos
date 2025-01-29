@@ -1,27 +1,16 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { Button } from "@/components/ui/button"; // Add this import
+import { Button } from "@/components/ui/button";
 import SearchBar from "@/components/SearchBar";
 import ServiceOrderForm from "@/components/ServiceOrderForm";
 import QuickActions from "@/components/QuickActions";
-import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { ServiceOrder } from "@/types";
-import ServiceOrderPagination from "./pagination/ServiceOrderPagination";
-import { filterServiceOrders, getStatusColor } from "./filters/ServiceOrderFilters";
-import { 
-  Clock, 
-  CalendarClock, 
-  Building2, 
-  ShoppingCart, 
-  Wrench, 
-  Package, 
-  CheckCircle2, 
-  Hammer,
-  Maximize,
-  Minimize,
-} from "lucide-react";
+import { filterServiceOrders } from "./filters/ServiceOrderFilters";
+import { Clock, CalendarClock, Building2, ShoppingCart, Wrench, Package, CheckCircle2, Hammer } from "lucide-react";
+import { ServiceOrderHeader } from "./service-order/ServiceOrderHeader";
+import { ServiceOrderTableContainer } from "./service-order/ServiceOrderTableContainer";
 
 export const statusOptions = [
   { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-blue-900", icon: Clock },
@@ -77,7 +66,6 @@ export default function ServiceOrderContent() {
     createServiceOrder(data);
     form.reset();
     setIsOpen(false);
-    // Após criar a OS, exibe automaticamente a tabela
     setShowTable(true);
     setShowStats(false);
   };
@@ -135,39 +123,18 @@ export default function ServiceOrderContent() {
 
       {(showTable || searchQuery || searchCriteria.length > 0) && (
         <div className="space-y-4 overflow-x-auto pb-4">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold">Ordens de Serviço Registradas</h2>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setShowTable(!showTable)}
-              className="animate-fade-in"
-            >
-              {showTable ? (
-                <Minimize className="h-4 w-4" />
-              ) : (
-                <Maximize className="h-4 w-4" />
-              )}
-            </Button>
-          </div>
+          <ServiceOrderHeader showTable={showTable} setShowTable={setShowTable} />
           
-          <ServiceOrderTable 
-            serviceOrders={paginatedOrders}
-            getStatusColor={getStatusColor}
-            statusOptions={statusOptions}
-            onUpdateServiceOrder={handleUpdateServiceOrder}
-            onDeleteServiceOrder={handleDeleteServiceOrder}
+          <ServiceOrderTableContainer 
+            paginatedOrders={paginatedOrders}
+            handleUpdateServiceOrder={handleUpdateServiceOrder}
+            handleDeleteServiceOrder={handleDeleteServiceOrder}
             selectedStatus={selectedStatus}
             onStatusChange={handleStatusChange}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
           />
-          
-          {totalPages > 1 && (
-            <ServiceOrderPagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-          )}
         </div>
       )}
 
