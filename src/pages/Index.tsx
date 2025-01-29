@@ -2,12 +2,14 @@ import Header from "@/components/Header";
 import ADEMonitor from "@/components/ADEMonitor";
 import ServiceOrderContent from "@/components/ServiceOrderContent";
 import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
+import ADENotification from "@/components/ADENotification";
 
 const IndexContent = () => {
   const { serviceOrders } = useServiceOrders();
   
   return (
     <div className="space-y-4 sm:space-y-6 animate-fade-in">
+      <ADENotification serviceOrders={serviceOrders} />
       <Header />
       <div className="px-2 sm:px-0">
         <ADEMonitor serviceOrders={serviceOrders} />
