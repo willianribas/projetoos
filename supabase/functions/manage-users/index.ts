@@ -18,7 +18,7 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
 
-    const { action, email, password } = await req.json()
+    const { action, userId, newPassword } = await req.json()
 
     // Verificar se o usuário que fez a requisição é admin
     const authHeader = req.headers.get('Authorization')
@@ -33,8 +33,6 @@ serve(async (req) => {
 
     const { data: { user: requestUser }, error: authError } = await supabase.auth.getUser(token)
     
-    console.log('Request user:', requestUser)
-    
     if (authError || requestUser?.email !== 'williann.dev@gmail.com') {
       return new Response(
         JSON.stringify({ error: 'Não autorizado' }),
@@ -44,43 +42,31 @@ serve(async (req) => {
 
     let result = {}
     switch (action) {
+      case 'update-password':
+        if (!userId || !newPassword) {
+          throw new Error('ID do usuário e nova senha são obrigatórios')
+        }
+        const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(
+          userId,
+          { password: newPassword }
+        )
+        if (updateError) throw updateError
+        result = { user: updateData.user }
+        break
+
+      case 'delete':
+        if (!userId) {
+          throw new Error('ID do usuário é obrigatório')
+        }
+        const { data: deleteData, error: deleteError } = await supabase.auth.admin.deleteUser(userId)
+        if (deleteError) throw deleteError
+        result = { success: true }
+        break
+
       case 'list':
         const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
-        if (listError) {
-          console.error('List users error:', listError)
-          throw listError
-        }
-        result = { users: users || [] }
-        break
-      
-      case 'create':
-        if (!email || !password) {
-          throw new Error('Email e senha são obrigatórios')
-        }
-        const { data: userData, error: createError } = await supabase.auth.admin.createUser({
-          email,
-          password,
-          email_confirm: true,
-        })
-        
-        if (createError) {
-          console.error('Create user error:', createError)
-          throw createError
-        }
-        
-        if (userData.user) {
-          const { error: roleError } = await supabase.from('user_roles').insert({
-            user_id: userData.user.id,
-            role: 'user'
-          })
-          
-          if (roleError) {
-            console.error('Create role error:', roleError)
-            throw roleError
-          }
-        }
-        
-        result = { user: userData.user }
+        if (listError) throw listError
+        result = { users }
         break
 
       default:
