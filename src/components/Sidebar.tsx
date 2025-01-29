@@ -42,7 +42,9 @@ const Sidebar = () => {
     <SidebarBase>
       <div className="p-4 flex items-center gap-3">
         <Menu className="h-6 w-6 text-foreground/60" />
-        <span className="text-foreground font-semibold text-lg">Daily.Flow</span>
+        {isOpen && (
+          <span className="text-foreground font-semibold text-lg">Daily.Flow</span>
+        )}
       </div>
       <nav className="flex-1 pt-4">
         {menuItems.map((item) => (
