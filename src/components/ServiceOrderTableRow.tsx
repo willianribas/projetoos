@@ -2,7 +2,7 @@ import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ServiceOrder } from "@/types";
-import { Trash2, FlagTriangleRight } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface ServiceOrderTableRowProps {
@@ -27,12 +27,7 @@ const ServiceOrderTableRow = ({
       onClick={() => onRowClick(order, index)}
     >
       <TableCell className="text-center font-medium">
-        <div className="flex items-center justify-center gap-2">
-          {order.numeroos}
-          {order.urgente && (
-            <FlagTriangleRight className="h-4 w-4 text-red-500" />
-          )}
-        </div>
+        {order.numeroos}
       </TableCell>
       <TableCell className="text-center">{order.patrimonio}</TableCell>
       <TableCell className="text-center">{order.equipamento}</TableCell>

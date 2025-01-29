@@ -114,30 +114,6 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
                       </FormItem>
                     )}
                   />
-
-                  <FormField
-                    control={form.control}
-                    name="urgente"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Urgência</FormLabel>
-                        <Select
-                          onValueChange={(value) => field.onChange(value === "true")}
-                          defaultValue={field.value ? "true" : "false"}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="bg-background/50">
-                              <SelectValue placeholder="Selecione a urgência" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="false">Normal</SelectItem>
-                            <SelectItem value="true">Urgente</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormItem>
-                    )}
-                  />
                 </div>
 
                 <FormField
