@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "./components/AuthProvider";
 import Index from "./pages/Index";
@@ -15,7 +15,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
   
   if (!user) {
-    return <Navigate to="/auth" replace />;
+    return <Auth />;
   }
 
   return <>{children}</>;
@@ -23,8 +23,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppRoutes = () => (
   <Routes>
-    {/* Redireciona a rota base para /auth */}
-    <Route path="" element={<Navigate to="/auth" replace />} />
     <Route path="/auth" element={<Auth />} />
     <Route
       path="/"
@@ -34,6 +32,8 @@ const AppRoutes = () => (
         </ProtectedRoute>
       }
     />
+    {/* Catch-all route to redirect to auth */}
+    <Route path="*" element={<Auth />} />
   </Routes>
 );
 
