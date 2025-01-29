@@ -8,7 +8,7 @@ interface SidebarBaseProps {
 }
 
 export function SidebarBase({ children, className }: SidebarBaseProps) {
-  const { isOpen, setIsOpen } = useSidebar();
+  const { isOpen } = useSidebar();
 
   return (
     <div className="flex min-h-screen">
@@ -18,8 +18,6 @@ export function SidebarBase({ children, className }: SidebarBaseProps) {
           isOpen ? "w-64" : "w-16",
           className
         )}
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
       >
         <div className="h-full flex flex-col">
           {children}
