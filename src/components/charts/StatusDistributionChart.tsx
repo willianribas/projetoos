@@ -23,40 +23,42 @@ const StatusDistributionChart = ({
   serviceOrders,
   statusOptions,
 }: StatusDistributionChartProps) => {
+  // Count occurrences of each status
   const statusCount = serviceOrders.reduce((acc, order) => {
     acc[order.status] = (acc[order.status] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
+  // Map status counts to chart data format
   const data = statusOptions
     .map((status) => ({
       name: status.label,
       value: statusCount[status.value] || 0,
-      color: status.color.replace("text-", ""),
+      color: status.color,
     }))
-    .filter(item => item.value > 0);
+    .filter((item) => item.value > 0); // Only show statuses that have orders
 
-  const getStatusColor = (color: string) => {
-    switch (color) {
-      case "blue-900":
-        return "#1e3a8a";
-      case "[#F97316]":
-        return "#F97316";
-      case "[#9b87f5]":
-        return "#9b87f5";
-      case "[#ea384c]":
-        return "#ea384c";
-      case "pink-500":
-        return "#ec4899";
-      case "[#33C3F0]":
-        return "#33C3F0";
-      case "[#22c55e]":
-        return "#22c55e";
-      case "[#f59e0b]":
-        return "#f59e0b";
-      default:
-        return "#666666";
-    }
+  const getStatusColor = (colorClass: string) => {
+    // Remove 'text-' prefix if present
+    const color = colorClass.replace("text-", "");
+    
+    // Map color classes to actual hex colors
+    const colorMap: Record<string, string> = {
+      "yellow-500": "#EAB308",
+      "blue-500": "#3B82F6",
+      "green-500": "#22C55E",
+      "red-500": "#EF4444",
+      "[#F97316]": "#F97316",
+      "[#9b87f5]": "#9b87f5",
+      "[#ea384c]": "#ea384c",
+      "pink-500": "#EC4899",
+      "[#33C3F0]": "#33C3F0",
+      "[#22c55e]": "#22c55e",
+      "[#f59e0b]": "#f59e0b",
+      "blue-900": "#1E3A8A",
+    };
+
+    return colorMap[color] || "#666666"; // Fallback color
   };
 
   const RADIAN = Math.PI / 180;
@@ -89,7 +91,9 @@ const StatusDistributionChart = ({
   return (
     <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
       <CardHeader>
-        <CardTitle className="text-lg font-semibold">Distribuição por Status</CardTitle>
+        <CardTitle className="text-lg font-semibold">
+          Distribuição por Status
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[400px] w-full">
@@ -102,7 +106,6 @@ const StatusDistributionChart = ({
                 labelLine={false}
                 label={renderCustomizedLabel}
                 outerRadius={150}
-                fill="#8884d8"
                 dataKey="value"
               >
                 {data.map((entry, index) => (
@@ -119,9 +122,7 @@ const StatusDistributionChart = ({
                     const data = payload[0].payload;
                     return (
                       <div className="rounded-lg border bg-background p-2 shadow-md">
-                        <p className="text-sm font-medium">
-                          {data.name}
-                        </p>
+                        <p className="text-sm font-medium">{data.name}</p>
                         <p className="text-sm text-muted-foreground">
                           Quantidade: {data.value}
                         </p>
@@ -131,7 +132,7 @@ const StatusDistributionChart = ({
                   return null;
                 }}
               />
-              <Legend 
+              <Legend
                 formatter={(value) => (
                   <span className="text-sm">{value}</span>
                 )}
