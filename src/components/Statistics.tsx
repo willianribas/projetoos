@@ -32,21 +32,23 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
 
   // Contagem por patrimônio
   const patrimonioCount = serviceOrders.reduce((acc, order) => {
+    if (!order.patrimonio) return acc;
     acc[order.patrimonio] = (acc[order.patrimonio] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
   // Contagem por equipamento
   const equipamentoCount = serviceOrders.reduce((acc, order) => {
+    if (!order.equipamento) return acc;
     acc[order.equipamento] = (acc[order.equipamento] || 0) + 1;
     return acc;
   }, {} as Record<string, number>);
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="space-y-8 p-6 animate-fade-in">
       <MetricsHighlight serviceOrders={serviceOrders} />
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <StatusDistributionChart 
           serviceOrders={serviceOrders} 
           statusOptions={statusOptions} 
@@ -54,7 +56,7 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
         <TimelineChart serviceOrders={serviceOrders} />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
           <CardHeader>
             <CardTitle className="text-lg font-semibold">Status</CardTitle>

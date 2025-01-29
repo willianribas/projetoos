@@ -5,10 +5,15 @@ import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 
 const statusOptions = [
-  { value: "pendente", label: "Pendente", color: "text-yellow-500" },
-  { value: "em_andamento", label: "Em Andamento", color: "text-blue-500" },
-  { value: "concluido", label: "Concluído", color: "text-green-500" },
-  { value: "cancelado", label: "Cancelado", color: "text-red-500" },
+  { value: "ADE", label: "Aguardando Disponibilidade", color: "text-yellow-500" },
+  { value: "AVT", label: "Avaliação Técnica", color: "text-blue-500" },
+  { value: "EXT", label: "Externo", color: "text-[#F97316]" },
+  { value: "A.M", label: "Aguardando Material", color: "text-[#9b87f5]" },
+  { value: "INST", label: "Instalação", color: "text-[#ea384c]" },
+  { value: "M.S", label: "Manutenção em Série", color: "text-pink-500" },
+  { value: "E.E", label: "Em Execução", color: "text-[#33C3F0]" },
+  { value: "OSP", label: "OS Pronta", color: "text-[#22c55e]" },
+  { value: "CAN", label: "Cancelada", color: "text-red-500" },
 ];
 
 const StatisticsContent = () => {
@@ -18,9 +23,7 @@ const StatisticsContent = () => {
     <div className="flex min-h-screen w-full">
       <Sidebar />
       <SidebarContent>
-        <div className="p-4 sm:p-8">
-          <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
-        </div>
+        <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
       </SidebarContent>
     </div>
   );
