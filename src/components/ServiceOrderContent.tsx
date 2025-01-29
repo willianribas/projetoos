@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import SearchBar from "@/components/SearchBar";
 import ServiceOrderForm from "@/components/ServiceOrderForm";
-import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
 import Statistics from "@/components/Statistics";
 import { useServiceOrders } from "./ServiceOrderProvider";
@@ -74,7 +73,6 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
     createServiceOrder(data);
     form.reset();
     setIsOpen(false);
-    // Após criar a OS, exibe automaticamente a tabela
     setShowTable(true);
     setShowStats(false);
   };
@@ -113,13 +111,6 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
         setIsOpen={setIsOpen}
         onSubmit={onSubmit}
         statusOptions={statusOptions}
-      />
-      <QuickActions 
-        setShowTable={setShowTable} 
-        showTable={showTable}
-        setShowStats={setShowStats}
-        showStats={showStats}
-        serviceOrders={serviceOrders}
       />
       <SearchBar 
         searchQuery={searchQuery} 
