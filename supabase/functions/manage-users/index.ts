@@ -7,7 +7,6 @@ const corsHeaders = {
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
@@ -20,7 +19,6 @@ serve(async (req) => {
 
     const { action, userId, newPassword, email, password } = await req.json()
 
-    // Verificar se o usuário que fez a requisição é admin
     const authHeader = req.headers.get('Authorization')
     const token = authHeader?.replace('Bearer ', '')
     
@@ -123,13 +121,32 @@ serve(async (req) => {
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
           )
         }
-        const { data: deleteData, error: deleteError } = await supabase.auth.admin.deleteUser(userId)
+
+        // Primeiro, deletar o registro na tabela user_roles
+        const { error: deleteRoleError } = await supabase
+          .from('user_roles')
+          .delete()
+          .eq('user_id', userId)
+
+        if (deleteRoleError) {
+          console.error('Error deleting user role:', deleteRoleError)
+          return new Response(
+            JSON.stringify({ error: 'Erro ao deletar permissões do usuário' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
+
+        // Depois, deletar o usuário
+        const { error: deleteError } = await supabase.auth.admin.deleteUser(userId)
+        
         if (deleteError) {
+          console.error('Error deleting user:', deleteError)
           return new Response(
             JSON.stringify({ error: deleteError.message }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
           )
         }
+
         result = { success: true }
         break
 
