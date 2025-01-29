@@ -36,12 +36,12 @@ interface SearchCriteria {
   value: string;
 }
 
-export default function ServiceOrderContent() {
+export default function ServiceOrderContent({ showTableByDefault = false }: { showTableByDefault?: boolean }) {
   const form = useForm<ServiceOrder>();
   const [searchQuery, setSearchQuery] = useState("");
   const [searchField, setSearchField] = useState("all");
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria[]>([]);
-  const [showTable, setShowTable] = useState(false);
+  const [showTable, setShowTable] = useState(showTableByDefault);
   const [showStats, setShowStats] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);

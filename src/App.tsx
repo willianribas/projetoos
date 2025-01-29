@@ -7,6 +7,8 @@ import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "./components/AuthProvider";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import Statistics from "./pages/Statistics";
+import Settings from "./pages/Settings";
 import { useAuth } from "./components/AuthProvider";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,22 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute>
           <Index />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/statistics"
+      element={
+        <ProtectedRoute>
+          <Statistics />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/settings"
+      element={
+        <ProtectedRoute>
+          <Settings />
         </ProtectedRoute>
       }
     />
