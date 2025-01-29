@@ -11,7 +11,7 @@ import {
   Legend,
 } from "recharts";
 import { ServiceOrder } from "@/types";
-import { format, parseISO, startOfDay, endOfDay } from "date-fns";
+import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
 interface TimelineChartProps {
@@ -50,23 +50,25 @@ const TimelineChart = ({ serviceOrders }: TimelineChartProps) => {
   });
 
   return (
-    <Card className="border-muted bg-card/50 backdrop-blur-sm">
+    <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
       <CardHeader>
-        <CardTitle>Timeline de Ordens de Serviço</CardTitle>
+        <CardTitle className="text-lg font-semibold">Timeline de OS</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="h-[400px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted/50" />
               <XAxis 
                 dataKey="date" 
                 stroke="currentColor"
-                className="text-muted-foreground text-xs"
+                className="text-xs"
+                tick={{ fill: 'currentColor' }}
               />
               <YAxis 
                 stroke="currentColor"
-                className="text-muted-foreground text-xs"
+                className="text-xs"
+                tick={{ fill: 'currentColor' }}
               />
               <Tooltip
                 content={({ active, payload, label }) => {
@@ -86,15 +88,19 @@ const TimelineChart = ({ serviceOrders }: TimelineChartProps) => {
                   return null;
                 }}
               />
-              <Legend />
+              <Legend 
+                formatter={(value) => (
+                  <span className="text-sm">{value}</span>
+                )}
+              />
               <Line
                 type="monotone"
                 dataKey="criadas"
                 name="OS Criadas"
                 stroke="#3b82f6"
                 strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 2 }}
               />
               <Line
                 type="monotone"
@@ -102,8 +108,8 @@ const TimelineChart = ({ serviceOrders }: TimelineChartProps) => {
                 name="OS Finalizadas"
                 stroke="#22c55e"
                 strokeWidth={2}
-                dot={{ r: 4 }}
-                activeDot={{ r: 6 }}
+                dot={{ r: 4, strokeWidth: 2 }}
+                activeDot={{ r: 6, strokeWidth: 2 }}
               />
             </LineChart>
           </ResponsiveContainer>

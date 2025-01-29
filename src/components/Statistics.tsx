@@ -12,6 +12,7 @@ import { ServiceOrder } from "@/types";
 import StatusDistributionChart from "./charts/StatusDistributionChart";
 import TimelineChart from "./charts/TimelineChart";
 import MetricsHighlight from "./charts/MetricsHighlight";
+import { ScrollArea } from "./ui/scroll-area";
 
 interface StatisticsProps {
   serviceOrders: ServiceOrder[];
@@ -42,7 +43,7 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
   }, {} as Record<string, number>);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 animate-fade-in">
       <MetricsHighlight serviceOrders={serviceOrders} />
       
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -53,81 +54,95 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
         <TimelineChart serviceOrders={serviceOrders} />
       </div>
 
-      <Card className="border-muted bg-card/50 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle>Estatísticas por Status</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Status</TableHead>
-                <TableHead>Quantidade</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {statusOptions.map((status) => (
-                <TableRow key={status.value}>
-                  <TableCell>
-                    <span className={`${status.color} font-medium`}>
-                      {status.label}
-                    </span>
-                  </TableCell>
-                  <TableCell>{statusCount[status.value] || 0}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Status</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[300px] pr-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Qtd.</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {statusOptions.map((status) => (
+                    <TableRow key={status.value} className="hover:bg-muted/50">
+                      <TableCell>
+                        <span className={`${status.color} font-medium`}>
+                          {status.label}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right font-medium">
+                        {statusCount[status.value] || 0}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </CardContent>
+        </Card>
 
-      <Card className="border-muted bg-card/50 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle>Estatísticas por Patrimônio</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Patrimônio</TableHead>
-                <TableHead>Quantidade</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Object.entries(patrimonioCount).map(([patrimonio, count]) => (
-                <TableRow key={patrimonio}>
-                  <TableCell>{patrimonio}</TableCell>
-                  <TableCell>{count}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Patrimônio</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[300px] pr-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Patrimônio</TableHead>
+                    <TableHead className="text-right">Qtd.</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Object.entries(patrimonioCount)
+                    .sort(([, a], [, b]) => b - a)
+                    .map(([patrimonio, count]) => (
+                      <TableRow key={patrimonio} className="hover:bg-muted/50">
+                        <TableCell>{patrimonio}</TableCell>
+                        <TableCell className="text-right font-medium">{count}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </CardContent>
+        </Card>
 
-      <Card className="border-muted bg-card/50 backdrop-blur-sm">
-        <CardHeader>
-          <CardTitle>Estatísticas por Equipamento</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Equipamento</TableHead>
-                <TableHead>Quantidade</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {Object.entries(equipamentoCount).map(([equipamento, count]) => (
-                <TableRow key={equipamento}>
-                  <TableCell>{equipamento}</TableCell>
-                  <TableCell>{count}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+        <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
+          <CardHeader>
+            <CardTitle className="text-lg font-semibold">Equipamento</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ScrollArea className="h-[300px] pr-4">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Equipamento</TableHead>
+                    <TableHead className="text-right">Qtd.</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {Object.entries(equipamentoCount)
+                    .sort(([, a], [, b]) => b - a)
+                    .map(([equipamento, count]) => (
+                      <TableRow key={equipamento} className="hover:bg-muted/50">
+                        <TableCell>{equipamento}</TableCell>
+                        <TableCell className="text-right font-medium">{count}</TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };
