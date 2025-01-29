@@ -19,6 +19,10 @@ const Settings = () => {
   const [showUserManagement, setShowUserManagement] = useState(false);
   const { data: serviceOrders = [] } = useServiceOrdersQuery();
   const { user } = useAuth();
+  
+  // Since we're in the settings page, we'll show a message when history is enabled
+  // but no specific service order is selected
+  const serviceOrderId = -1; // Using -1 to indicate no specific service order selected
 
   return (
     <SidebarProvider>
@@ -33,7 +37,8 @@ const Settings = () => {
                   <ThemeToggle />
                   <HistoryToggle 
                     showHistory={showHistory} 
-                    setShowHistory={setShowHistory} 
+                    setShowHistory={setShowHistory}
+                    serviceOrderId={serviceOrderId}
                   />
                   <DatabaseBackup />
                   <ExportPDF 

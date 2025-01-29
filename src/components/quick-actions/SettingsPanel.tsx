@@ -21,6 +21,10 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
   const [showUserManagement, setShowUserManagement] = useState(false);
   const { user } = useAuth();
 
+  // Since we're in a settings panel, we'll show a message when history is enabled
+  // but no specific service order is selected
+  const serviceOrderId = -1; // Using -1 to indicate no specific service order selected
+
   if (!showSettings) return null;
 
   return (
@@ -36,7 +40,11 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
           <ThemeToggle />
           <ExportPDF serviceOrders={serviceOrders} statusOptions={statusOptions} />
           <DatabaseBackup />
-          <HistoryToggle showHistory={showHistory} setShowHistory={setShowHistory} />
+          <HistoryToggle 
+            showHistory={showHistory} 
+            setShowHistory={setShowHistory}
+            serviceOrderId={serviceOrderId}
+          />
           {user?.email === "williann.dev@gmail.com" && (
             <div>
               <Button 

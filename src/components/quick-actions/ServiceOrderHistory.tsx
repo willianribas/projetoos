@@ -26,6 +26,10 @@ export const ServiceOrderHistory = ({ serviceOrderId }: ServiceOrderHistoryProps
   const { data: history = [], isLoading } = useQuery({
     queryKey: ["service_order_history", serviceOrderId],
     queryFn: async () => {
+      if (serviceOrderId === -1) {
+        return [];
+      }
+
       const { data, error } = await supabase
         .from("service_order_history")
         .select("*")
@@ -52,6 +56,18 @@ export const ServiceOrderHistory = ({ serviceOrderId }: ServiceOrderHistoryProps
 
   if (isLoading) {
     return <div>Carregando histórico...</div>;
+  }
+
+  if (serviceOrderId === -1) {
+    return (
+      <Card className="mt-4">
+        <CardContent className="pt-6">
+          <p className="text-center text-muted-foreground">
+            Selecione uma ordem de serviço específica para ver seu histórico.
+          </p>
+        </CardContent>
+      </Card>
+    );
   }
 
   return (
