@@ -39,16 +39,16 @@ const Sidebar = () => {
   ];
 
   return (
-    <>
+    <div className="flex min-h-screen">
       <div
         className={cn(
-          "fixed left-0 top-0 h-full z-40 transition-all duration-300",
+          "fixed left-0 top-0 h-full z-40 transition-all duration-300 bg-background border-r border-border",
           isOpen ? "w-64" : "w-16"
         )}
         onMouseEnter={() => setIsOpen(true)}
         onMouseLeave={() => setIsOpen(false)}
       >
-        <div className="h-full bg-background border-r border-border flex flex-col">
+        <div className="h-full flex flex-col">
           <SidebarHeader isOpen={isOpen} />
           <nav className="flex-1 pt-4">
             {menuItems.map((item) => (
@@ -62,7 +62,7 @@ const Sidebar = () => {
               />
             ))}
           </nav>
-          <div className="mt-auto">
+          <div className="mt-auto mb-4">
             {bottomMenuItems.map((item) => (
               <SidebarNavItem
                 key={item.title}
@@ -78,7 +78,7 @@ const Sidebar = () => {
       </div>
       <div
         className={cn(
-          "min-h-screen transition-all duration-300",
+          "flex-1 transition-all duration-300",
           isOpen ? "ml-64" : "ml-16"
         )}
       >
@@ -88,7 +88,7 @@ const Sidebar = () => {
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

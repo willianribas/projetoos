@@ -3,7 +3,6 @@ import ADEMonitor from "@/components/ADEMonitor";
 import ServiceOrderContent from "@/components/ServiceOrderContent";
 import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
 import ADENotification from "@/components/ADENotification";
-import Sidebar from "@/components/Sidebar";
 import MetricsHighlight from "@/components/charts/MetricsHighlight";
 
 const IndexContent = () => {
