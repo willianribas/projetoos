@@ -29,7 +29,6 @@ export const useUpdateServiceOrder = () => {
         description: "As alterações foram salvas com sucesso!",
         variant: "default",
         className: "bg-blue-500 text-white border-none",
-        duration: 3000,
       });
     },
     onError: (error) => {
@@ -38,7 +37,6 @@ export const useUpdateServiceOrder = () => {
         title: "Erro ao atualizar OS",
         description: "Ocorreu um erro ao tentar atualizar a ordem de serviço.",
         variant: "destructive",
-        duration: 3000,
       });
     },
   });

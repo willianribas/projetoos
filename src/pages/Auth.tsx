@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Boxes } from "lucide-react";
 
@@ -23,7 +23,14 @@ const Auth = () => {
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        toast({
+          variant: "destructive",
+          title: "Erro ao fazer login",
+          description: "Entre em contato com o administrador do sistema.",
+        });
+        throw error;
+      }
 
       toast({
         title: "Login realizado com sucesso!",
@@ -32,11 +39,7 @@ const Auth = () => {
 
       navigate("/", { replace: true });
     } catch (error: any) {
-      toast({
-        variant: "destructive",
-        title: "Erro ao fazer login",
-        description: error.message,
-      });
+      console.error("Login error:", error);
     } finally {
       setLoading(false);
     }
@@ -44,12 +47,12 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background/95 to-background/90 p-4">
-      <Card className="w-full max-w-md border-muted bg-card/50 backdrop-blur-sm animate-fade-in">
+      <Card className="w-full max-w-md border-muted bg-card/50 backdrop-blur-sm animate-fade-in border border-blue-500/20">
         <CardHeader className="space-y-1">
           <div className="flex items-center gap-3 justify-center mb-4">
             <Boxes className="h-8 w-8 text-blue-500" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Sistema OS
+              Daily.Flow
             </h1>
           </div>
           <CardTitle className="text-2xl font-bold text-center">Bem-vindo</CardTitle>
@@ -67,6 +70,7 @@ const Auth = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 disabled={loading}
                 required
+                className="border-blue-500/20"
               />
               <Input
                 type="password"
@@ -75,11 +79,12 @@ const Auth = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 disabled={loading}
                 required
+                className="border-blue-500/20"
               />
             </div>
             <Button 
               type="submit" 
-              className="w-full" 
+              className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700" 
               disabled={loading}
             >
               {loading ? "Entrando..." : "Entrar"}
@@ -88,7 +93,7 @@ const Auth = () => {
         </CardContent>
       </Card>
       <footer className="mt-8 text-sm text-muted-foreground text-center">
-        © {new Date().getFullYear()} Sistema OS. Todos os direitos reservados.
+        © {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
       </footer>
     </div>
   );

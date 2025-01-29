@@ -14,7 +14,7 @@ const IndexContent = () => {
         <ServiceOrderContent />
       </div>
       <footer className="mt-8 py-4 text-sm text-muted-foreground text-center border-t">
-        © {new Date().getFullYear()} Sistema OS. Todos os direitos reservados.
+        © {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
       </footer>
     </div>
   );

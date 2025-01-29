@@ -13,7 +13,7 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <Boxes className="h-8 w-8 text-blue-500" />
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Sistema OS
+            Daily.Flow
           </h1>
         </div>
         <div className="flex items-center gap-4">
