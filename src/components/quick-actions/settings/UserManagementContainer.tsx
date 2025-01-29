@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { X, UserPlus, Key } from "lucide-react";
@@ -20,30 +20,35 @@ const AddUserDialog = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const handleAddUser = async () => {
     try {
-      const { data: { user }, error } = await supabase.auth.admin.createUser({
-        email,
-        password,
-        email_confirm: true,
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${session?.access_token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          action: 'create',
+          email,
+          password,
+        }),
       });
 
-      if (error) throw error;
-
-      // Adicionar role padrão 'user' para o novo usuário
-      if (user) {
-        await supabase.from('user_roles').insert({
-          user_id: user.id,
-          role: 'user'
-        });
-      }
+      const data = await response.json();
+      
+      if (data.error) throw new Error(data.error);
 
       toast({
         title: "Usuário criado com sucesso",
         description: `Um novo usuário foi criado com o email ${email}`,
       });
 
+      queryClient.invalidateQueries({ queryKey: ["users"] });
       setEmail("");
       setPassword("");
     } catch (error: any) {
@@ -94,64 +99,6 @@ const AddUserDialog = () => {
   );
 };
 
-const ResetPasswordDialog = ({ user }: { user: User }) => {
-  const [newPassword, setNewPassword] = useState("");
-  const { toast } = useToast();
-
-  const handleResetPassword = async () => {
-    try {
-      const { error } = await supabase.auth.admin.updateUserById(
-        user.id,
-        { password: newPassword }
-      );
-
-      if (error) throw error;
-
-      toast({
-        title: "Senha atualizada",
-        description: "A senha foi atualizada com sucesso",
-      });
-
-      setNewPassword("");
-    } catch (error: any) {
-      console.error("Error resetting password:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao atualizar senha",
-        description: error.message || "Não foi possível atualizar a senha",
-      });
-    }
-  };
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Key className="h-4 w-4" />
-          Redefinir Senha
-        </Button>
-      </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Redefinir Senha</DialogTitle>
-        </DialogHeader>
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="newPassword">Nova Senha</Label>
-            <Input
-              id="newPassword"
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-            />
-          </div>
-          <Button onClick={handleResetPassword} className="w-full">Atualizar Senha</Button>
-        </div>
-      </DialogContent>
-    </Dialog>
-  );
-};
-
 export const UserManagementContainer = ({ onClose }: UserManagementContainerProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
@@ -160,9 +107,24 @@ export const UserManagementContainer = ({ onClose }: UserManagementContainerProp
     queryKey: ["users"],
     queryFn: async () => {
       try {
-        const { data: { users }, error } = await supabase.auth.admin.listUsers();
-        if (error) throw error;
-        return users;
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${session?.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            action: 'list'
+          }),
+        });
+
+        const data = await response.json();
+        
+        if (data.error) throw new Error(data.error);
+        
+        return data.users;
       } catch (error: any) {
         console.error("Error fetching users:", error);
         toast({
@@ -173,6 +135,7 @@ export const UserManagementContainer = ({ onClose }: UserManagementContainerProp
         return [];
       }
     },
+    enabled: !!user && user.email === "williann.dev@gmail.com",
   });
 
   if (!user || user.email !== "williann.dev@gmail.com") {
@@ -202,20 +165,16 @@ export const UserManagementContainer = ({ onClose }: UserManagementContainerProp
               <TableRow>
                 <TableHead>Email</TableHead>
                 <TableHead>Último Login</TableHead>
-                <TableHead>Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {users?.map((user) => (
+              {users?.map((user: User) => (
                 <TableRow key={user.id}>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     {user.last_sign_in_at
                       ? new Date(user.last_sign_in_at).toLocaleString()
                       : "Nunca"}
-                  </TableCell>
-                  <TableCell>
-                    <ResetPasswordDialog user={user} />
                   </TableCell>
                 </TableRow>
               ))}
