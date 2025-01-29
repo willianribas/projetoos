@@ -6,6 +6,7 @@ import { ThemeToggle } from "./settings/ThemeToggle";
 import { ExportPDF } from "./settings/ExportPDF";
 import { DatabaseBackup } from "./settings/DatabaseBackup";
 import { HistoryToggle } from "./settings/HistoryToggle";
+import { UserManagement } from "./settings/UserManagement";
 import { statusOptions } from "../ServiceOrderContent";
 
 interface SettingsPanelProps {
@@ -31,6 +32,7 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
         <ExportPDF serviceOrders={serviceOrders} statusOptions={statusOptions} />
         <DatabaseBackup />
         <HistoryToggle showHistory={showHistory} setShowHistory={setShowHistory} />
+        <UserManagement />
       </CardContent>
     </Card>
   );
