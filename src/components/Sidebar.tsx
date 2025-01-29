@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ClipboardList, BarChart2, Settings, LogOut, Menu } from "lucide-react";
 import { useAuth } from "./AuthProvider";
@@ -24,14 +24,15 @@ const Sidebar = () => {
       icon: BarChart2,
       path: "/statistics",
     },
+  ];
+
+  const bottomMenuItems = [
     {
       title: "Configurações",
       icon: Settings,
       path: "/settings",
+      onClick: () => navigate("/settings"),
     },
-  ];
-
-  const bottomMenuItems = [
     {
       title: "Sair",
       icon: LogOut,
@@ -77,9 +78,9 @@ const Sidebar = () => {
             key={item.title}
             icon={item.icon}
             title={item.title}
-            isActive={false}
+            isActive={location.pathname === item.path}
             isOpen={isOpen}
-            onClick={item.onClick || (() => {})}
+            onClick={item.onClick}
           />
         ))}
       </div>
