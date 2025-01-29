@@ -13,7 +13,7 @@ const Header = () => {
         <div className="flex items-center gap-3">
           <Boxes className="h-8 w-8 text-blue-500" />
           <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Sistema OS
+            Daily.Flow
           </h1>
         </div>
         <div className="flex items-center gap-4">
@@ -22,9 +22,9 @@ const Header = () => {
             variant="ghost"
             size="icon"
             onClick={signOut}
-            className="hover:bg-destructive/10 hover:text-destructive"
+            className="hover:bg-destructive/10 hover:text-destructive h-10 w-10"
           >
-            <LogOut className="h-5 w-5" />
+            <LogOut className="h-6 w-6" />
           </Button>
         </div>
       </div>

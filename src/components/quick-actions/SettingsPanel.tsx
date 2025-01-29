@@ -1,7 +1,7 @@
 import React, { useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, FileDown, Moon, Sun, Upload, Database, History, TestTube } from "lucide-react";
+import { Settings, FileDown, Moon, Sun, Upload, Database, History } from "lucide-react";
 import { Toggle } from "@/components/ui/toggle";
 import { useTheme } from "next-themes";
 import { BlobProvider } from "@react-pdf/renderer";
@@ -100,14 +100,6 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
     }
   };
 
-  const handleImplementTests = () => {
-    toast({
-      title: "Testes Automatizados",
-      description: "Iniciando implementação dos testes automatizados...",
-    });
-    // Aqui você pode adicionar a lógica para implementar os testes
-  };
-
   if (!showSettings) return null;
 
   return (
@@ -188,16 +180,6 @@ export const SettingsPanel = ({ showSettings, serviceOrders }: SettingsPanelProp
           >
             <History className="mr-2 h-4 w-4" />
             {showHistory ? "Ocultar Histórico" : "Ver Histórico"}
-          </Button>
-        </div>
-        <div className="flex items-center justify-between">
-          <span className="text-sm">Testes Automatizados</span>
-          <Button
-            variant="outline"
-            onClick={handleImplementTests}
-          >
-            <TestTube className="mr-2 h-4 w-4" />
-            Implementar Testes
           </Button>
         </div>
         {showHistory && <ServiceOrderHistory />}

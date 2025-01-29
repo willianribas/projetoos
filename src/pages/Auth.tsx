@@ -31,7 +31,7 @@ const Auth = () => {
       toast({
         variant: "destructive",
         title: "Erro ao fazer login",
-        description: error.message,
+        description: "Entre em contato com o administrador do sistema.",
       });
     } finally {
       setLoading(false);
@@ -39,13 +39,13 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90 flex flex-col items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
         <div className="text-center">
           <div className="flex items-center justify-center gap-3 mb-3">
             <Boxes className="h-12 w-12 text-blue-500" />
             <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Sistema OS
+              Daily.Flow
             </h1>
           </div>
           <p className="text-foreground/90 text-lg">
@@ -53,7 +53,7 @@ const Auth = () => {
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="mt-8 space-y-6 bg-card/50 backdrop-blur-sm p-8 rounded-lg shadow-sm">
+        <form onSubmit={handleLogin} className="mt-8 space-y-6 bg-card/50 backdrop-blur-sm p-8 rounded-lg shadow-sm border border-border/50">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -89,6 +89,10 @@ const Auth = () => {
             {loading ? "Entrando..." : "Entrar"}
           </Button>
         </form>
+        
+        <div className="text-center text-sm text-foreground/60">
+          &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
+        </div>
       </div>
     </div>
   );

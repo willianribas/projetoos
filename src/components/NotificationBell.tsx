@@ -48,12 +48,6 @@ const NotificationBell = () => {
             
             setNotifications(prev => [notification, ...prev].slice(0, 10));
             setUnreadCount(prev => prev + 1);
-            
-            toast({
-              title: "Status Atualizado",
-              description: notification.message,
-              duration: 5000,
-            });
           }
         }
       )

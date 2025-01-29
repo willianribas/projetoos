@@ -13,6 +13,9 @@ const IndexContent = () => {
         <ADEMonitor serviceOrders={serviceOrders} />
         <ServiceOrderContent />
       </div>
+      <div className="text-center text-sm text-foreground/60 py-4">
+        &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
+      </div>
     </div>
   );
 };
