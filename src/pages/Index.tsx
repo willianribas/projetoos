@@ -5,10 +5,38 @@ import ServiceOrderForm from "@/components/ServiceOrderForm";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+
+const statusOptions = [
+  { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-blue-900" },
+  { value: "AVT", label: "AVT - Aguardando vinda técnica", color: "text-[#F97316]" },
+  { value: "EXT", label: "EXT - Serviço Externo", color: "text-[#9b87f5]" },
+  { value: "A.M", label: "A.M - Aquisição de Material", color: "text-[#ea384c]" },
+  { value: "INST", label: "INST - Instalação", color: "text-pink-500" },
+  { value: "M.S", label: "M.S - Material Solicitado", color: "text-[#33C3F0]" },
+  { value: "OSP", label: "OSP - Ordem de Serviço Pronta", color: "text-[#22c55e]" },
+  { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]" }
+];
 
 const IndexContent = () => {
-  const { serviceOrders } = useServiceOrders();
+  const { serviceOrders, createServiceOrder } = useServiceOrders();
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const form = useForm({
+    defaultValues: {
+      numeroos: "",
+      patrimonio: "",
+      equipamento: "",
+      status: "",
+      observacao: ""
+    }
+  });
+
+  const handleSubmit = (data: any) => {
+    createServiceOrder(data);
+    form.reset();
+    setIsFormOpen(false);
+  };
   
   return (
     <div className="space-y-4 sm:space-y-6 animate-fade-in">
@@ -16,7 +44,13 @@ const IndexContent = () => {
       <Header />
       <div className="px-2 sm:px-0">
         <ADEMonitor serviceOrders={serviceOrders} />
-        <ServiceOrderForm />
+        <ServiceOrderForm 
+          form={form}
+          isOpen={isFormOpen}
+          setIsOpen={setIsFormOpen}
+          onSubmit={handleSubmit}
+          statusOptions={statusOptions}
+        />
         <ServiceOrderTable 
           serviceOrders={serviceOrders}
           getStatusColor={(status) => {
@@ -41,16 +75,7 @@ const IndexContent = () => {
                 return "text-gray-500";
             }
           }}
-          statusOptions={[
-            { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-blue-900", icon: null },
-            { value: "AVT", label: "AVT - Aguardando vinda técnica", color: "text-[#F97316]", icon: null },
-            { value: "EXT", label: "EXT - Serviço Externo", color: "text-[#9b87f5]", icon: null },
-            { value: "A.M", label: "A.M - Aquisição de Material", color: "text-[#ea384c]", icon: null },
-            { value: "INST", label: "INST - Instalação", color: "text-pink-500", icon: null },
-            { value: "M.S", label: "M.S - Material Solicitado", color: "text-[#33C3F0]", icon: null },
-            { value: "OSP", label: "OSP - Ordem de Serviço Pronta", color: "text-[#22c55e]", icon: null },
-            { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]", icon: null }
-          ]}
+          statusOptions={statusOptions}
           onUpdateServiceOrder={() => {}}
           onDeleteServiceOrder={() => {}}
           selectedStatus={selectedStatus}
