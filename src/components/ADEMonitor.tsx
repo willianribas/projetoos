@@ -23,7 +23,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
         <CardTitle className="flex items-center gap-2">
           <Clock className="h-5 w-5 text-blue-400 animate-pulse" />
           <span className="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
-            Monitor de ADE
+            Notificações
           </span>
         </CardTitle>
       </CardHeader>
