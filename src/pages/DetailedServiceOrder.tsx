@@ -23,6 +23,7 @@ import { statusOptions } from "@/components/ServiceOrderContent";
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar-context";
+import { cn } from "@/lib/utils";
 
 const DetailedServiceOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
