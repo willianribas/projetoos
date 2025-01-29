@@ -8,7 +8,7 @@ const StatisticsContent = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-3xl font-bold">Estatísticas</h1>
+      <h1 className="text-3xl font-bold">Daily.Flow Sistema de Gerenciamento de Ordens de Serviços</h1>
       <Statistics serviceOrders={serviceOrders} statusOptions={[]} />
     </div>
   );

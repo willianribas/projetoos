@@ -8,7 +8,7 @@ const SettingsContent = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-3xl font-bold">Configurações</h1>
+      <h1 className="text-3xl font-bold">Daily.Flow Sistema de Gerenciamento de Ordens de Serviços</h1>
       <SettingsPanel showSettings={true} serviceOrders={serviceOrders} />
     </div>
   );
