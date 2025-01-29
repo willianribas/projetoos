@@ -7,6 +7,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ServiceOrder } from "@/types";
 import ServiceOrderTableRow from "./ServiceOrderTableRow";
 import EditServiceOrderDialog from "./EditServiceOrderDialog";
@@ -18,6 +20,7 @@ import {
   ActivitySquare, 
   MessageSquare, 
   GripHorizontal,
+  Filter,
 } from "lucide-react";
 
 interface ServiceOrderTableProps {
@@ -41,6 +44,8 @@ const ServiceOrderTable = ({
   statusOptions,
   onUpdateServiceOrder,
   onDeleteServiceOrder,
+  selectedStatus,
+  onStatusChange,
 }: ServiceOrderTableProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -81,8 +86,37 @@ const ServiceOrderTable = ({
   return (
     <>
       <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm">
-        <CardHeader>
+        <CardHeader className="space-y-4">
           <CardTitle className="text-foreground font-bold">Ordens de Serviço Registradas</CardTitle>
+          <ScrollArea className="w-full whitespace-nowrap">
+            <div className="flex space-x-2 pb-4">
+              <Badge
+                variant={selectedStatus === null ? "default" : "outline"}
+                className="cursor-pointer flex items-center gap-1 font-medium"
+                onClick={() => onStatusChange(null)}
+              >
+                <Filter className="h-3 w-3" />
+                Todos
+              </Badge>
+              {statusOptions.map((status) => {
+                const Icon = status.icon;
+                return (
+                  <Badge
+                    key={status.value}
+                    variant={selectedStatus === status.value ? "default" : "outline"}
+                    className={`cursor-pointer flex items-center gap-1 font-medium ${
+                      selectedStatus === status.value ? "bg-primary text-primary-foreground" : ""
+                    }`}
+                    onClick={() => onStatusChange(status.value)}
+                  >
+                    <Icon className="h-3 w-3" />
+                    {status.value}
+                  </Badge>
+                );
+              })}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
         </CardHeader>
         <CardContent>
           <Table>
