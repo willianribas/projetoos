@@ -1,5 +1,4 @@
 import { ServiceOrder } from "@/types";
-import { statusOptions } from "@/components/ServiceOrderContent";
 
 interface SearchCriteria {
   field: string;
@@ -14,6 +13,13 @@ interface ServiceOrderFiltersProps {
   searchCriteria: SearchCriteria[];
 }
 
+const statusColors: Record<string, string> = {
+  'ADE': 'border-yellow-500 text-yellow-700 bg-yellow-50',
+  'FINALIZADO': 'border-green-500 text-green-700 bg-green-50',
+  'PENDENTE': 'border-red-500 text-red-700 bg-red-50',
+  'EM ANDAMENTO': 'border-blue-500 text-blue-700 bg-blue-50',
+};
+
 export const filterServiceOrders = ({
   serviceOrders,
   searchQuery,
@@ -22,11 +28,8 @@ export const filterServiceOrders = ({
   searchCriteria = [],
 }: ServiceOrderFiltersProps) => {
   return serviceOrders.filter((order) => {
-    // Primeiro aplica os critérios de busca avançada
     const matchesCriteria = searchCriteria.length === 0 || searchCriteria.every(criteria => {
       const searchLower = criteria.value.toLowerCase().trim();
-      
-      // Função auxiliar para verificar se um campo contém o termo de busca
       const fieldContainsSearch = (field: string | null) => 
         (field?.toLowerCase() || "").includes(searchLower);
 
@@ -41,10 +44,8 @@ export const filterServiceOrders = ({
         : fieldContainsSearch(order[criteria.field as keyof ServiceOrder] as string | null);
     });
 
-    // Se não passar nos critérios avançados, já retorna false
     if (!matchesCriteria) return false;
 
-    // Depois aplica a busca simples se houver
     const searchLower = searchQuery.toLowerCase().trim();
     
     if (!searchLower) {
@@ -73,6 +74,5 @@ export const filterServiceOrders = ({
 };
 
 export const getStatusColor = (status: string) => {
-  const statusOption = statusOptions.find(option => option.value === status);
-  return statusOption?.color || "text-muted-foreground";
+  return statusColors[status] || 'border-gray-500 text-gray-700 bg-gray-50';
 };

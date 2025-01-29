@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-import { toast } from "@/hooks/use-toast";
+import { useEffect } from "react";
 import { ServiceOrder } from "@/types";
-import { BellRing } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ADENotificationProps {
   serviceOrders: ServiceOrder[];
 }
 
 const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
-  const [notifiedOrders, setNotifiedOrders] = useState<Set<number>>(new Set());
+  const { toast } = useToast();
 
   const calculateDays = (createdAt: string) => {
     return Math.floor(
@@ -21,18 +20,19 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
     const checkADEOrders = async () => {
       const adeOrders = serviceOrders.filter(order => {
         const days = calculateDays(order.created_at || "");
-        return order.status === "ADE" && days >= 8 && !notifiedOrders.has(order.id);
+        return order.status === "ADE" && days >= 8;
       });
 
       for (const order of adeOrders) {
         const days = calculateDays(order.created_at || "");
         
-        // Check if notification already exists and is not read
+        // Check if notification already exists
         const { data: existingNotification } = await supabase
           .from('notification_states')
           .select('*')
           .eq('service_order_id', order.id)
           .eq('notification_type', 'ADE_8_DAYS')
+          .eq('is_read', false)
           .single();
 
         if (!existingNotification) {
@@ -45,15 +45,6 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
               notification_type: 'ADE_8_DAYS',
               is_read: false
             });
-
-          // Show toast notification
-          toast({
-            title: "Ordem de Serviço em ADE",
-            description: `A OS ${order.numeroos} do patrimônio ${order.patrimonio} (${order.equipamento}) está há ${days} dias em ADE.`,
-            duration: 5000,
-          });
-
-          setNotifiedOrders(prev => new Set([...prev, order.id]));
         }
       }
     };

@@ -23,7 +23,7 @@ const ServiceOrderTableRow = ({
   return (
     <TableRow
       key={order.id}
-      className="cursor-pointer hover:bg-muted/50"
+      className="cursor-pointer hover:bg-muted/50 transition-colors"
       onClick={() => onRowClick(order, index)}
     >
       <TableCell className="text-center font-medium">
@@ -35,7 +35,12 @@ const ServiceOrderTableRow = ({
         {order.observacao}
       </TableCell>
       <TableCell className="text-center">
-        <span className={cn("px-2 py-1 rounded-md text-xs font-medium border", getStatusColor(order.status))}>
+        <span 
+          className={cn(
+            "px-3 py-1 rounded-md text-xs font-medium border-2 transition-colors",
+            getStatusColor(order.status)
+          )}
+        >
           {order.status}
         </span>
       </TableCell>
@@ -43,7 +48,7 @@ const ServiceOrderTableRow = ({
         <Button
           variant="ghost"
           size="icon"
-          className="hover:bg-destructive/10 hover:text-destructive"
+          className="hover:bg-destructive/10 hover:text-destructive transition-colors"
           onClick={(e) => onDelete(e, index)}
         >
           <Trash2 className="h-4 w-4" />

@@ -8,47 +8,69 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 import { Database } from "@/integrations/supabase/types";
+import { Button } from "./ui/button";
 
 type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
+type NotificationState = Database['public']['Tables']['notification_states']['Row'];
 
 interface Notification {
   id: string;
   message: string;
   timestamp: Date;
+  isRead?: boolean;
+  notificationId?: number;
 }
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-  const { toast } = useToast();
+
+  const fetchNotifications = async () => {
+    const { data: notificationStates } = await supabase
+      .from('notification_states')
+      .select(`
+        *,
+        service_orders (*)
+      `)
+      .eq('is_read', false)
+      .order('created_at', { ascending: false });
+
+    if (notificationStates) {
+      const formattedNotifications = notificationStates.map((notification: any) => {
+        const serviceOrder = notification.service_orders;
+        const days = Math.floor(
+          (new Date().getTime() - new Date(serviceOrder.created_at).getTime()) / (1000 * 60 * 60 * 24)
+        );
+        
+        return {
+          id: notification.id.toString(),
+          message: `OS ${serviceOrder.numeroos} do patrimônio ${serviceOrder.patrimonio} está há ${days} dias em ADE`,
+          timestamp: new Date(notification.created_at || new Date()),
+          isRead: notification.is_read,
+          notificationId: notification.id
+        };
+      });
+
+      setNotifications(formattedNotifications);
+      setUnreadCount(formattedNotifications.length);
+    }
+  };
 
   useEffect(() => {
+    fetchNotifications();
+
     const channel = supabase
       .channel('service-orders-changes')
       .on(
         'postgres_changes',
         {
-          event: 'UPDATE',
+          event: '*',
           schema: 'public',
-          table: 'service_orders',
+          table: 'notification_states',
         },
-        (payload) => {
-          const oldStatus = payload.old?.status;
-          const newStatus = payload.new?.status;
-          const orderNumber = payload.new?.numeroos;
-          
-          if (oldStatus && newStatus && orderNumber && oldStatus !== newStatus) {
-            const notification = {
-              id: new Date().getTime().toString(),
-              message: `OS ${orderNumber} mudou de ${oldStatus} para ${newStatus}`,
-              timestamp: new Date(),
-            };
-            
-            setNotifications(prev => [notification, ...prev].slice(0, 10));
-            setUnreadCount(prev => prev + 1);
-          }
+        () => {
+          fetchNotifications();
         }
       )
       .subscribe();
@@ -58,14 +80,17 @@ const NotificationBell = () => {
     };
   }, []);
 
-  const handleOpenChange = (open: boolean) => {
-    if (open) {
-      setUnreadCount(0);
-    }
+  const handleNotificationClick = async (notificationId: number) => {
+    await supabase
+      .from('notification_states')
+      .update({ is_read: true })
+      .eq('id', notificationId);
+
+    fetchNotifications();
   };
 
   return (
-    <Popover onOpenChange={handleOpenChange}>
+    <Popover>
       <PopoverTrigger className="relative">
         <Bell className="h-6 w-6 text-foreground/80 hover:text-foreground transition-colors" />
         {unreadCount > 0 && (
@@ -85,12 +110,17 @@ const NotificationBell = () => {
           {notifications.length > 0 ? (
             <div className="divide-y">
               {notifications.map((notification) => (
-                <div key={notification.id} className="p-4">
+                <Button
+                  key={notification.id}
+                  variant="ghost"
+                  className="w-full p-4 flex flex-col items-start space-y-1 hover:bg-muted/50"
+                  onClick={() => notification.notificationId && handleNotificationClick(notification.notificationId)}
+                >
                   <p className="text-sm text-foreground/90">{notification.message}</p>
-                  <p className="text-xs text-foreground/60 mt-1">
+                  <p className="text-xs text-foreground/60">
                     {new Date(notification.timestamp).toLocaleString('pt-BR')}
                   </p>
-                </div>
+                </Button>
               ))}
             </div>
           ) : (
