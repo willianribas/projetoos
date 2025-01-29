@@ -6,4 +6,5 @@ export interface ServiceOrder {
   status: string;
   observacao: string | null;
   created_at?: string;
+  user_id?: string;
 }

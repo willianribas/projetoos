@@ -20,6 +20,7 @@ export type Database = {
           patrimonio: string
           service_order_id: number | null
           status: string
+          user_id: string | null
         }
         Insert: {
           action: string
@@ -31,6 +32,7 @@ export type Database = {
           patrimonio: string
           service_order_id?: number | null
           status: string
+          user_id?: string | null
         }
         Update: {
           action?: string
@@ -42,6 +44,7 @@ export type Database = {
           patrimonio?: string
           service_order_id?: number | null
           status?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -62,6 +65,7 @@ export type Database = {
           observacao: string | null
           patrimonio: string
           status: string
+          user_id: string | null
         }
         Insert: {
           created_at?: string
@@ -71,6 +75,7 @@ export type Database = {
           observacao?: string | null
           patrimonio: string
           status: string
+          user_id?: string | null
         }
         Update: {
           created_at?: string
@@ -80,6 +85,7 @@ export type Database = {
           observacao?: string | null
           patrimonio?: string
           status?: string
+          user_id?: string | null
         }
         Relationships: []
       }
