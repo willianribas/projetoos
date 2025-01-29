@@ -11,27 +11,55 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
 
-      if (error) throw error;
+        if (error) {
+          if (error.message === "Invalid login credentials") {
+            throw new Error("Email ou senha incorretos");
+          }
+          throw error;
+        }
 
-      navigate("/");
+        navigate("/");
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+        });
+
+        if (error) {
+          if (error.message.includes("already registered")) {
+            throw new Error("Este email já está cadastrado");
+          }
+          throw error;
+        }
+
+        toast({
+          title: "Cadastro realizado com sucesso!",
+          description: "Verifique seu email para confirmar o cadastro.",
+        });
+        
+        // Switch to login view after successful signup
+        setIsLogin(true);
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
-        title: "Erro ao fazer login",
-        description: "Entre em contato com o administrador do sistema.",
+        title: "Erro na autenticação",
+        description: error.message || "Ocorreu um erro inesperado.",
       });
     } finally {
       setLoading(false);
@@ -53,7 +81,7 @@ const Auth = () => {
           </p>
         </div>
 
-        <form onSubmit={handleLogin} className="mt-8 space-y-6 bg-card/50 backdrop-blur-sm p-8 rounded-lg shadow-sm border border-border/50">
+        <form onSubmit={handleAuth} className="mt-8 space-y-6 bg-card/50 backdrop-blur-sm p-8 rounded-lg shadow-sm border border-border/50">
           <div className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
@@ -77,6 +105,7 @@ const Auth = () => {
                 required
                 className="w-full"
                 placeholder="Digite sua senha"
+                minLength={6}
               />
             </div>
           </div>
@@ -86,8 +115,18 @@ const Auth = () => {
             className="w-full bg-blue-500 hover:bg-blue-600"
             disabled={loading}
           >
-            {loading ? "Entrando..." : "Entrar"}
+            {loading ? "Processando..." : isLogin ? "Entrar" : "Cadastrar"}
           </Button>
+
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => setIsLogin(!isLogin)}
+              className="text-sm text-blue-500 hover:text-blue-600"
+            >
+              {isLogin ? "Não tem uma conta? Cadastre-se" : "Já tem uma conta? Entre"}
+            </button>
+          </div>
         </form>
         
         <div className="text-center text-sm text-foreground/60">
