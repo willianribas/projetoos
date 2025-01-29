@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Database } from "@/integrations/supabase/types";
+import { useAuth } from "@/components/AuthProvider";
 
 type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
 
@@ -25,14 +26,18 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
+    if (!user) return;
+
     // Verificar OSs em ADE com mais de 8 dias
     const checkADEOrders = async () => {
       const { data: orders, error } = await supabase
         .from('service_orders')
         .select('*')
-        .eq('status', 'ADE');
+        .eq('status', 'ADE')
+        .eq('user_id', user.id);
 
       if (error) {
         console.error('Error fetching ADE orders:', error);
@@ -76,6 +81,7 @@ const NotificationBell = () => {
           event: 'UPDATE',
           schema: 'public',
           table: 'service_orders',
+          filter: `user_id=eq.${user.id}`
         },
         (payload) => {
           const oldStatus = payload.old?.status;
@@ -102,7 +108,7 @@ const NotificationBell = () => {
       clearInterval(interval);
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user]);
 
   const handleNotificationClick = (notificationId: string) => {
     setNotifications(prev =>
