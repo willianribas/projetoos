@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { DatabaseBackup } from "@/components/quick-actions/settings/DatabaseBackup";
@@ -8,8 +8,14 @@ import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
 import { UserManagementContainer } from "@/components/quick-actions/settings/UserManagementContainer";
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
+import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
+import { statusOptions } from "@/components/ServiceOrderContent";
 
 const Settings = () => {
+  const [showHistory, setShowHistory] = useState(false);
+  const [showUserManagement, setShowUserManagement] = useState(false);
+  const { data: serviceOrders = [] } = useServiceOrdersQuery();
+
   return (
     <div className="flex min-h-screen w-full">
       <Sidebar />
@@ -20,10 +26,18 @@ const Settings = () => {
             <ScrollArea className="h-[calc(100vh-12rem)]">
               <div className="space-y-6">
                 <ThemeToggle />
-                <HistoryToggle />
+                <HistoryToggle 
+                  showHistory={showHistory} 
+                  setShowHistory={setShowHistory} 
+                />
                 <DatabaseBackup />
-                <ExportPDF />
-                <UserManagementContainer />
+                <ExportPDF 
+                  serviceOrders={serviceOrders}
+                  statusOptions={statusOptions}
+                />
+                {showUserManagement && (
+                  <UserManagementContainer onClose={() => setShowUserManagement(false)} />
+                )}
               </div>
             </ScrollArea>
           </Card>
