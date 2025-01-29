@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ClipboardList, BarChart2, Settings, LogOut } from "lucide-react";
+import { ClipboardList, BarChart2, Settings, LogOut, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuth } from "./AuthProvider";
-import { SidebarHeader } from "./sidebar/SidebarHeader";
+import { SidebarBase } from "@/components/ui/sidebar";
 import { SidebarNavItem } from "./sidebar/SidebarNavItem";
 
 const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { signOut } = useAuth();
@@ -39,56 +38,34 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="flex min-h-screen">
-      <div
-        className={cn(
-          "fixed left-0 top-0 h-full z-40 transition-all duration-300 bg-background border-r border-border",
-          isOpen ? "w-64" : "w-16"
-        )}
-        onMouseEnter={() => setIsOpen(true)}
-        onMouseLeave={() => setIsOpen(false)}
-      >
-        <div className="h-full flex flex-col">
-          <SidebarHeader isOpen={isOpen} />
-          <nav className="flex-1 pt-4">
-            {menuItems.map((item) => (
-              <SidebarNavItem
-                key={item.title}
-                icon={item.icon}
-                title={item.title}
-                isActive={location.pathname === item.path}
-                isOpen={isOpen}
-                onClick={() => navigate(item.path)}
-              />
-            ))}
-          </nav>
-          <div className="mt-auto mb-4">
-            {bottomMenuItems.map((item) => (
-              <SidebarNavItem
-                key={item.title}
-                icon={item.icon}
-                title={item.title}
-                isActive={item.path ? location.pathname === item.path : false}
-                isOpen={isOpen}
-                onClick={item.onClick || (() => navigate(item.path!))}
-              />
-            ))}
-          </div>
-        </div>
+    <SidebarBase>
+      <div className="p-4 flex items-center gap-3">
+        <Menu className="h-6 w-6 text-foreground/60" />
+        <span className="text-foreground font-semibold text-lg">Daily.Flow</span>
       </div>
-      <div
-        className={cn(
-          "flex-1 transition-all duration-300",
-          isOpen ? "ml-64" : "ml-16"
-        )}
-      >
-        <div className="p-4 sm:p-8">
-          <div className="max-w-7xl mx-auto">
-            {/* Content will be rendered here */}
-          </div>
-        </div>
+      <nav className="flex-1 pt-4">
+        {menuItems.map((item) => (
+          <SidebarNavItem
+            key={item.title}
+            icon={item.icon}
+            title={item.title}
+            isActive={location.pathname === item.path}
+            onClick={() => navigate(item.path)}
+          />
+        ))}
+      </nav>
+      <div className="mt-auto mb-4">
+        {bottomMenuItems.map((item) => (
+          <SidebarNavItem
+            key={item.title}
+            icon={item.icon}
+            title={item.title}
+            isActive={item.path ? location.pathname === item.path : false}
+            onClick={item.onClick || (() => navigate(item.path!))}
+          />
+        ))}
       </div>
-    </div>
+    </SidebarBase>
   );
 };
 
