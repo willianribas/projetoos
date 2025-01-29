@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "./components/AuthProvider";
+import { ServiceOrderProvider } from "./components/ServiceOrderProvider";
 import { SidebarProvider } from "./components/ui/sidebar-context";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
@@ -22,7 +23,11 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
     return <Auth />;
   }
 
-  return <>{children}</>;
+  return (
+    <ServiceOrderProvider>
+      {children}
+    </ServiceOrderProvider>
+  );
 };
 
 const AppRoutes = () => (
