@@ -10,7 +10,7 @@ import { User } from "@supabase/supabase-js";
 import { useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { X } from "lucide-react";
+import { X, UserPlus, Key } from "lucide-react";
 
 interface UserManagementContainerProps {
   onClose: () => void;
@@ -23,7 +23,7 @@ const AddUserDialog = () => {
 
   const handleAddUser = async () => {
     try {
-      const { data, error } = await supabase.auth.admin.createUser({
+      const { data: { user }, error } = await supabase.auth.admin.createUser({
         email,
         password,
         email_confirm: true,
@@ -32,9 +32,9 @@ const AddUserDialog = () => {
       if (error) throw error;
 
       // Adicionar role padrão 'user' para o novo usuário
-      if (data.user) {
+      if (user) {
         await supabase.from('user_roles').insert({
-          user_id: data.user.id,
+          user_id: user.id,
           role: 'user'
         });
       }
@@ -47,10 +47,11 @@ const AddUserDialog = () => {
       setEmail("");
       setPassword("");
     } catch (error: any) {
+      console.error("Error creating user:", error);
       toast({
         variant: "destructive",
         title: "Erro ao criar usuário",
-        description: error.message,
+        description: error.message || "Não foi possível criar o usuário",
       });
     }
   };
@@ -58,7 +59,10 @@ const AddUserDialog = () => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Adicionar Usuário</Button>
+        <Button variant="outline" className="gap-2">
+          <UserPlus className="h-4 w-4" />
+          Adicionar Usuário
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -83,7 +87,7 @@ const AddUserDialog = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button onClick={handleAddUser}>Criar Usuário</Button>
+          <Button onClick={handleAddUser} className="w-full">Criar Usuário</Button>
         </div>
       </DialogContent>
     </Dialog>
@@ -110,10 +114,11 @@ const ResetPasswordDialog = ({ user }: { user: User }) => {
 
       setNewPassword("");
     } catch (error: any) {
+      console.error("Error resetting password:", error);
       toast({
         variant: "destructive",
         title: "Erro ao atualizar senha",
-        description: error.message,
+        description: error.message || "Não foi possível atualizar a senha",
       });
     }
   };
@@ -121,7 +126,10 @@ const ResetPasswordDialog = ({ user }: { user: User }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">Redefinir Senha</Button>
+        <Button variant="outline" size="sm" className="gap-2">
+          <Key className="h-4 w-4" />
+          Redefinir Senha
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -137,7 +145,7 @@ const ResetPasswordDialog = ({ user }: { user: User }) => {
               onChange={(e) => setNewPassword(e.target.value)}
             />
           </div>
-          <Button onClick={handleResetPassword}>Atualizar Senha</Button>
+          <Button onClick={handleResetPassword} className="w-full">Atualizar Senha</Button>
         </div>
       </DialogContent>
     </Dialog>
@@ -151,9 +159,19 @@ export const UserManagementContainer = ({ onClose }: UserManagementContainerProp
   const { data: users, isLoading } = useQuery({
     queryKey: ["users"],
     queryFn: async () => {
-      const { data: { users }, error } = await supabase.auth.admin.listUsers();
-      if (error) throw error;
-      return users;
+      try {
+        const { data: { users }, error } = await supabase.auth.admin.listUsers();
+        if (error) throw error;
+        return users;
+      } catch (error: any) {
+        console.error("Error fetching users:", error);
+        toast({
+          variant: "destructive",
+          title: "Erro ao carregar usuários",
+          description: error.message || "Não foi possível carregar a lista de usuários",
+        });
+        return [];
+      }
     },
   });
 
@@ -175,7 +193,9 @@ export const UserManagementContainer = ({ onClose }: UserManagementContainerProp
           <AddUserDialog />
         </div>
         {isLoading ? (
-          <div>Carregando usuários...</div>
+          <div className="flex items-center justify-center py-4">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+          </div>
         ) : (
           <Table>
             <TableHeader>
