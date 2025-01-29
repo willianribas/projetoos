@@ -16,24 +16,15 @@ export const AddUserDialog = () => {
 
   const handleAddUser = async () => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/manage-users`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${session?.access_token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('manage-users', {
+        body: {
           action: 'create',
           email,
           password,
-        }),
+        }
       });
 
-      const data = await response.json();
-      
-      if (data.error) throw new Error(data.error);
+      if (error) throw error;
 
       toast({
         title: "Usuário criado com sucesso",
