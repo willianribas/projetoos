@@ -16,14 +16,14 @@ export function SidebarBase({ children, className, onMouseEnter, onMouseLeave }:
     <div className="flex min-h-screen">
       <div
         className={cn(
-          "fixed left-0 top-0 h-full z-40 transition-all duration-300 bg-background border-r border-border",
+          "fixed left-0 top-0 h-full z-40 transition-all duration-300 ease-in-out bg-background border-r border-border",
           isOpen ? "w-64" : "w-16",
           className
         )}
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
       >
-        <div className="h-full flex flex-col">
+        <div className="h-full flex flex-col overflow-hidden">
           {children}
         </div>
       </div>

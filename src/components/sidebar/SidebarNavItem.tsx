@@ -25,8 +25,15 @@ export const SidebarNavItem = ({
         isActive && "text-sidebar-foreground bg-sidebar-accent"
       )}
     >
-      <Icon className="h-5 w-5" />
-      {isOpen && <span className="ml-4">{title}</span>}
+      <Icon className="h-5 w-5 shrink-0" />
+      <span 
+        className={cn(
+          "ml-4 truncate opacity-0 transition-all duration-200",
+          isOpen && "opacity-100"
+        )}
+      >
+        {title}
+      </span>
     </button>
   );
 };

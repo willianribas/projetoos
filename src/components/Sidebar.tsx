@@ -57,20 +57,23 @@ const Sidebar = () => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <div className="p-4 flex items-center gap-3">
+      <div className="p-4 flex items-center gap-3 overflow-hidden">
         <Button 
           variant="ghost" 
           size="icon"
           onClick={() => setIsOpen(!isOpen)}
-          className="p-0"
+          className="p-0 shrink-0"
         >
           <Menu className="h-6 w-6 text-foreground/60" />
         </Button>
-        {isOpen && (
-          <span className="text-foreground font-semibold text-lg animate-fade-in transition-all duration-300">
-            Daily.Flow
-          </span>
-        )}
+        <span 
+          className={cn(
+            "text-foreground font-semibold text-lg transition-all duration-300 opacity-0",
+            isOpen && "opacity-100"
+          )}
+        >
+          Daily.Flow
+        </span>
       </div>
       <nav className="flex-1 pt-4">
         {menuItems.map((item) => (
