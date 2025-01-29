@@ -8,17 +8,14 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { Database } from "@/integrations/supabase/types";
-import { Button } from "./ui/button";
-
-type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
-type NotificationState = Database['public']['Tables']['notification_states']['Row'];
+import { NotificationItem } from "./notifications/NotificationItem";
+import { EmptyNotifications } from "./notifications/EmptyNotifications";
+import { NotificationHeader } from "./notifications/NotificationHeader";
 
 interface Notification {
   id: string;
   message: string;
   timestamp: Date;
-  isRead?: boolean;
   notificationId?: number;
 }
 
@@ -47,7 +44,6 @@ const NotificationBell = () => {
           id: notification.id.toString(),
           message: `OS ${serviceOrder.numeroos} do patrimônio ${serviceOrder.patrimonio} está há ${days} dias em ADE`,
           timestamp: new Date(notification.created_at || new Date()),
-          isRead: notification.is_read,
           notificationId: notification.id
         };
       });
@@ -102,31 +98,22 @@ const NotificationBell = () => {
           </Badge>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
-        <div className="px-4 py-2 font-medium border-b">
-          Notificações
-        </div>
-        <ScrollArea className="h-[300px]">
+      <PopoverContent className="w-96 p-0" align="end">
+        <NotificationHeader />
+        <ScrollArea className="h-[400px]">
           {notifications.length > 0 ? (
             <div className="divide-y">
               {notifications.map((notification) => (
-                <Button
+                <NotificationItem
                   key={notification.id}
-                  variant="ghost"
-                  className="w-full p-4 flex flex-col items-start space-y-1 hover:bg-muted/50"
+                  message={notification.message}
+                  timestamp={notification.timestamp}
                   onClick={() => notification.notificationId && handleNotificationClick(notification.notificationId)}
-                >
-                  <p className="text-sm text-foreground/90">{notification.message}</p>
-                  <p className="text-xs text-foreground/60">
-                    {new Date(notification.timestamp).toLocaleString('pt-BR')}
-                  </p>
-                </Button>
+                />
               ))}
             </div>
           ) : (
-            <div className="p-4 text-center text-sm text-foreground/60">
-              Nenhuma notificação
-            </div>
+            <EmptyNotifications />
           )}
         </ScrollArea>
       </PopoverContent>
