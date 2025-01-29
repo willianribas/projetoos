@@ -17,7 +17,7 @@ import { useState } from "react";
 import ServiceOrderPagination from "@/components/pagination/ServiceOrderPagination";
 import { filterServiceOrders, getStatusColor } from "@/components/filters/ServiceOrderFilters";
 import { Clock, History } from "lucide-react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import Sidebar from "@/components/Sidebar";
@@ -169,7 +169,8 @@ const DetailedServiceOrder = () => {
 
             <Dialog open={selectedOrderId !== null} onOpenChange={() => setSelectedOrderId(null)}>
               <DialogContent className="max-w-3xl">
-                <ServiceOrderHistory />
+                <DialogTitle>Histórico da Ordem de Serviço</DialogTitle>
+                {selectedOrderId && <ServiceOrderHistory serviceOrderId={selectedOrderId} />}
               </DialogContent>
             </Dialog>
           </div>

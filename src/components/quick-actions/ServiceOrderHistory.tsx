@@ -18,13 +18,18 @@ interface HistoryEntry {
   action: string;
 }
 
-export const ServiceOrderHistory = () => {
+interface ServiceOrderHistoryProps {
+  serviceOrderId: number;
+}
+
+export const ServiceOrderHistory = ({ serviceOrderId }: ServiceOrderHistoryProps) => {
   const { data: history = [], isLoading } = useQuery({
-    queryKey: ["service_order_history"],
+    queryKey: ["service_order_history", serviceOrderId],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("service_order_history")
         .select("*")
+        .eq('service_order_id', serviceOrderId)
         .order("changed_at", { ascending: false });
 
       if (error) throw error;
@@ -54,7 +59,7 @@ export const ServiceOrderHistory = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2 text-lg">
           <History className="h-5 w-5 text-gray-400" />
-          Histórico de Alterações
+          Histórico de Alterações - OS #{history[0]?.numeroos}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -67,7 +72,11 @@ export const ServiceOrderHistory = () => {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-2">
                   {getActionIcon(entry.action)}
-                  <span className="font-medium">OS #{entry.numeroos}</span>
+                  <span className="font-medium">
+                    {entry.action === "CREATE" ? "Criação" : 
+                     entry.action === "UPDATE" ? "Atualização" : 
+                     "Exclusão"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Clock className="h-4 w-4" />
