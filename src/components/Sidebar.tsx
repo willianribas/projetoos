@@ -43,7 +43,9 @@ const Sidebar = () => {
       <div className="p-4 flex items-center gap-3">
         <Menu className="h-6 w-6 text-foreground/60" />
         {isOpen && (
-          <span className="text-foreground font-semibold text-lg">Daily.Flow</span>
+          <span className="text-foreground font-semibold text-lg animate-fade-in transition-all duration-300">
+            Daily.Flow
+          </span>
         )}
       </div>
       <nav className="flex-1 pt-4">
