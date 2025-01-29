@@ -15,6 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import { ServiceOrder } from "@/types";
 
 interface EditServiceOrderDialogProps {
@@ -97,6 +99,32 @@ const EditServiceOrderDialog = ({
                 ))}
               </SelectContent>
             </Select>
+          </div>
+          <div className="space-y-2">
+            <Label>Prioridade</Label>
+            <RadioGroup
+              value={editedOrder.priority || "normal"}
+              onValueChange={(value) =>
+                setEditedOrder({
+                  ...editedOrder,
+                  priority: value as "normal" | "critical",
+                })
+              }
+              className="flex gap-4"
+            >
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="normal" id="normal" />
+                <Label htmlFor="normal" className="text-green-500">
+                  Normal
+                </Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <RadioGroupItem value="critical" id="critical" />
+                <Label htmlFor="critical" className="text-red-500">
+                  Crítico
+                </Label>
+              </div>
+            </RadioGroup>
           </div>
           <div className="space-y-2">
             <label>Observação</label>
