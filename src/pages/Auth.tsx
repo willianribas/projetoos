@@ -12,7 +12,6 @@ const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -21,25 +20,12 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      if (isLogin) {
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        });
-        if (error) throw error;
-        navigate("/");
-      } else {
-        const { error } = await supabase.auth.signUp({
-          email,
-          password,
-        });
-        if (error) throw error;
-        toast({
-          title: "Conta criada com sucesso!",
-          description: "Verifique seu email para confirmar o cadastro.",
-        });
-        setIsLogin(true);
-      }
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) throw error;
+      navigate("/");
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -69,12 +55,10 @@ const Auth = () => {
         <Card className="border border-border/50 shadow-lg animate-scale-in">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">
-              {isLogin ? "Bem-vindo de volta!" : "Criar nova conta"}
+              Bem-vindo de volta!
             </CardTitle>
             <CardDescription className="text-center">
-              {isLogin
-                ? "Entre com suas credenciais para acessar"
-                : "Preencha os dados abaixo para se cadastrar"}
+              Entre com suas credenciais para acessar
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleAuth}>
@@ -110,27 +94,13 @@ const Auth = () => {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex flex-col space-y-4">
+            <CardFooter>
               <Button
                 type="submit"
                 className="w-full bg-blue-500 hover:bg-blue-600"
                 disabled={loading}
               >
-                {loading
-                  ? "Processando..."
-                  : isLogin
-                  ? "Entrar"
-                  : "Criar conta"}
-              </Button>
-              <Button
-                type="button"
-                variant="ghost"
-                className="w-full"
-                onClick={() => setIsLogin(!isLogin)}
-              >
-                {isLogin
-                  ? "Não tem uma conta? Cadastre-se"
-                  : "Já tem uma conta? Entre"}
+                {loading ? "Processando..." : "Entrar"}
               </Button>
             </CardFooter>
           </form>
