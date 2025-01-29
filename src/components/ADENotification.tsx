@@ -48,12 +48,7 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
 
           // Show toast notification
           toast({
-            title: (
-              <div className="flex items-center gap-2">
-                <BellRing className="h-4 w-4 text-blue-400" />
-                <span>Ordem de Serviço em ADE</span>
-              </div>
-            ),
+            title: "Ordem de Serviço em ADE",
             description: `A OS ${order.numeroos} do patrimônio ${order.patrimonio} (${order.equipamento}) está há ${days} dias em ADE.`,
             duration: 5000,
           });
