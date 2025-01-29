@@ -1,14 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "@/hooks/use-toast";
 import { ServiceOrder } from "@/types";
+import { BellRing } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
 
 interface ADENotificationProps {
   serviceOrders: ServiceOrder[];
 }
 
 const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
-  const { toast } = useToast();
+  const [notifiedOrders, setNotifiedOrders] = useState<Set<number>>(new Set());
 
   const calculateDays = (createdAt: string) => {
     return Math.floor(
@@ -20,19 +21,18 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
     const checkADEOrders = async () => {
       const adeOrders = serviceOrders.filter(order => {
         const days = calculateDays(order.created_at || "");
-        return order.status === "ADE" && days >= 8;
+        return order.status === "ADE" && days >= 8 && !notifiedOrders.has(order.id);
       });
 
       for (const order of adeOrders) {
         const days = calculateDays(order.created_at || "");
         
-        // Check if notification already exists
+        // Check if notification already exists and is not read
         const { data: existingNotification } = await supabase
           .from('notification_states')
           .select('*')
           .eq('service_order_id', order.id)
           .eq('notification_type', 'ADE_8_DAYS')
-          .eq('is_read', false)
           .single();
 
         if (!existingNotification) {
@@ -45,6 +45,27 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
               notification_type: 'ADE_8_DAYS',
               is_read: false
             });
+
+          // Show toast notification
+          toast({
+            title: (
+              <div className="flex items-center gap-2">
+                <BellRing className="h-4 w-4 text-blue-400" />
+                <span>Ordem de Serviço em ADE</span>
+              </div>
+            ),
+            description: (
+              <div className="mt-1 text-sm">
+                <p>
+                  A OS {order.numeroos} do patrimônio {order.patrimonio} ({order.equipamento}) 
+                  está há {days} dias em ADE.
+                </p>
+              </div>
+            ),
+            duration: 5000,
+          });
+
+          setNotifiedOrders(prev => new Set([...prev, order.id]));
         }
       }
     };

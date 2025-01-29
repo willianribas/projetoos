@@ -8,65 +8,47 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
-import { NotificationItem } from "./notifications/NotificationItem";
-import { EmptyNotifications } from "./notifications/EmptyNotifications";
-import { NotificationHeader } from "./notifications/NotificationHeader";
+import { useToast } from "@/hooks/use-toast";
+import { Database } from "@/integrations/supabase/types";
+
+type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
 
 interface Notification {
   id: string;
   message: string;
   timestamp: Date;
-  notificationId?: number;
 }
 
 const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
-
-  const fetchNotifications = async () => {
-    const { data: notificationStates } = await supabase
-      .from('notification_states')
-      .select(`
-        *,
-        service_orders (*)
-      `)
-      .eq('is_read', false)
-      .order('created_at', { ascending: false });
-
-    if (notificationStates) {
-      const formattedNotifications = notificationStates.map((notification: any) => {
-        const serviceOrder = notification.service_orders;
-        const days = Math.floor(
-          (new Date().getTime() - new Date(serviceOrder.created_at).getTime()) / (1000 * 60 * 60 * 24)
-        );
-        
-        return {
-          id: notification.id.toString(),
-          message: `OS ${serviceOrder.numeroos} do patrimônio ${serviceOrder.patrimonio} está há ${days} dias em ADE`,
-          timestamp: new Date(notification.created_at || new Date()),
-          notificationId: notification.id
-        };
-      });
-
-      setNotifications(formattedNotifications);
-      setUnreadCount(formattedNotifications.length);
-    }
-  };
+  const { toast } = useToast();
 
   useEffect(() => {
-    fetchNotifications();
-
     const channel = supabase
       .channel('service-orders-changes')
       .on(
         'postgres_changes',
         {
-          event: '*',
+          event: 'UPDATE',
           schema: 'public',
-          table: 'notification_states',
+          table: 'service_orders',
         },
-        () => {
-          fetchNotifications();
+        (payload) => {
+          const oldStatus = payload.old?.status;
+          const newStatus = payload.new?.status;
+          const orderNumber = payload.new?.numeroos;
+          
+          if (oldStatus && newStatus && orderNumber && oldStatus !== newStatus) {
+            const notification = {
+              id: new Date().getTime().toString(),
+              message: `OS ${orderNumber} mudou de ${oldStatus} para ${newStatus}`,
+              timestamp: new Date(),
+            };
+            
+            setNotifications(prev => [notification, ...prev].slice(0, 10));
+            setUnreadCount(prev => prev + 1);
+          }
         }
       )
       .subscribe();
@@ -76,17 +58,14 @@ const NotificationBell = () => {
     };
   }, []);
 
-  const handleNotificationClick = async (notificationId: number) => {
-    await supabase
-      .from('notification_states')
-      .update({ is_read: true })
-      .eq('id', notificationId);
-
-    fetchNotifications();
+  const handleOpenChange = (open: boolean) => {
+    if (open) {
+      setUnreadCount(0);
+    }
   };
 
   return (
-    <Popover>
+    <Popover onOpenChange={handleOpenChange}>
       <PopoverTrigger className="relative">
         <Bell className="h-6 w-6 text-foreground/80 hover:text-foreground transition-colors" />
         {unreadCount > 0 && (
@@ -98,22 +77,26 @@ const NotificationBell = () => {
           </Badge>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-96 p-0" align="end">
-        <NotificationHeader />
-        <ScrollArea className="h-[400px]">
+      <PopoverContent className="w-80 p-0" align="end">
+        <div className="px-4 py-2 font-medium border-b">
+          Notificações
+        </div>
+        <ScrollArea className="h-[300px]">
           {notifications.length > 0 ? (
             <div className="divide-y">
               {notifications.map((notification) => (
-                <NotificationItem
-                  key={notification.id}
-                  message={notification.message}
-                  timestamp={notification.timestamp}
-                  onClick={() => notification.notificationId && handleNotificationClick(notification.notificationId)}
-                />
+                <div key={notification.id} className="p-4">
+                  <p className="text-sm text-foreground/90">{notification.message}</p>
+                  <p className="text-xs text-foreground/60 mt-1">
+                    {new Date(notification.timestamp).toLocaleString('pt-BR')}
+                  </p>
+                </div>
               ))}
             </div>
           ) : (
-            <EmptyNotifications />
+            <div className="p-4 text-center text-sm text-foreground/60">
+              Nenhuma notificação
+            </div>
           )}
         </ScrollArea>
       </PopoverContent>

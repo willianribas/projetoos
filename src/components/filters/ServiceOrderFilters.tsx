@@ -1,49 +1,78 @@
-export const getStatusColor = (status: string) => {
-  switch (status) {
-    case "ADE":
-      return "text-blue-900 border-blue-900";
-    case "AVT":
-      return "text-[#F97316] border-[#F97316]";
-    case "EXT":
-      return "text-[#9b87f5] border-[#9b87f5]";
-    case "A.M":
-      return "text-[#ea384c] border-[#ea384c]";
-    case "INST":
-      return "text-pink-500 border-pink-500";
-    case "M.S":
-      return "text-[#33C3F0] border-[#33C3F0]";
-    case "OSP":
-      return "text-[#22c55e] border-[#22c55e]";
-    case "E.E":
-      return "text-[#F97316] border-[#F97316]";
-    default:
-      return "text-gray-500 border-gray-500";
-  }
-};
+import { ServiceOrder } from "@/types";
+import { statusOptions } from "@/components/ServiceOrderContent";
+
+interface SearchCriteria {
+  field: string;
+  value: string;
+}
+
+interface ServiceOrderFiltersProps {
+  serviceOrders: ServiceOrder[];
+  searchQuery: string;
+  searchField: string;
+  selectedStatus: string | null;
+  searchCriteria: SearchCriteria[];
+}
 
 export const filterServiceOrders = ({
   serviceOrders,
   searchQuery,
   searchField,
   selectedStatus,
-  searchCriteria,
-}: {
-  serviceOrders: any[];
-  searchQuery: string;
-  searchField: string;
-  selectedStatus: string | null;
-  searchCriteria: { field: string; value: string }[];
-}) => {
+  searchCriteria = [],
+}: ServiceOrderFiltersProps) => {
   return serviceOrders.filter((order) => {
-    const matchesQuery =
-      order[searchField].toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesStatus = selectedStatus
-      ? order.status === selectedStatus
-      : true;
-    const matchesCriteria = searchCriteria.every((criteria) =>
-      order[criteria.field].toLowerCase().includes(criteria.value.toLowerCase())
-    );
+    // Primeiro aplica os critérios de busca avançada
+    const matchesCriteria = searchCriteria.length === 0 || searchCriteria.every(criteria => {
+      const searchLower = criteria.value.toLowerCase().trim();
+      
+      // Função auxiliar para verificar se um campo contém o termo de busca
+      const fieldContainsSearch = (field: string | null) => 
+        (field?.toLowerCase() || "").includes(searchLower);
 
-    return matchesQuery && matchesStatus && matchesCriteria;
+      return criteria.field === "all"
+        ? (
+            fieldContainsSearch(order.numeroos) ||
+            fieldContainsSearch(order.patrimonio) ||
+            fieldContainsSearch(order.equipamento) ||
+            fieldContainsSearch(order.status) ||
+            fieldContainsSearch(order.observacao)
+          )
+        : fieldContainsSearch(order[criteria.field as keyof ServiceOrder] as string | null);
+    });
+
+    // Se não passar nos critérios avançados, já retorna false
+    if (!matchesCriteria) return false;
+
+    // Depois aplica a busca simples se houver
+    const searchLower = searchQuery.toLowerCase().trim();
+    
+    if (!searchLower) {
+      return selectedStatus ? order.status === selectedStatus : true;
+    }
+
+    const fieldContainsSearch = (field: string | null) => 
+      (field?.toLowerCase() || "").includes(searchLower);
+
+    const matchesSearch = searchField === "all" 
+      ? (
+          fieldContainsSearch(order.numeroos) ||
+          fieldContainsSearch(order.patrimonio) ||
+          fieldContainsSearch(order.equipamento) ||
+          fieldContainsSearch(order.status) ||
+          fieldContainsSearch(order.observacao)
+        )
+      : fieldContainsSearch(order[searchField as keyof ServiceOrder] as string | null);
+    
+    if (selectedStatus) {
+      return matchesSearch && order.status === selectedStatus;
+    }
+    
+    return matchesSearch;
   });
+};
+
+export const getStatusColor = (status: string) => {
+  const statusOption = statusOptions.find(option => option.value === status);
+  return statusOption?.color || "text-muted-foreground";
 };
