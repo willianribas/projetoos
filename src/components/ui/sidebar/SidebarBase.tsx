@@ -5,9 +5,11 @@ import { useSidebar } from "../sidebar-context";
 interface SidebarBaseProps {
   children: React.ReactNode;
   className?: string;
+  onMouseEnter?: () => void;
+  onMouseLeave?: () => void;
 }
 
-export function SidebarBase({ children, className }: SidebarBaseProps) {
+export function SidebarBase({ children, className, onMouseEnter, onMouseLeave }: SidebarBaseProps) {
   const { isOpen } = useSidebar();
 
   return (
@@ -18,6 +20,8 @@ export function SidebarBase({ children, className }: SidebarBaseProps) {
           isOpen ? "w-64" : "w-16",
           className
         )}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
       >
         <div className="h-full flex flex-col">
           {children}
