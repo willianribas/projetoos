@@ -44,15 +44,38 @@ serve(async (req) => {
     switch (action) {
       case 'create':
         if (!email || !password) {
-          throw new Error('Email e senha são obrigatórios')
+          return new Response(
+            JSON.stringify({ error: 'Email e senha são obrigatórios' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
         }
+
+        // Verificar se o usuário já existe
+        const { data: existingUser } = await supabase
+          .from('user_roles')
+          .select('user_id')
+          .eq('user_id', (await supabase.auth.admin.listUsers()).data.users.find(u => u.email === email)?.id)
+          .single()
+
+        if (existingUser) {
+          return new Response(
+            JSON.stringify({ error: 'Um usuário com este email já está registrado' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
+
         const { data: userData, error: createError } = await supabase.auth.admin.createUser({
           email,
           password,
           email_confirm: true,
         })
         
-        if (createError) throw createError
+        if (createError) {
+          return new Response(
+            JSON.stringify({ error: createError.message }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
         
         if (userData.user) {
           const { error: roleError } = await supabase.from('user_roles').insert({
@@ -60,7 +83,14 @@ serve(async (req) => {
             role: 'user'
           })
           
-          if (roleError) throw roleError
+          if (roleError) {
+            // Se houver erro ao criar a role, deletar o usuário criado
+            await supabase.auth.admin.deleteUser(userData.user.id)
+            return new Response(
+              JSON.stringify({ error: 'Erro ao criar permissões do usuário' }),
+              { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+            )
+          }
         }
         
         result = { user: userData.user }
@@ -68,33 +98,57 @@ serve(async (req) => {
 
       case 'update-password':
         if (!userId || !newPassword) {
-          throw new Error('ID do usuário e nova senha são obrigatórios')
+          return new Response(
+            JSON.stringify({ error: 'ID do usuário e nova senha são obrigatórios' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
         }
         const { data: updateData, error: updateError } = await supabase.auth.admin.updateUserById(
           userId,
           { password: newPassword }
         )
-        if (updateError) throw updateError
+        if (updateError) {
+          return new Response(
+            JSON.stringify({ error: updateError.message }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
         result = { user: updateData.user }
         break
 
       case 'delete':
         if (!userId) {
-          throw new Error('ID do usuário é obrigatório')
+          return new Response(
+            JSON.stringify({ error: 'ID do usuário é obrigatório' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
         }
         const { data: deleteData, error: deleteError } = await supabase.auth.admin.deleteUser(userId)
-        if (deleteError) throw deleteError
+        if (deleteError) {
+          return new Response(
+            JSON.stringify({ error: deleteError.message }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
         result = { success: true }
         break
 
       case 'list':
         const { data: { users }, error: listError } = await supabase.auth.admin.listUsers()
-        if (listError) throw listError
+        if (listError) {
+          return new Response(
+            JSON.stringify({ error: listError.message }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
         result = { users }
         break
 
       default:
-        throw new Error('Ação inválida')
+        return new Response(
+          JSON.stringify({ error: 'Ação inválida' }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+        )
     }
 
     return new Response(
