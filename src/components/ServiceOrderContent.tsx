@@ -17,7 +17,9 @@ import {
   Wrench, 
   Package, 
   CheckCircle2, 
-  Hammer 
+  Hammer,
+  Maximize,
+  Minimize,
 } from "lucide-react";
 
 export const statusOptions = [
@@ -132,6 +134,22 @@ export default function ServiceOrderContent() {
 
       {(showTable || searchQuery || searchCriteria.length > 0) && (
         <div className="space-y-4 overflow-x-auto pb-4">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-semibold">Ordens de Serviço Registradas</h2>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowTable(!showTable)}
+              className="animate-fade-in"
+            >
+              {showTable ? (
+                <Minimize className="h-4 w-4" />
+              ) : (
+                <Maximize className="h-4 w-4" />
+              )}
+            </Button>
+          </div>
+          
           <ServiceOrderTable 
             serviceOrders={paginatedOrders}
             getStatusColor={getStatusColor}
