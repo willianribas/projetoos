@@ -1,11 +1,11 @@
 import React from "react";
 import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import DatabaseBackup from "@/components/quick-actions/settings/DatabaseBackup";
-import ExportPDF from "@/components/quick-actions/settings/ExportPDF";
-import HistoryToggle from "@/components/quick-actions/settings/HistoryToggle";
-import ThemeToggle from "@/components/quick-actions/settings/ThemeToggle";
-import UserManagementContainer from "@/components/quick-actions/settings/UserManagementContainer";
+import { DatabaseBackup } from "@/components/quick-actions/settings/DatabaseBackup";
+import { ExportPDF } from "@/components/quick-actions/settings/ExportPDF";
+import { HistoryToggle } from "@/components/quick-actions/settings/HistoryToggle";
+import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
+import { UserManagementContainer } from "@/components/quick-actions/settings/UserManagementContainer";
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 
