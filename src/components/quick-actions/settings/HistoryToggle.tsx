@@ -6,9 +6,14 @@ import { ServiceOrderHistory } from "../ServiceOrderHistory";
 interface HistoryToggleProps {
   showHistory: boolean;
   setShowHistory: (show: boolean) => void;
+  serviceOrderId: number;
 }
 
-export const HistoryToggle = ({ showHistory, setShowHistory }: HistoryToggleProps) => {
+export const HistoryToggle = ({ 
+  showHistory, 
+  setShowHistory,
+  serviceOrderId 
+}: HistoryToggleProps) => {
   return (
     <>
       <div className="flex items-center justify-between">
@@ -21,7 +26,7 @@ export const HistoryToggle = ({ showHistory, setShowHistory }: HistoryToggleProp
           {showHistory ? "Ocultar Histórico" : "Ver Histórico"}
         </Button>
       </div>
-      {showHistory && <ServiceOrderHistory />}
+      {showHistory && <ServiceOrderHistory serviceOrderId={serviceOrderId} />}
     </>
   );
 };
