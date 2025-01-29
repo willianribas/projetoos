@@ -12,7 +12,6 @@ serve(async (req) => {
   }
 
   try {
-    // Create Supabase client with service role key for admin operations
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
@@ -55,7 +54,6 @@ serve(async (req) => {
           )
         }
 
-        // Check if user already exists
         const { data: existingUsers } = await supabaseAdmin.auth.admin.listUsers()
         const userExists = existingUsers.users.some(u => u.email === email)
         
@@ -90,7 +88,6 @@ serve(async (req) => {
           
           if (roleError) {
             console.error('Error creating user role:', roleError)
-            // If role creation fails, delete the created user
             await supabaseAdmin.auth.admin.deleteUser(userData.user.id)
             return new Response(
               JSON.stringify({ error: 'Erro ao criar permissões do usuário' }),
@@ -132,7 +129,18 @@ serve(async (req) => {
         }
 
         try {
-          // First, delete user role using service role client
+          // First, delete all service orders associated with the user
+          const { error: deleteServiceOrdersError } = await supabaseAdmin
+            .from('service_orders')
+            .delete()
+            .eq('user_id', userId)
+
+          if (deleteServiceOrdersError) {
+            console.error('Error deleting service orders:', deleteServiceOrdersError)
+            throw new Error('Erro ao deletar ordens de serviço do usuário')
+          }
+
+          // Then, delete user role
           const { error: deleteRoleError } = await supabaseAdmin
             .from('user_roles')
             .delete()
@@ -143,12 +151,12 @@ serve(async (req) => {
             throw new Error('Erro ao deletar permissões do usuário')
           }
 
-          // Then delete the user
-          const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId)
+          // Finally, delete the user from auth.users
+          const { error: deleteUserError } = await supabaseAdmin.auth.admin.deleteUser(userId)
           
-          if (deleteError) {
-            console.error('Error deleting user:', deleteError)
-            throw new Error(deleteError.message)
+          if (deleteUserError) {
+            console.error('Error deleting user:', deleteUserError)
+            throw new Error(deleteUserError.message)
           }
 
           result = { success: true }
