@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { User } from "lucide-react";
+import { User, Loader2 } from "lucide-react";
 
 interface Profile {
   id: string;
@@ -30,6 +30,7 @@ export const UserProfile = () => {
   const [fullName, setFullName] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -44,24 +45,54 @@ export const UserProfile = () => {
         .from("profiles")
         .select("*")
         .eq("id", user?.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      setProfile(data);
-      setFullName(data.full_name || "");
+      if (data) {
+        setProfile(data);
+        setFullName(data.full_name || "");
+      }
     } catch (error) {
       console.error("Error fetching profile:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar perfil",
+        description: "Não foi possível carregar suas informações.",
+      });
     }
   };
 
-  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          variant: "destructive",
+          title: "Arquivo muito grande",
+          description: "O tamanho máximo permitido é 5MB.",
+        });
+        return;
+      }
+      
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        toast({
+          variant: "destructive",
+          title: "Tipo de arquivo inválido",
+          description: "Por favor, selecione uma imagem.",
+        });
+        return;
+      }
+      
       setAvatarFile(file);
     }
   };
 
   const updateProfile = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
     try {
       const updates: { full_name: string; avatar_url?: string } = {
         full_name: fullName,
@@ -98,13 +129,14 @@ export const UserProfile = () => {
         if (passwordError) throw passwordError;
       }
 
+      await fetchProfile();
+
       toast({
         title: "Perfil atualizado",
         description: "Suas informações foram atualizadas com sucesso.",
       });
 
       setIsEditOpen(false);
-      fetchProfile();
       setNewPassword("");
       setAvatarFile(null);
     } catch (error: any) {
@@ -113,6 +145,8 @@ export const UserProfile = () => {
         title: "Erro ao atualizar perfil",
         description: error.message,
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -152,7 +186,9 @@ export const UserProfile = () => {
               <Label>Foto de Perfil</Label>
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
-                  <AvatarImage src={profile?.avatar_url || ""} />
+                  <AvatarImage 
+                    src={avatarFile ? URL.createObjectURL(avatarFile) : profile?.avatar_url || ""} 
+                  />
                   <AvatarFallback>
                     <User className="h-8 w-8" />
                   </AvatarFallback>
@@ -190,8 +226,19 @@ export const UserProfile = () => {
                 placeholder="Digite para alterar a senha"
               />
             </div>
-            <Button onClick={updateProfile} className="w-full">
-              Salvar Alterações
+            <Button 
+              onClick={updateProfile} 
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                "Salvar Alterações"
+              )}
             </Button>
           </div>
         </DialogContent>
