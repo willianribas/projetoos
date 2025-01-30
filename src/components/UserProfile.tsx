@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -25,12 +25,6 @@ export const UserProfile = () => {
   const [newPassword, setNewPassword] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
-
-  useEffect(() => {
-    if (profile) {
-      setFullName(profile.full_name || "");
-    }
-  }, [profile]);
 
   const handleDialogClose = () => {
     setIsEditOpen(false);
@@ -64,7 +58,6 @@ export const UserProfile = () => {
         if (passwordError) throw passwordError;
       }
 
-      // Fetch the updated profile immediately after successful update
       await fetchProfile();
 
       toast({
@@ -119,7 +112,7 @@ export const UserProfile = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Dialog open={isEditOpen} onOpenChange={handleDialogClose}>
+      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Perfil</DialogTitle>

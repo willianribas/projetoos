@@ -17,9 +17,10 @@ export const useProfile = () => {
 
   const fetchProfile = async () => {
     try {
+      setIsLoading(true);
+      
       if (!user?.id) {
         setProfile(null);
-        setIsLoading(false);
         return;
       }
 
@@ -27,7 +28,7 @@ export const useProfile = () => {
         .from("profiles")
         .select("id, full_name, avatar_url")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
       setProfile(data);
