@@ -69,9 +69,9 @@ const Sidebar = () => {
           variant="ghost" 
           size="icon"
           onClick={() => setIsOpen(!isOpen)}
-          className="h-7 w-7 p-0"
+          className="h-5 w-5 p-0"
         >
-          <Menu className="h-7 w-7 text-sidebar-foreground/60" />
+          <Menu className="h-5 w-5 text-sidebar-foreground/60" />
         </Button>
         <span 
           className={cn(
