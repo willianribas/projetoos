@@ -12,28 +12,31 @@ export type Database = {
       equipments: {
         Row: {
           created_at: string
-          descricao: string | null
           id: number
-          patrimonio: string
-          status: string | null
+          identificador: string | null
+          marca: string | null
+          modelo: string | null
+          numero_serie: string | null
           tipo_equipamento: string
           user_id: string | null
         }
         Insert: {
           created_at?: string
-          descricao?: string | null
           id?: number
-          patrimonio: string
-          status?: string | null
+          identificador?: string | null
+          marca?: string | null
+          modelo?: string | null
+          numero_serie?: string | null
           tipo_equipamento: string
           user_id?: string | null
         }
         Update: {
           created_at?: string
-          descricao?: string | null
           id?: number
-          patrimonio?: string
-          status?: string | null
+          identificador?: string | null
+          marca?: string | null
+          modelo?: string | null
+          numero_serie?: string | null
           tipo_equipamento?: string
           user_id?: string | null
         }
