@@ -41,14 +41,21 @@ const Auth = () => {
           email,
           password,
         });
-        if (error) throw error;
+        if (error) {
+          toast({
+            variant: "destructive",
+            title: "Erro na autenticação",
+            description: "Entre em contato com o administrador do sistema",
+          });
+          return;
+        }
         navigate("/");
       }
     } catch (error: any) {
       toast({
         variant: "destructive",
         title: "Erro na autenticação",
-        description: error.message,
+        description: "Entre em contato com o administrador do sistema",
       });
     } finally {
       setLoading(false);
