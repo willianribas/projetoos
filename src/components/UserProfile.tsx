@@ -30,6 +30,7 @@ export const UserProfile = () => {
   const [fullName, setFullName] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -84,6 +85,8 @@ export const UserProfile = () => {
       }
       
       setAvatarFile(file);
+      const previewUrl = URL.createObjectURL(file);
+      setAvatarPreviewUrl(previewUrl);
     }
   };
 
@@ -134,6 +137,12 @@ export const UserProfile = () => {
         avatar_url: avatarUrl,
       };
       setProfile(updatedProfile);
+
+      // Cleanup
+      if (avatarPreviewUrl) {
+        URL.revokeObjectURL(avatarPreviewUrl);
+      }
+      setAvatarPreviewUrl(null);
 
       toast({
         title: "Perfil atualizado",
@@ -192,7 +201,7 @@ export const UserProfile = () => {
               <div className="flex items-center gap-4">
                 <Avatar className="h-16 w-16">
                   <AvatarImage 
-                    src={avatarFile ? URL.createObjectURL(avatarFile) : profile?.avatar_url || ""} 
+                    src={avatarPreviewUrl || profile?.avatar_url || ""} 
                   />
                   <AvatarFallback>
                     <User className="h-8 w-8" />
