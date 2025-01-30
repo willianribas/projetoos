@@ -31,9 +31,9 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
       <CardContent>
         <div className="flex items-center justify-between">
           <p className="text-lg text-foreground/90">
-            Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> ordens de serviço em ADE
+            Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> {adeOrders.length === 1 ? 'ordem de serviço' : 'ordens de serviço'} em ADE
             {criticalAdeOrders.length > 0 && (
-              <span>, {criticalAdeOrders.length} delas são equipamentos críticos</span>
+              <span>, {criticalAdeOrders.length} {criticalAdeOrders.length === 1 ? 'dela é equipamento crítico' : 'delas são equipamentos críticos'}</span>
             )}
           </p>
           <Button 
