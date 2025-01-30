@@ -10,10 +10,18 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface Equipment {
   numero_serie?: string;
@@ -24,7 +32,10 @@ interface Equipment {
 }
 
 interface ColumnMapping {
-  [key: string]: boolean;
+  [key: string]: {
+    selected: boolean;
+    mappedTo: keyof Equipment | '';
+  };
 }
 
 export const EquipmentUpload = () => {
@@ -33,13 +44,16 @@ export const EquipmentUpload = () => {
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
-  const [columnMapping, setColumnMapping] = useState<ColumnMapping>({
-    numero_serie: true,
-    identificador: true,
-    tipo_equipamento: true,
-    marca: true,
-    modelo: true,
-  });
+  const [startRow, setStartRow] = useState<number>(6);
+  const [columnMapping, setColumnMapping] = useState<ColumnMapping>({});
+
+  const equipmentFields: { value: keyof Equipment; label: string }[] = [
+    { value: 'numero_serie', label: 'Número de Série' },
+    { value: 'identificador', label: 'Identificador' },
+    { value: 'tipo_equipamento', label: 'Tipo de Equipamento' },
+    { value: 'marca', label: 'Marca' },
+    { value: 'modelo', label: 'Modelo' },
+  ];
 
   const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -49,17 +63,25 @@ export const EquipmentUpload = () => {
       const data = await file.arrayBuffer();
       const workbook = read(data);
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+      
+      // Adjust the range to start from the specified row
+      const range = utils.decode_range(worksheet['!ref'] || 'A1');
+      range.s.r = startRow - 1; // Adjust for 0-based index
+      worksheet['!ref'] = utils.encode_range(range);
+      
       const jsonData = utils.sheet_to_json(worksheet);
       
-      // Get available columns from the first row
       if (jsonData.length > 0) {
         const columns = Object.keys(jsonData[0]);
         setAvailableColumns(columns);
         
-        // Initialize column mapping based on available columns
+        // Initialize column mapping
         const initialMapping: ColumnMapping = {};
         columns.forEach(col => {
-          initialMapping[col] = true;
+          initialMapping[col] = {
+            selected: false,
+            mappedTo: '',
+          };
         });
         setColumnMapping(initialMapping);
       }
@@ -76,51 +98,35 @@ export const EquipmentUpload = () => {
     }
   };
 
-  const filterDataByKeyword = (data: any[]) => {
-    if (!searchKeyword) return data;
-    
-    return data.filter(row => 
-      Object.entries(row).some(([key, value]) => 
-        columnMapping[key] && 
-        String(value).toLowerCase().includes(searchKeyword.toLowerCase())
-      )
-    );
-  };
-
   const handleImport = async () => {
     try {
-      const filteredData = filterDataByKeyword(previewData);
-      
-      // Map and validate the filtered data
-      const validEquipments = filteredData
-        .map(row => {
-          const equipment: Partial<Equipment> = {};
-          
-          Object.entries(columnMapping).forEach(([field, isSelected]) => {
-            if (isSelected && row[field]) {
-              equipment[field as keyof Equipment] = String(row[field]);
-            }
-          });
-
-          return equipment;
-        })
-        .filter((equipment): equipment is Equipment => {
-          return typeof equipment.tipo_equipamento === 'string';
+      const mappedData = previewData.map(row => {
+        const equipment: Partial<Equipment> = {};
+        
+        Object.entries(columnMapping).forEach(([excelColumn, mapping]) => {
+          if (mapping.selected && mapping.mappedTo && row[excelColumn] !== undefined) {
+            equipment[mapping.mappedTo] = String(row[excelColumn]);
+          }
         });
 
-      if (validEquipments.length === 0) {
+        return equipment;
+      }).filter((equipment): equipment is Equipment => {
+        return typeof equipment.tipo_equipamento === 'string';
+      });
+
+      if (mappedData.length === 0) {
         throw new Error('Nenhum equipamento válido encontrado para importar');
       }
 
       const { error } = await supabase
         .from('equipments')
-        .insert(validEquipments);
+        .insert(mappedData);
 
       if (error) throw error;
 
       toast({
         title: "Sucesso!",
-        description: `${validEquipments.length} equipamentos importados com sucesso.`,
+        description: `${mappedData.length} equipamentos importados com sucesso.`,
       });
 
       setIsOpen(false);
@@ -156,7 +162,10 @@ export const EquipmentUpload = () => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Selecione as colunas e filtre os dados</DialogTitle>
+            <DialogTitle>Mapeamento de Colunas</DialogTitle>
+            <DialogDescription>
+              Selecione as colunas da planilha e mapeie para os campos correspondentes
+            </DialogDescription>
           </DialogHeader>
           
           <div className="grid gap-4 py-4">
@@ -168,21 +177,51 @@ export const EquipmentUpload = () => {
                 className="w-full"
               />
               
-              <div className="grid grid-cols-2 gap-4">
-                {availableColumns.map((field) => (
-                  <div key={field} className="flex items-center space-x-2">
-                    <Checkbox
-                      id={field}
-                      checked={columnMapping[field]}
-                      disabled={field === 'tipo_equipamento'}
-                      onCheckedChange={(checked) => 
-                        setColumnMapping(prev => ({...prev, [field]: checked === true}))
-                      }
-                    />
-                    <Label htmlFor={field}>
-                      {field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
-                      {field === 'tipo_equipamento' && ' (Obrigatório)'}
-                    </Label>
+              <div className="grid gap-4">
+                {availableColumns.map((column) => (
+                  <div key={column} className="flex items-center gap-4">
+                    <div className="flex items-center space-x-2">
+                      <Checkbox
+                        id={column}
+                        checked={columnMapping[column]?.selected}
+                        onCheckedChange={(checked) => 
+                          setColumnMapping(prev => ({
+                            ...prev,
+                            [column]: {
+                              ...prev[column],
+                              selected: checked === true,
+                            }
+                          }))
+                        }
+                      />
+                      <Label htmlFor={column}>{column}</Label>
+                    </div>
+                    
+                    {columnMapping[column]?.selected && (
+                      <Select
+                        value={columnMapping[column]?.mappedTo}
+                        onValueChange={(value) => 
+                          setColumnMapping(prev => ({
+                            ...prev,
+                            [column]: {
+                              ...prev[column],
+                              mappedTo: value as keyof Equipment,
+                            }
+                          }))
+                        }
+                      >
+                        <SelectTrigger className="w-[200px]">
+                          <SelectValue placeholder="Mapear para..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {equipmentFields.map(field => (
+                            <SelectItem key={field.value} value={field.value}>
+                              {field.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    )}
                   </div>
                 ))}
               </div>
@@ -190,27 +229,27 @@ export const EquipmentUpload = () => {
 
             {previewData.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">Preview dos dados filtrados:</h4>
+                <h4 className="text-sm font-medium mb-2">Preview dos dados:</h4>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr>
-                        {availableColumns.map(field => (
-                          columnMapping[field] && (
-                            <th key={field} className="text-left p-2 border">
-                              {field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
+                        {availableColumns.map(column => (
+                          columnMapping[column]?.selected && (
+                            <th key={column} className="text-left p-2 border">
+                              {column} → {columnMapping[column]?.mappedTo}
                             </th>
                           )
                         ))}
                       </tr>
                     </thead>
                     <tbody>
-                      {filterDataByKeyword(previewData).slice(0, 3).map((row, index) => (
+                      {previewData.slice(0, 3).map((row, index) => (
                         <tr key={index}>
-                          {availableColumns.map(field => (
-                            columnMapping[field] && (
-                              <td key={field} className="p-2 border">
-                                {row[field] || '-'}
+                          {availableColumns.map(column => (
+                            columnMapping[column]?.selected && (
+                              <td key={column} className="p-2 border">
+                                {row[column] || '-'}
                               </td>
                             )
                           ))}
