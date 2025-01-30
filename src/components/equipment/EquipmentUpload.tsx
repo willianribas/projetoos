@@ -21,6 +21,8 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  SelectScrollUpButton,
+  SelectScrollDownButton,
 } from "@/components/ui/select";
 
 interface Equipment {
@@ -214,11 +216,15 @@ export const EquipmentUpload = () => {
                           <SelectValue placeholder="Mapear para..." />
                         </SelectTrigger>
                         <SelectContent>
-                          {equipmentFields.map(field => (
-                            <SelectItem key={field.value} value={field.value}>
-                              {field.label}
-                            </SelectItem>
-                          ))}
+                          <SelectScrollUpButton />
+                          <div className="max-h-[200px] overflow-y-auto">
+                            {equipmentFields.map(field => (
+                              <SelectItem key={field.value} value={field.value}>
+                                {field.label}
+                              </SelectItem>
+                            ))}
+                          </div>
+                          <SelectScrollDownButton />
                         </SelectContent>
                       </Select>
                     )}
