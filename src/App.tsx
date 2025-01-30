@@ -26,7 +26,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ServiceOrderProvider>
-      {children}
+      <div className="animate-fade-in">
+        {children}
+      </div>
     </ServiceOrderProvider>
   );
 };
@@ -90,9 +92,11 @@ const App = () => (
         <BrowserRouter>
           <AuthProvider>
             <SidebarProvider>
-              <AppRoutes />
-              <Toaster />
-              <Sonner />
+              <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
+                <AppRoutes />
+                <Toaster />
+                <Sonner />
+              </div>
             </SidebarProvider>
           </AuthProvider>
         </BrowserRouter>
