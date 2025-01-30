@@ -20,7 +20,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   }
 
   return (
-    <Card className="mb-8 border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 animate-fade-in">
+    <Card className="mb-8 mt-4 border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2">
           <Bell className="h-5 w-5 text-blue-400 animate-pulse" />
