@@ -4,6 +4,7 @@ import { FileSpreadsheet } from "lucide-react";
 import { read, utils } from 'xlsx';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
+import { useAuth } from "@/components/AuthProvider";
 import {
   Dialog,
   DialogContent,
@@ -31,6 +32,7 @@ interface Equipment {
   tipo_equipamento: string;  // This is required
   marca?: string;
   modelo?: string;
+  user_id: string;
 }
 
 interface ColumnMapping {
@@ -42,6 +44,7 @@ interface ColumnMapping {
 
 export const EquipmentUpload = () => {
   const { toast } = useToast();
+  const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
@@ -101,9 +104,20 @@ export const EquipmentUpload = () => {
   };
 
   const handleImport = async () => {
+    if (!user) {
+      toast({
+        title: "Erro",
+        description: "Você precisa estar logado para importar equipamentos.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const mappedData = previewData.map(row => {
-        const equipment: Partial<Equipment> = {};
+        const equipment: Partial<Equipment> = {
+          user_id: user.id, // Add user_id to each equipment
+        };
         
         Object.entries(columnMapping).forEach(([excelColumn, mapping]) => {
           if (mapping.selected && mapping.mappedTo && row[excelColumn] !== undefined) {
