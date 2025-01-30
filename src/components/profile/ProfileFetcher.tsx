@@ -30,10 +30,29 @@ export const useProfile = () => {
         .from("profiles")
         .select("id, full_name, avatar_url, created_at, updated_at")
         .eq("id", user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
-      setProfile(data);
+
+      // Se não encontrou o perfil, vamos criar um
+      if (!data) {
+        const { data: newProfile, error: createError } = await supabase
+          .from("profiles")
+          .insert([
+            {
+              id: user.id,
+              full_name: user.email?.split('@')[0] || 'Usuário',
+              created_at: new Date().toISOString(),
+            },
+          ])
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        setProfile(newProfile);
+      } else {
+        setProfile(data);
+      }
     } catch (error: any) {
       console.error("Error fetching profile:", error);
       toast({
