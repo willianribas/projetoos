@@ -162,7 +162,7 @@ export const EquipmentUpload = () => {
       </div>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="max-w-2xl">
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
           <DialogHeader>
             <DialogTitle>Mapeamento de Colunas</DialogTitle>
             <DialogDescription>
@@ -170,8 +170,8 @@ export const EquipmentUpload = () => {
             </DialogDescription>
           </DialogHeader>
           
-          <div className="grid gap-4 py-4">
-            <div className="space-y-4">
+          <div className="flex-1 overflow-y-auto px-1">
+            <div className="space-y-4 py-4">
               <Input
                 placeholder="Filtrar por palavra-chave..."
                 value={searchKeyword}
@@ -272,7 +272,7 @@ export const EquipmentUpload = () => {
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="mt-4">
             <Button variant="outline" onClick={() => setIsOpen(false)}>
               Cancelar
             </Button>
