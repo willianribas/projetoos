@@ -37,32 +37,12 @@ export const EquipmentList = () => {
   const { toast } = useToast();
   const itemsPerPage = 20;
 
-  const { data: equipments, isLoading, refetch } = useQuery({
-    queryKey: ['equipments', searchTerm, filterField, currentPage],
+  const { data: allEquipments, isLoading, refetch } = useQuery({
+    queryKey: ['equipments'],
     queryFn: async () => {
-      let query = supabase
+      const { data, error } = await supabase
         .from('equipments')
-        .select('*');
-
-      if (searchTerm) {
-        if (filterField === 'all') {
-          query = query.or(
-            `numero_serie.ilike.%${searchTerm}%,` +
-            `identificador.ilike.%${searchTerm}%,` +
-            `tipo_equipamento.ilike.%${searchTerm}%,` +
-            `marca.ilike.%${searchTerm}%,` +
-            `modelo.ilike.%${searchTerm}%`
-          );
-        } else {
-          query = query.ilike(filterField, `%${searchTerm}%`);
-        }
-      }
-
-      const start = (currentPage - 1) * itemsPerPage;
-      const end = start + itemsPerPage - 1;
-
-      const { data, error } = await query
-        .range(start, end)
+        .select('*')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -70,17 +50,34 @@ export const EquipmentList = () => {
     },
   });
 
-  const { data: totalCount } = useQuery({
-    queryKey: ['equipments-count'],
-    queryFn: async () => {
-      const { count, error } = await supabase
-        .from('equipments')
-        .select('*', { count: 'exact', head: true });
+  const filteredEquipments = React.useMemo(() => {
+    if (!allEquipments) return [];
+    
+    return allEquipments.filter(equipment => {
+      if (!searchTerm) return true;
 
-      if (error) throw error;
-      return count || 0;
-    },
-  });
+      const searchLower = searchTerm.toLowerCase();
+      
+      if (filterField === 'all') {
+        return (
+          (equipment.numero_serie?.toLowerCase() || '').includes(searchLower) ||
+          (equipment.identificador?.toLowerCase() || '').includes(searchLower) ||
+          (equipment.tipo_equipamento.toLowerCase() || '').includes(searchLower) ||
+          (equipment.marca?.toLowerCase() || '').includes(searchLower) ||
+          (equipment.modelo?.toLowerCase() || '').includes(searchLower)
+        );
+      }
+
+      const value = equipment[filterField as keyof Equipment];
+      return value ? value.toString().toLowerCase().includes(searchLower) : false;
+    });
+  }, [allEquipments, searchTerm, filterField]);
+
+  const paginatedEquipments = React.useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredEquipments.slice(start, end);
+  }, [filteredEquipments, currentPage]);
 
   const handleDeleteEquipment = async () => {
     if (!selectedEquipmentId) return;
@@ -108,7 +105,7 @@ export const EquipmentList = () => {
     setSelectedEquipmentId(null);
   };
 
-  const totalPages = Math.ceil((totalCount || 0) / itemsPerPage);
+  const totalPages = Math.ceil(filteredEquipments.length / itemsPerPage);
 
   return (
     <div className="space-y-4">
@@ -116,7 +113,10 @@ export const EquipmentList = () => {
         <div className="relative flex-1 min-w-[200px]">
           <Input
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
             placeholder="Buscar equipamentos..."
             className="pl-10"
           />
@@ -151,13 +151,13 @@ export const EquipmentList = () => {
 
       {isLoading ? (
         <div className="text-center py-4">Carregando...</div>
-      ) : !equipments?.length ? (
+      ) : !paginatedEquipments.length ? (
         <div className="text-center py-4 text-muted-foreground">
           Nenhum equipamento encontrado
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {equipments.map((equipment) => (
+          {paginatedEquipments.map((equipment) => (
             <div
               key={equipment.id}
               className="p-4 rounded-lg border bg-card hover:bg-accent/10 transition-colors relative group"
@@ -223,7 +223,7 @@ export const EquipmentList = () => {
       <EquipmentStats
         open={isStatsOpen}
         onOpenChange={setIsStatsOpen}
-        equipments={equipments || []}
+        equipments={allEquipments || []}
       />
 
       <DeleteServiceOrderDialog
