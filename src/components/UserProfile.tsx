@@ -48,7 +48,6 @@ export const UserProfile = () => {
       const updates = {
         id: user.id,
         full_name: fullName,
-        updated_at: new Date().toISOString(),
       };
 
       const { error } = await supabase
