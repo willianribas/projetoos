@@ -24,7 +24,14 @@ export const ProfileForm = ({
   onSubmit,
 }: ProfileFormProps) => {
   return (
-    <div className="space-y-4 py-4">
+    <form 
+      className="space-y-4 py-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        onSubmit();
+      }}
+      aria-label="Formulário de edição de perfil"
+    >
       <div className="space-y-2">
         <Label htmlFor="name">Nome Completo</Label>
         <Input
@@ -32,6 +39,10 @@ export const ProfileForm = ({
           value={fullName}
           onChange={(e) => onFullNameChange(e.target.value)}
           disabled={isLoading}
+          aria-label="Nome completo"
+          required
+          minLength={2}
+          maxLength={100}
         />
       </div>
       <div className="space-y-2">
@@ -40,6 +51,8 @@ export const ProfileForm = ({
           id="email"
           value={email}
           disabled
+          aria-label="Email do usuário"
+          readOnly
         />
       </div>
       <div className="space-y-2">
@@ -51,22 +64,25 @@ export const ProfileForm = ({
           onChange={(e) => onPasswordChange(e.target.value)}
           placeholder="Digite para alterar a senha"
           disabled={isLoading}
+          aria-label="Nova senha"
+          minLength={6}
         />
       </div>
       <Button 
-        onClick={onSubmit} 
+        type="submit"
         className="w-full"
         disabled={isLoading}
+        aria-busy={isLoading}
       >
         {isLoading ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            Salvando...
+            <span>Salvando...</span>
           </>
         ) : (
           "Salvar Alterações"
         )}
       </Button>
-    </div>
+    </form>
   );
 };
