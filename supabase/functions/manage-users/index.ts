@@ -23,7 +23,7 @@ serve(async (req) => {
       }
     )
 
-    const { action, userId, newPassword, email, password } = await req.json()
+    const { action, userId, newPassword, email, password, fullName } = await req.json()
 
     const authHeader = req.headers.get('Authorization')
     const token = authHeader?.replace('Bearer ', '')
@@ -68,6 +68,7 @@ serve(async (req) => {
           email,
           password,
           email_confirm: true,
+          user_metadata: { full_name: fullName },
         })
         
         if (createError) {
@@ -76,24 +77,6 @@ serve(async (req) => {
             JSON.stringify({ error: createError.message }),
             { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
           )
-        }
-        
-        if (userData.user) {
-          const { error: roleError } = await supabaseAdmin
-            .from('user_roles')
-            .insert({
-              user_id: userData.user.id,
-              role: 'user'
-            })
-          
-          if (roleError) {
-            console.error('Error creating user role:', roleError)
-            await supabaseAdmin.auth.admin.deleteUser(userData.user.id)
-            return new Response(
-              JSON.stringify({ error: 'Erro ao criar permissões do usuário' }),
-              { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
-            )
-          }
         }
         
         result = { user: userData.user }
@@ -129,7 +112,6 @@ serve(async (req) => {
         }
 
         try {
-          // First, delete all service orders associated with the user
           const { error: deleteServiceOrdersError } = await supabaseAdmin
             .from('service_orders')
             .delete()
@@ -140,7 +122,6 @@ serve(async (req) => {
             throw new Error('Erro ao deletar ordens de serviço do usuário')
           }
 
-          // Then, delete user role
           const { error: deleteRoleError } = await supabaseAdmin
             .from('user_roles')
             .delete()
@@ -151,7 +132,6 @@ serve(async (req) => {
             throw new Error('Erro ao deletar permissões do usuário')
           }
 
-          // Finally, delete the user from auth.users
           const { error: deleteUserError } = await supabaseAdmin.auth.admin.deleteUser(userId)
           
           if (deleteUserError) {

@@ -11,6 +11,7 @@ import { UserPlus } from "lucide-react";
 export const AddUserDialog = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -21,6 +22,7 @@ export const AddUserDialog = () => {
           action: 'create',
           email,
           password,
+          fullName,
         }
       });
 
@@ -34,6 +36,7 @@ export const AddUserDialog = () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       setEmail("");
       setPassword("");
+      setFullName("");
     } catch (error: any) {
       console.error("Error creating user:", error);
       toast({
@@ -57,6 +60,15 @@ export const AddUserDialog = () => {
           <DialogTitle>Adicionar Novo Usuário</DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
+          <div>
+            <Label htmlFor="fullName">Nome Completo</Label>
+            <Input
+              id="fullName"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Nome completo do usuário"
+            />
+          </div>
           <div>
             <Label htmlFor="email">Email</Label>
             <Input

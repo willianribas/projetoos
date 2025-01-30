@@ -1,6 +1,7 @@
 import React from "react";
 import { Boxes } from "lucide-react";
 import NotificationBell from "./NotificationBell";
+import { UserProfile } from "./UserProfile";
 
 const Header = () => {
   return (
@@ -13,6 +14,7 @@ const Header = () => {
           </h1>
         </div>
         <div className="flex items-center gap-4">
+          <UserProfile />
           <NotificationBell />
         </div>
       </div>

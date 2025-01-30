@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Boxes, Mail, Lock } from "lucide-react";
+import { Boxes, Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,6 +11,8 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -20,12 +22,30 @@ const Auth = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-      if (error) throw error;
-      navigate("/");
+      if (isSignUp) {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              full_name: fullName,
+            },
+          },
+        });
+        if (error) throw error;
+        toast({
+          title: "Conta criada com sucesso",
+          description: "Você já pode fazer login no sistema.",
+        });
+        setIsSignUp(false);
+      } else {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+        navigate("/");
+      }
     } catch (error: any) {
       toast({
         variant: "destructive",
@@ -55,14 +75,30 @@ const Auth = () => {
         <Card className="border border-border/50 shadow-lg animate-scale-in">
           <CardHeader className="space-y-1">
             <CardTitle className="text-2xl text-center">
-              Bem-vindo de volta!
+              {isSignUp ? "Criar nova conta" : "Bem-vindo de volta!"}
             </CardTitle>
             <CardDescription className="text-center">
-              Entre com suas credenciais para acessar
+              {isSignUp ? "Preencha seus dados para criar uma conta" : "Entre com suas credenciais para acessar"}
             </CardDescription>
           </CardHeader>
           <form onSubmit={handleAuth}>
             <CardContent className="space-y-4">
+              {isSignUp && (
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Nome Completo</Label>
+                  <div className="relative">
+                    <User className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
+                    <Input
+                      id="fullName"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      required={isSignUp}
+                      className="pl-10"
+                      placeholder="Seu nome completo"
+                    />
+                  </div>
+                </div>
+              )}
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <div className="relative">
@@ -94,13 +130,21 @@ const Auth = () => {
                 </div>
               </div>
             </CardContent>
-            <CardFooter>
+            <CardFooter className="flex flex-col space-y-4">
               <Button
                 type="submit"
                 className="w-full bg-blue-500 hover:bg-blue-600"
                 disabled={loading}
               >
-                {loading ? "Processando..." : "Entrar"}
+                {loading ? "Processando..." : isSignUp ? "Criar Conta" : "Entrar"}
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setIsSignUp(!isSignUp)}
+              >
+                {isSignUp ? "Já tem uma conta? Entre" : "Não tem uma conta? Cadastre-se"}
               </Button>
             </CardFooter>
           </form>
