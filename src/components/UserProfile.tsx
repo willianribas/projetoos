@@ -73,7 +73,7 @@ export const UserProfile = () => {
 
       handleDialogClose();
       
-      // Aguarda um pouco antes de buscar o perfil novamente
+      // Aguarda um pouco antes de buscar o perfil novamente para evitar race conditions
       setTimeout(() => {
         fetchProfile();
       }, 1000);
