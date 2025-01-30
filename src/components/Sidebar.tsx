@@ -73,14 +73,16 @@ const Sidebar = () => {
         >
           <Menu className="h-6 w-6 text-sidebar-foreground/60" />
         </Button>
-        <span 
-          className={cn(
-            "text-foreground font-semibold text-lg transition-all duration-300 opacity-0 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient",
-            isOpen && "opacity-100"
-          )}
-        >
-          Menu
-        </span>
+        <div className="flex-1 flex justify-center">
+          <span 
+            className={cn(
+              "text-foreground font-semibold text-lg transition-all duration-300 opacity-0 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient",
+              isOpen && "opacity-100"
+            )}
+          >
+            Menu
+          </span>
+        </div>
       </div>
       <nav className="flex-1 pt-4">
         {menuItems.map((item) => (
