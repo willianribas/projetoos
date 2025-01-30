@@ -65,7 +65,6 @@ export const UserProfile = () => {
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           variant: "destructive",
@@ -75,7 +74,6 @@ export const UserProfile = () => {
         return;
       }
       
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         toast({
           variant: "destructive",
@@ -94,9 +92,7 @@ export const UserProfile = () => {
     setIsLoading(true);
 
     try {
-      const updates: { full_name: string; avatar_url?: string } = {
-        full_name: fullName,
-      };
+      let avatarUrl = profile?.avatar_url;
 
       if (avatarFile) {
         const fileExt = avatarFile.name.split(".").pop();
@@ -112,12 +108,15 @@ export const UserProfile = () => {
           .from("avatars")
           .getPublicUrl(filePath);
 
-        updates.avatar_url = publicUrl;
+        avatarUrl = publicUrl;
       }
 
       const { error } = await supabase
         .from("profiles")
-        .update(updates)
+        .update({
+          full_name: fullName,
+          avatar_url: avatarUrl,
+        })
         .eq("id", user?.id);
 
       if (error) throw error;
@@ -129,7 +128,12 @@ export const UserProfile = () => {
         if (passwordError) throw passwordError;
       }
 
-      await fetchProfile();
+      const updatedProfile = {
+        ...profile,
+        full_name: fullName,
+        avatar_url: avatarUrl,
+      };
+      setProfile(updatedProfile);
 
       toast({
         title: "Perfil atualizado",
@@ -140,6 +144,7 @@ export const UserProfile = () => {
       setNewPassword("");
       setAvatarFile(null);
     } catch (error: any) {
+      console.error("Error updating profile:", error);
       toast({
         variant: "destructive",
         title: "Erro ao atualizar perfil",
