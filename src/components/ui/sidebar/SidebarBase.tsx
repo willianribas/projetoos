@@ -17,7 +17,7 @@ export function SidebarBase({ children, className, onMouseEnter, onMouseLeave }:
       <div
         className={cn(
           "fixed left-0 top-0 h-full z-40 transition-all duration-300 ease-in-out bg-background border-r border-border",
-          isOpen ? "w-64" : "w-16",
+          isOpen ? "w-56" : "w-14",
           className
         )}
         onMouseEnter={onMouseEnter}
