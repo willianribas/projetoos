@@ -65,7 +65,11 @@ export const EquipmentForm = ({ open, onOpenChange }: EquipmentFormProps) => {
     try {
       const { error } = await supabase
         .from('equipments')
-        .insert([{ ...data, user_id: user.id }]);
+        .insert({
+          ...data,
+          user_id: user.id,
+          tipo_equipamento: data.tipo_equipamento, // Garantindo que tipo_equipamento está presente
+        });
 
       if (error) throw error;
 
