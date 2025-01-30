@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -24,8 +23,6 @@ export const UserProfile = () => {
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [fullName, setFullName] = useState("");
   const [newPassword, setNewPassword] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
   const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
@@ -35,35 +32,7 @@ export const UserProfile = () => {
     }
   }, [profile]);
 
-  useEffect(() => {
-    return () => {
-      if (avatarPreviewUrl) {
-        URL.revokeObjectURL(avatarPreviewUrl);
-      }
-    };
-  }, [avatarPreviewUrl]);
-
-  const handleFileChange = (file: File | null) => {
-    if (avatarPreviewUrl) {
-      URL.revokeObjectURL(avatarPreviewUrl);
-    }
-
-    if (file) {
-      setAvatarFile(file);
-      const previewUrl = URL.createObjectURL(file);
-      setAvatarPreviewUrl(previewUrl);
-    } else {
-      setAvatarFile(null);
-      setAvatarPreviewUrl(null);
-    }
-  };
-
   const handleDialogClose = () => {
-    if (avatarPreviewUrl) {
-      URL.revokeObjectURL(avatarPreviewUrl);
-      setAvatarPreviewUrl(null);
-    }
-    setAvatarFile(null);
     setIsEditOpen(false);
     setNewPassword("");
     if (profile) {
@@ -76,34 +45,9 @@ export const UserProfile = () => {
     setIsUpdating(true);
 
     try {
-      let avatarUrl = profile?.avatar_url;
-
-      if (avatarFile) {
-        const fileExt = avatarFile.name.split(".").pop();
-        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
-
-        const { error: uploadError, data } = await supabase.storage
-          .from("avatars")
-          .upload(filePath, avatarFile, {
-            cacheControl: "3600",
-            upsert: false
-          });
-
-        if (uploadError) throw uploadError;
-
-        if (data) {
-          const { data: { publicUrl } } = supabase.storage
-            .from("avatars")
-            .getPublicUrl(filePath);
-
-          avatarUrl = publicUrl;
-        }
-      }
-
       const updates = {
         id: user.id,
         full_name: fullName,
-        avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
       };
 
@@ -156,7 +100,6 @@ export const UserProfile = () => {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="relative flex items-center gap-2">
             <Avatar className="h-8 w-8">
-              <AvatarImage src={profile?.avatar_url || ""} />
               <AvatarFallback>
                 <User className="h-4 w-4" />
               </AvatarFallback>
@@ -185,12 +128,9 @@ export const UserProfile = () => {
             fullName={fullName}
             email={user?.email}
             newPassword={newPassword}
-            avatarUrl={profile?.avatar_url || null}
-            previewUrl={avatarPreviewUrl}
             isLoading={isUpdating}
             onFullNameChange={setFullName}
             onPasswordChange={setNewPassword}
-            onFileChange={handleFileChange}
             onSubmit={updateProfile}
           />
         </DialogContent>

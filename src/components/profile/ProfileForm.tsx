@@ -3,18 +3,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
-import { AvatarUpload } from "./AvatarUpload";
 
 interface ProfileFormProps {
   fullName: string;
   email: string | undefined;
   newPassword: string;
-  avatarUrl: string | null;
-  previewUrl: string | null;
   isLoading: boolean;
   onFullNameChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
-  onFileChange: (file: File | null) => void;
   onSubmit: () => void;
 }
 
@@ -22,22 +18,13 @@ export const ProfileForm = ({
   fullName,
   email,
   newPassword,
-  avatarUrl,
-  previewUrl,
   isLoading,
   onFullNameChange,
   onPasswordChange,
-  onFileChange,
   onSubmit,
 }: ProfileFormProps) => {
   return (
     <div className="space-y-4 py-4">
-      <AvatarUpload
-        avatarUrl={avatarUrl}
-        previewUrl={previewUrl}
-        onFileChange={onFileChange}
-        isLoading={isLoading}
-      />
       <div className="space-y-2">
         <Label htmlFor="name">Nome Completo</Label>
         <Input
