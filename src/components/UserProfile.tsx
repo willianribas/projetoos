@@ -15,64 +15,34 @@ import { useAuth } from "./AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "lucide-react";
 import { ProfileForm } from "./profile/ProfileForm";
-
-interface Profile {
-  id: string;
-  full_name: string | null;
-  avatar_url: string | null;
-}
+import { useProfile } from "./profile/ProfileFetcher";
 
 export const UserProfile = () => {
   const { user, signOut } = useAuth();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const { profile, isLoading, fetchProfile } = useProfile();
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [fullName, setFullName] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreviewUrl, setAvatarPreviewUrl] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
-    if (user) {
-      fetchProfile();
+    if (profile) {
+      setFullName(profile.full_name || "");
     }
-  }, [user]);
+  }, [profile]);
 
   useEffect(() => {
     return () => {
-      // Cleanup preview URL when component unmounts
       if (avatarPreviewUrl) {
         URL.revokeObjectURL(avatarPreviewUrl);
       }
     };
   }, [avatarPreviewUrl]);
 
-  const fetchProfile = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", user?.id)
-        .single();
-
-      if (error) throw error;
-      if (data) {
-        setProfile(data);
-        setFullName(data.full_name || "");
-      }
-    } catch (error) {
-      console.error("Error fetching profile:", error);
-      toast({
-        variant: "destructive",
-        title: "Erro ao carregar perfil",
-        description: "Não foi possível carregar suas informações.",
-      });
-    }
-  };
-
   const handleFileChange = (file: File | null) => {
-    // Cleanup previous preview URL
     if (avatarPreviewUrl) {
       URL.revokeObjectURL(avatarPreviewUrl);
     }
@@ -88,7 +58,6 @@ export const UserProfile = () => {
   };
 
   const handleDialogClose = () => {
-    // Cleanup when dialog closes
     if (avatarPreviewUrl) {
       URL.revokeObjectURL(avatarPreviewUrl);
       setAvatarPreviewUrl(null);
@@ -102,8 +71,8 @@ export const UserProfile = () => {
   };
 
   const updateProfile = async () => {
-    if (isLoading) return;
-    setIsLoading(true);
+    if (isUpdating) return;
+    setIsUpdating(true);
 
     try {
       let avatarUrl = profile?.avatar_url;
@@ -161,9 +130,18 @@ export const UserProfile = () => {
         description: error.message,
       });
     } finally {
-      setIsLoading(false);
+      setIsUpdating(false);
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2">
+        <div className="h-8 w-8 animate-pulse rounded-full bg-muted"></div>
+        <div className="h-4 w-24 animate-pulse rounded bg-muted"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex items-center gap-2">
@@ -202,7 +180,7 @@ export const UserProfile = () => {
             newPassword={newPassword}
             avatarUrl={profile?.avatar_url || null}
             previewUrl={avatarPreviewUrl}
-            isLoading={isLoading}
+            isLoading={isUpdating}
             onFullNameChange={setFullName}
             onPasswordChange={setNewPassword}
             onFileChange={handleFileChange}
