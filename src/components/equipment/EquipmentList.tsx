@@ -35,7 +35,7 @@ export const EquipmentList = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<number | null>(null);
   const { toast } = useToast();
-  const itemsPerPage = 20;
+  const itemsPerPage = 50; // Increased items per page
 
   const { data: allEquipments, isLoading, refetch } = useQuery({
     queryKey: ['equipments'],
