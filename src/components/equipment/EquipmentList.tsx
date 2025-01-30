@@ -75,7 +75,7 @@ export const EquipmentList = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4">
+      <div className="flex gap-4 mb-6">
         <div className="relative flex-1">
           <Input
             value={searchTerm}
@@ -107,22 +107,38 @@ export const EquipmentList = () => {
           Nenhum equipamento encontrado
         </div>
       ) : (
-        <div className="space-y-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {equipments.map((equipment) => (
             <div
               key={equipment.id}
-              className="flex items-center justify-between p-4 rounded-lg border bg-card"
+              className="p-4 rounded-lg border bg-card hover:bg-accent/10 transition-colors"
             >
-              <div className="space-y-1">
-                <h3 className="font-medium">
+              <div className="space-y-2">
+                <h3 className="font-medium text-lg">
                   {equipment.tipo_equipamento}
-                  {equipment.numero_serie && ` - ${equipment.numero_serie}`}
                 </h3>
-                <p className="text-sm text-muted-foreground">
-                  {equipment.identificador && `ID: ${equipment.identificador} | `}
-                  {equipment.marca && `Marca: ${equipment.marca} | `}
-                  {equipment.modelo && `Modelo: ${equipment.modelo}`}
-                </p>
+                <div className="space-y-1 text-sm text-muted-foreground">
+                  {equipment.numero_serie && (
+                    <p>
+                      <span className="font-medium text-foreground">Nº Série:</span> {equipment.numero_serie}
+                    </p>
+                  )}
+                  {equipment.identificador && (
+                    <p>
+                      <span className="font-medium text-foreground">ID:</span> {equipment.identificador}
+                    </p>
+                  )}
+                  {equipment.marca && (
+                    <p>
+                      <span className="font-medium text-foreground">Marca:</span> {equipment.marca}
+                    </p>
+                  )}
+                  {equipment.modelo && (
+                    <p>
+                      <span className="font-medium text-foreground">Modelo:</span> {equipment.modelo}
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -130,7 +146,7 @@ export const EquipmentList = () => {
       )}
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-4">
+        <div className="flex justify-center gap-2 mt-6">
           {Array.from({ length: totalPages }, (_, i) => (
             <button
               key={i + 1}
@@ -138,7 +154,7 @@ export const EquipmentList = () => {
               className={`px-3 py-1 rounded ${
                 currentPage === i + 1
                   ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary'
+                  : 'bg-secondary hover:bg-secondary/80'
               }`}
             >
               {i + 1}
