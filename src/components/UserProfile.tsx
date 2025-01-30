@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { Toaster } from "@/components/ui/toaster";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -71,7 +71,7 @@ export const UserProfile = () => {
   };
 
   const updateProfile = async () => {
-    if (isUpdating) return;
+    if (isUpdating || !user) return;
     setIsUpdating(true);
 
     try {
@@ -79,22 +79,28 @@ export const UserProfile = () => {
 
       if (avatarFile) {
         const fileExt = avatarFile.name.split(".").pop();
-        const filePath = `${user?.id}/${crypto.randomUUID()}.${fileExt}`;
+        const filePath = `${user.id}/${crypto.randomUUID()}.${fileExt}`;
 
-        const { error: uploadError } = await supabase.storage
+        const { error: uploadError, data } = await supabase.storage
           .from("avatars")
-          .upload(filePath, avatarFile);
+          .upload(filePath, avatarFile, {
+            cacheControl: "3600",
+            upsert: false
+          });
 
         if (uploadError) throw uploadError;
 
-        const { data: { publicUrl } } = supabase.storage
-          .from("avatars")
-          .getPublicUrl(filePath);
+        if (data) {
+          const { data: { publicUrl } } = supabase.storage
+            .from("avatars")
+            .getPublicUrl(filePath);
 
-        avatarUrl = publicUrl;
+          avatarUrl = publicUrl;
+        }
       }
 
       const updates = {
+        id: user.id,
         full_name: fullName,
         avatar_url: avatarUrl,
         updated_at: new Date().toISOString(),
@@ -103,7 +109,7 @@ export const UserProfile = () => {
       const { error } = await supabase
         .from("profiles")
         .update(updates)
-        .eq("id", user?.id);
+        .eq("id", user.id);
 
       if (error) throw error;
 
@@ -127,7 +133,7 @@ export const UserProfile = () => {
       toast({
         variant: "destructive",
         title: "Erro ao atualizar perfil",
-        description: error.message,
+        description: error.message || "Ocorreu um erro ao atualizar o perfil.",
       });
     } finally {
       setIsUpdating(false);

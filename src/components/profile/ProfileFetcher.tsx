@@ -17,11 +17,14 @@ export const useProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      if (!user?.id) return;
+      if (!user?.id) {
+        setProfile(null);
+        return;
+      }
 
       const { data, error } = await supabase
         .from("profiles")
-        .select("*")
+        .select("id, full_name, avatar_url")
         .eq("id", user.id)
         .maybeSingle();
 
