@@ -5,6 +5,7 @@ import { read, utils } from 'xlsx';
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useAuth } from "@/components/AuthProvider";
+import { useQueryClient } from '@tanstack/react-query';
 import {
   Dialog,
   DialogContent,
@@ -45,6 +46,7 @@ interface ColumnMapping {
 export const EquipmentUpload = () => {
   const { toast } = useToast();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
   const [availableColumns, setAvailableColumns] = useState<string[]>([]);
@@ -69,9 +71,8 @@ export const EquipmentUpload = () => {
       const workbook = read(data);
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       
-      // Adjust the range to start from the specified row
       const range = utils.decode_range(worksheet['!ref'] || 'A1');
-      range.s.r = startRow - 1; // Adjust for 0-based index
+      range.s.r = startRow - 1;
       worksheet['!ref'] = utils.encode_range(range);
       
       const jsonData = utils.sheet_to_json(worksheet);
@@ -80,7 +81,6 @@ export const EquipmentUpload = () => {
         const columns = Object.keys(jsonData[0]);
         setAvailableColumns(columns);
         
-        // Initialize column mapping
         const initialMapping: ColumnMapping = {};
         columns.forEach(col => {
           initialMapping[col] = {
@@ -169,6 +169,9 @@ export const EquipmentUpload = () => {
           duplicateCount++;
         }
       }
+
+      // Invalidate and refetch equipments query
+      await queryClient.invalidateQueries({ queryKey: ['equipments'] });
 
       toast({
         title: "Sucesso!",
