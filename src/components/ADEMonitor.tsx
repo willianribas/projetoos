@@ -12,6 +12,7 @@ interface ADEMonitorProps {
 const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   const navigate = useNavigate();
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
+  const criticalAdeOrders = adeOrders.filter(order => order.priority === "critical");
 
   if (adeOrders.length === 0) {
     return null;
@@ -31,6 +32,9 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
         <div className="flex items-center justify-between">
           <p className="text-lg text-foreground/90">
             Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> ordens de serviço em ADE
+            {criticalAdeOrders.length > 0 && (
+              <span>, {criticalAdeOrders.length} delas são equipamentos críticos</span>
+            )}
           </p>
           <Button 
             variant="outline"
