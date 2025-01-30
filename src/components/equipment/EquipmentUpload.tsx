@@ -17,7 +17,7 @@ import { Label } from "@/components/ui/label";
 interface Equipment {
   numero_serie?: string;
   identificador?: string;
-  tipo_equipamento: string;
+  tipo_equipamento: string;  // This is required
   marca?: string;
   modelo?: string;
 }
@@ -48,7 +48,7 @@ export const EquipmentUpload = () => {
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = utils.sheet_to_json(worksheet);
       
-      setPreviewData(jsonData.slice(0, 5)); // Preview primeiras 5 linhas
+      setPreviewData(jsonData.slice(0, 5));
       setIsOpen(true);
     } catch (error) {
       console.error('Error reading file:', error);
@@ -62,28 +62,37 @@ export const EquipmentUpload = () => {
 
   const handleImport = async () => {
     try {
-      // Filtra os dados baseado nas colunas selecionadas
-      const validEquipments = previewData.map(row => {
-        const equipment: Partial<Equipment> = {};
-        
-        if (columnMapping.numero_serie && row.numero_serie) {
-          equipment.numero_serie = String(row.numero_serie);
-        }
-        if (columnMapping.identificador && row.identificador) {
-          equipment.identificador = String(row.identificador);
-        }
-        if (columnMapping.tipo_equipamento && row.tipo_equipamento) {
-          equipment.tipo_equipamento = String(row.tipo_equipamento);
-        }
-        if (columnMapping.marca && row.marca) {
-          equipment.marca = String(row.marca);
-        }
-        if (columnMapping.modelo && row.modelo) {
-          equipment.modelo = String(row.modelo);
-        }
+      // Filter and validate the data before insertion
+      const validEquipments = previewData
+        .map(row => {
+          const equipment: Partial<Equipment> = {};
+          
+          if (columnMapping.numero_serie && row.numero_serie) {
+            equipment.numero_serie = String(row.numero_serie);
+          }
+          if (columnMapping.identificador && row.identificador) {
+            equipment.identificador = String(row.identificador);
+          }
+          if (columnMapping.tipo_equipamento && row.tipo_equipamento) {
+            equipment.tipo_equipamento = String(row.tipo_equipamento);
+          }
+          if (columnMapping.marca && row.marca) {
+            equipment.marca = String(row.marca);
+          }
+          if (columnMapping.modelo && row.modelo) {
+            equipment.modelo = String(row.modelo);
+          }
 
-        return equipment;
-      }).filter(equipment => equipment.tipo_equipamento); // Tipo de equipamento é obrigatório
+          return equipment;
+        })
+        .filter((equipment): equipment is Equipment => {
+          // Type guard to ensure tipo_equipamento is present
+          return typeof equipment.tipo_equipamento === 'string';
+        });
+
+      if (validEquipments.length === 0) {
+        throw new Error('Nenhum equipamento válido encontrado para importar');
+      }
 
       const { error } = await supabase
         .from('equipments')
@@ -139,7 +148,7 @@ export const EquipmentUpload = () => {
                   <Checkbox
                     id={field}
                     checked={isChecked}
-                    disabled={field === 'tipo_equipamento'} // Tipo de equipamento é obrigatório
+                    disabled={field === 'tipo_equipamento'}
                     onCheckedChange={(checked) => 
                       setColumnMapping(prev => ({...prev, [field]: checked === true}))
                     }
