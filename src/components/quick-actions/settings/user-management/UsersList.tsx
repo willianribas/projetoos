@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Key, Trash2, UserCog } from "lucide-react";
+import { Key, Trash2, UserCog, Edit } from "lucide-react";
 
 type AppRole = 'admin' | 'user';
 
@@ -73,6 +73,68 @@ const ChangePasswordDialog = ({ user }: { user: User }) => {
         </div>
         <DialogFooter>
           <Button onClick={handleChangePassword}>Atualizar Senha</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const EditUserDialog = ({ user, currentName }: { user: User; currentName: string }) => {
+  const [fullName, setFullName] = useState(currentName || "");
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleUpdateName = async () => {
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ full_name: fullName })
+        .eq('id', user.id);
+
+      if (error) throw error;
+
+      toast({
+        title: "Nome atualizado",
+        description: "O nome foi atualizado com sucesso",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setIsOpen(false);
+    } catch (error: any) {
+      console.error("Error updating name:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar nome",
+        description: error.message || "Não foi possível atualizar o nome",
+      });
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="mr-2">
+          <Edit className="h-4 w-4 mr-1" />
+          Editar Nome
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Editar Nome</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="fullName">Nome Completo</Label>
+            <Input
+              id="fullName"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button onClick={handleUpdateName}>Atualizar Nome</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -218,18 +280,26 @@ export const UsersList = () => {
 
         if (usersError) throw usersError;
 
+        // Fetch profiles to get full names
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('profiles')
+          .select('id, full_name');
+
+        if (profilesError) throw profilesError;
+
         const { data: rolesData, error: rolesError } = await supabase
           .from('user_roles')
           .select('user_id, role');
 
         if (rolesError) throw rolesError;
 
-        const usersWithRoles = usersData.users.map((user: User) => ({
+        const usersWithDetails = usersData.users.map((user: User) => ({
           ...user,
+          full_name: profilesData.find((p: any) => p.id === user.id)?.full_name || '',
           role: (rolesData.find((r: any) => r.user_id === user.id)?.role || 'user') as AppRole
         }));
 
-        return usersWithRoles;
+        return usersWithDetails;
       } catch (error: any) {
         console.error("Error fetching users:", error);
         toast({
@@ -255,6 +325,7 @@ export const UsersList = () => {
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead>Nome</TableHead>
           <TableHead>Email</TableHead>
           <TableHead>Último Login</TableHead>
           <TableHead>Permissão</TableHead>
@@ -264,6 +335,7 @@ export const UsersList = () => {
       <TableBody>
         {users?.map((user: any) => (
           <TableRow key={user.id}>
+            <TableCell>{user.full_name || 'Sem nome'}</TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>
               {user.last_sign_in_at
@@ -274,6 +346,7 @@ export const UsersList = () => {
               {user.role === 'admin' ? 'Administrador' : 'Usuário'}
             </TableCell>
             <TableCell className="space-x-2">
+              <EditUserDialog user={user} currentName={user.full_name} />
               <ChangePasswordDialog user={user} />
               <ChangeRoleDialog user={user} currentRole={user.role} />
               <DeleteAccountDialog user={user} onDelete={() => {}} />
