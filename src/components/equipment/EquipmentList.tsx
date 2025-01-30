@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -9,7 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search } from "lucide-react";
+import { Search, Plus, BarChart2 } from "lucide-react";
+import { EquipmentForm } from './EquipmentForm';
+import { EquipmentStats } from './EquipmentStats';
+import ServiceOrderPagination from '@/components/pagination/ServiceOrderPagination';
 
 interface Equipment {
   id: number;
@@ -24,6 +28,8 @@ export const EquipmentList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterField, setFilterField] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isStatsOpen, setIsStatsOpen] = useState(false);
   const itemsPerPage = 20;
 
   const { data: equipments, isLoading } = useQuery({
@@ -75,8 +81,8 @@ export const EquipmentList = () => {
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4 mb-6">
-        <div className="relative flex-1">
+      <div className="flex flex-wrap gap-4 mb-6">
+        <div className="relative flex-1 min-w-[200px]">
           <Input
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -98,6 +104,18 @@ export const EquipmentList = () => {
             <SelectItem value="modelo">Modelo</SelectItem>
           </SelectContent>
         </Select>
+        <Button onClick={() => setIsFormOpen(true)} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Adicionar
+        </Button>
+        <Button 
+          variant="outline" 
+          onClick={() => setIsStatsOpen(true)}
+          className="gap-2"
+        >
+          <BarChart2 className="h-4 w-4" />
+          Estatísticas
+        </Button>
       </div>
 
       {isLoading ? (
@@ -146,22 +164,25 @@ export const EquipmentList = () => {
       )}
 
       {totalPages > 1 && (
-        <div className="flex justify-center gap-2 mt-6">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              onClick={() => setCurrentPage(i + 1)}
-              className={`px-3 py-1 rounded ${
-                currentPage === i + 1
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-secondary hover:bg-secondary/80'
-              }`}
-            >
-              {i + 1}
-            </button>
-          ))}
+        <div className="mt-6">
+          <ServiceOrderPagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
       )}
+
+      <EquipmentForm 
+        open={isFormOpen} 
+        onOpenChange={setIsFormOpen}
+      />
+      
+      <EquipmentStats
+        open={isStatsOpen}
+        onOpenChange={setIsStatsOpen}
+        equipments={equipments || []}
+      />
     </div>
   );
 };
