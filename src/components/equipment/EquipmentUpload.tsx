@@ -212,14 +212,18 @@ export const EquipmentUpload = () => {
                           }))
                         }
                       >
-                        <SelectTrigger className="w-[200px]">
+                        <SelectTrigger className="w-[300px]">
                           <SelectValue placeholder="Mapear para..." />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="w-[300px]">
                           <SelectScrollUpButton />
                           <div className="max-h-[200px] overflow-y-auto">
                             {equipmentFields.map(field => (
-                              <SelectItem key={field.value} value={field.value}>
+                              <SelectItem 
+                                key={field.value} 
+                                value={field.value}
+                                className="py-2.5"
+                              >
                                 {field.label}
                               </SelectItem>
                             ))}
