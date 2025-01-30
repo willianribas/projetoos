@@ -1,42 +1,39 @@
+import React from "react";
 import { LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
 
 interface SidebarNavItemProps {
   icon: LucideIcon;
   title: string;
-  isActive?: boolean;
-  isOpen?: boolean;
-  onClick?: () => void;
+  isActive: boolean;
+  isOpen: boolean;
+  onClick: () => void;
 }
 
-export function SidebarNavItem({
+export const SidebarNavItem = ({
   icon: Icon,
   title,
   isActive,
   isOpen,
   onClick,
-}: SidebarNavItemProps) {
+}: SidebarNavItemProps) => {
   return (
-    <Button
-      variant="ghost"
-      className={cn(
-        "w-full justify-start gap-3 px-4",
-        isActive && "bg-sidebar-accent text-sidebar-accent-foreground"
-      )}
+    <button
       onClick={onClick}
+      className={cn(
+        "w-full flex items-center px-4 py-3 text-sidebar-foreground/60 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors",
+        isActive && "text-sidebar-foreground bg-sidebar-accent"
+      )}
     >
-      <div className="flex items-center justify-center w-7">
-        <Icon className="h-5 w-5" />
-      </div>
-      <span
+      <Icon className="h-5 w-5 shrink-0" />
+      <span 
         className={cn(
-          "transition-all duration-300 opacity-0 overflow-hidden",
+          "ml-4 truncate opacity-0 transition-all duration-200",
           isOpen && "opacity-100"
         )}
       >
         {title}
       </span>
-    </Button>
+    </button>
   );
-}
+};
