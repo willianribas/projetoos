@@ -69,17 +69,17 @@ const Sidebar = () => {
           variant="ghost" 
           size="icon"
           onClick={() => setIsOpen(!isOpen)}
-          className="h-5 w-5 p-0"
+          className="h-7 w-7 p-0"
         >
-          <Menu className="h-5 w-5 text-sidebar-foreground/60" />
+          <Menu className="h-7 w-7 text-sidebar-foreground/60" />
         </Button>
         <span 
           className={cn(
-            "text-foreground font-semibold text-lg transition-all duration-300 opacity-0",
+            "text-foreground font-semibold text-lg transition-all duration-300 opacity-0 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient",
             isOpen && "opacity-100"
           )}
         >
-          Daily.Flow
+          Menu
         </span>
       </div>
       <nav className="flex-1 pt-4">
