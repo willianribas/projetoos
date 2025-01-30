@@ -127,7 +127,7 @@ export const UserProfile = () => {
                 <User className="h-4 w-4" />
               </AvatarFallback>
             </Avatar>
-            <span>Olá, {profile?.full_name || "Usuário"}</span>
+            <span className="hidden sm:inline">Olá, {profile?.full_name || "Usuário"}</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end">
