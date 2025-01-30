@@ -33,7 +33,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
           <p className="text-lg text-foreground/90">
             Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> {adeOrders.length === 1 ? 'ordem de serviço' : 'ordens de serviço'} em ADE
             {criticalAdeOrders.length > 0 && (
-              <span>, <span className="text-red-500 font-bold">{criticalAdeOrders.length}</span> {criticalAdeOrders.length === 1 ? 'dela é' : 'delas são'} equipamento crítico</span>
+              <span>, <span className="text-red-500 font-bold">{criticalAdeOrders.length}</span> OS {criticalAdeOrders.length === 1 ? 'é' : 'são'} equipamento crítico!</span>
             )}
           </p>
           <Button 
