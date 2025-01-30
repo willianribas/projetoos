@@ -9,7 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
@@ -48,6 +48,7 @@ export const UserProfile = () => {
       const updates = {
         id: user.id,
         full_name: fullName,
+        updated_at: new Date().toISOString(),
       };
 
       const { error } = await supabase
@@ -65,7 +66,7 @@ export const UserProfile = () => {
       }
 
       await fetchProfile();
-
+      
       toast({
         title: "Perfil atualizado",
         description: "Suas informações foram atualizadas com sucesso.",
@@ -122,6 +123,9 @@ export const UserProfile = () => {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Perfil</DialogTitle>
+            <DialogDescription>
+              Atualize suas informações de perfil aqui.
+            </DialogDescription>
           </DialogHeader>
           <ProfileForm
             fullName={fullName}
