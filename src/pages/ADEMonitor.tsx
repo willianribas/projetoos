@@ -9,6 +9,12 @@ import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 import Header from "@/components/Header";
 
+const getColorByDays = (days: number): string => {
+  if (days <= 3) return "text-[#0EA5E9]"; // Verde/Azul para 0-3 dias
+  if (days <= 6) return "text-[#F97316]"; // Laranja para 4-6 dias
+  return "text-[#ea384c]"; // Vermelho para 7+ dias
+};
+
 const ADEMonitorPage = () => {
   const { serviceOrders } = useServiceOrders();
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");

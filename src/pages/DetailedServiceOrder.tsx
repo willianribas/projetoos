@@ -17,6 +17,7 @@ import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar-context";
 import Header from "@/components/Header";
+import { cn } from "@/lib/utils";
 
 const DetailedServiceOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
