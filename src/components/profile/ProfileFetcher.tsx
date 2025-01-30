@@ -19,8 +19,6 @@ export const useProfile = () => {
 
   const fetchProfile = async () => {
     try {
-      setIsLoading(true);
-      
       if (!user?.id) {
         setProfile(null);
         return;
@@ -34,7 +32,6 @@ export const useProfile = () => {
 
       if (error) throw error;
 
-      // Se não encontrou o perfil, vamos criar um
       if (!data) {
         const { data: newProfile, error: createError } = await supabase
           .from("profiles")
@@ -66,7 +63,9 @@ export const useProfile = () => {
   };
 
   useEffect(() => {
-    fetchProfile();
+    if (user?.id) {
+      fetchProfile();
+    }
   }, [user?.id]);
 
   return { profile, isLoading, fetchProfile };

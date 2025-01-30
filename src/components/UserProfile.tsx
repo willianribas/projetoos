@@ -66,14 +66,22 @@ export const UserProfile = () => {
         if (passwordError) throw passwordError;
       }
 
-      await fetchProfile();
-      
+      // Atualiza o estado local antes de buscar novamente
+      if (profile) {
+        setProfile({ ...profile, full_name: fullName });
+      }
+
       toast({
         title: "Perfil atualizado",
         description: "Suas informações foram atualizadas com sucesso.",
       });
 
       handleDialogClose();
+      
+      // Aguarda um pouco antes de buscar o perfil novamente
+      setTimeout(() => {
+        fetchProfile();
+      }, 1000);
     } catch (error: any) {
       console.error("Error updating profile:", error);
       toast({
