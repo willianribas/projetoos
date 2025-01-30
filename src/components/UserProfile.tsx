@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,12 +10,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "./AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { User, Loader2 } from "lucide-react";
+import { User } from "lucide-react";
+import { ProfileForm } from "./profile/ProfileForm";
 
 interface Profile {
   id: string;
@@ -63,27 +62,8 @@ export const UserProfile = () => {
     }
   };
 
-  const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleFileChange = (file: File | null) => {
     if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        toast({
-          variant: "destructive",
-          title: "Arquivo muito grande",
-          description: "O tamanho máximo permitido é 5MB.",
-        });
-        return;
-      }
-      
-      if (!file.type.startsWith("image/")) {
-        toast({
-          variant: "destructive",
-          title: "Tipo de arquivo inválido",
-          description: "Por favor, selecione uma imagem.",
-        });
-        return;
-      }
-      
       setAvatarFile(file);
       const previewUrl = URL.createObjectURL(file);
       setAvatarPreviewUrl(previewUrl);
@@ -143,6 +123,9 @@ export const UserProfile = () => {
         URL.revokeObjectURL(avatarPreviewUrl);
       }
       setAvatarPreviewUrl(null);
+      setAvatarFile(null);
+
+      await fetchProfile(); // Refresh profile data
 
       toast({
         title: "Perfil atualizado",
@@ -151,7 +134,6 @@ export const UserProfile = () => {
 
       setIsEditOpen(false);
       setNewPassword("");
-      setAvatarFile(null);
     } catch (error: any) {
       console.error("Error updating profile:", error);
       toast({
@@ -195,66 +177,18 @@ export const UserProfile = () => {
           <DialogHeader>
             <DialogTitle>Editar Perfil</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Foto de Perfil</Label>
-              <div className="flex items-center gap-4">
-                <Avatar className="h-16 w-16">
-                  <AvatarImage 
-                    src={avatarPreviewUrl || profile?.avatar_url || ""} 
-                  />
-                  <AvatarFallback>
-                    <User className="h-8 w-8" />
-                  </AvatarFallback>
-                </Avatar>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleAvatarChange}
-                />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="name">Nome Completo</Label>
-              <Input
-                id="name"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                value={user?.email}
-                disabled
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Nova Senha (opcional)</Label>
-              <Input
-                id="password"
-                type="password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Digite para alterar a senha"
-              />
-            </div>
-            <Button 
-              onClick={updateProfile} 
-              className="w-full"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  Salvando...
-                </>
-              ) : (
-                "Salvar Alterações"
-              )}
-            </Button>
-          </div>
+          <ProfileForm
+            fullName={fullName}
+            email={user?.email}
+            newPassword={newPassword}
+            avatarUrl={profile?.avatar_url || null}
+            previewUrl={avatarPreviewUrl}
+            isLoading={isLoading}
+            onFullNameChange={setFullName}
+            onPasswordChange={setNewPassword}
+            onFileChange={handleFileChange}
+            onSubmit={updateProfile}
+          />
         </DialogContent>
       </Dialog>
     </div>
