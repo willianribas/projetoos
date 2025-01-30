@@ -9,10 +9,17 @@ interface AvatarUploadProps {
   avatarUrl: string | null;
   previewUrl: string | null;
   onFileChange: (file: File | null) => void;
+  isLoading: boolean;
 }
 
-export const AvatarUpload = ({ avatarUrl, previewUrl, onFileChange }: AvatarUploadProps) => {
+export const AvatarUpload = ({ 
+  avatarUrl, 
+  previewUrl, 
+  onFileChange,
+  isLoading 
+}: AvatarUploadProps) => {
   const { toast } = useToast();
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -23,6 +30,9 @@ export const AvatarUpload = ({ avatarUrl, previewUrl, onFileChange }: AvatarUplo
           title: "Arquivo muito grande",
           description: "O tamanho máximo permitido é 5MB.",
         });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         return;
       }
       
@@ -32,6 +42,9 @@ export const AvatarUpload = ({ avatarUrl, previewUrl, onFileChange }: AvatarUplo
           title: "Tipo de arquivo inválido",
           description: "Por favor, selecione uma imagem.",
         });
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
         return;
       }
       
@@ -50,9 +63,11 @@ export const AvatarUpload = ({ avatarUrl, previewUrl, onFileChange }: AvatarUplo
           </AvatarFallback>
         </Avatar>
         <Input
+          ref={fileInputRef}
           type="file"
           accept="image/*"
           onChange={handleAvatarChange}
+          disabled={isLoading}
         />
       </div>
     </div>

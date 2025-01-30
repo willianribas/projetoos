@@ -36,6 +36,7 @@ export const ProfileForm = ({
         avatarUrl={avatarUrl}
         previewUrl={previewUrl}
         onFileChange={onFileChange}
+        isLoading={isLoading}
       />
       <div className="space-y-2">
         <Label htmlFor="name">Nome Completo</Label>
@@ -43,6 +44,7 @@ export const ProfileForm = ({
           id="name"
           value={fullName}
           onChange={(e) => onFullNameChange(e.target.value)}
+          disabled={isLoading}
         />
       </div>
       <div className="space-y-2">
@@ -61,6 +63,7 @@ export const ProfileForm = ({
           value={newPassword}
           onChange={(e) => onPasswordChange(e.target.value)}
           placeholder="Digite para alterar a senha"
+          disabled={isLoading}
         />
       </div>
       <Button 

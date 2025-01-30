@@ -39,13 +39,22 @@ export const UserProfile = () => {
     }
   }, [user]);
 
+  useEffect(() => {
+    return () => {
+      // Cleanup preview URL when component unmounts
+      if (avatarPreviewUrl) {
+        URL.revokeObjectURL(avatarPreviewUrl);
+      }
+    };
+  }, [avatarPreviewUrl]);
+
   const fetchProfile = async () => {
     try {
       const { data, error } = await supabase
         .from("profiles")
         .select("*")
         .eq("id", user?.id)
-        .maybeSingle();
+        .single();
 
       if (error) throw error;
       if (data) {
@@ -63,10 +72,32 @@ export const UserProfile = () => {
   };
 
   const handleFileChange = (file: File | null) => {
+    // Cleanup previous preview URL
+    if (avatarPreviewUrl) {
+      URL.revokeObjectURL(avatarPreviewUrl);
+    }
+
     if (file) {
       setAvatarFile(file);
       const previewUrl = URL.createObjectURL(file);
       setAvatarPreviewUrl(previewUrl);
+    } else {
+      setAvatarFile(null);
+      setAvatarPreviewUrl(null);
+    }
+  };
+
+  const handleDialogClose = () => {
+    // Cleanup when dialog closes
+    if (avatarPreviewUrl) {
+      URL.revokeObjectURL(avatarPreviewUrl);
+      setAvatarPreviewUrl(null);
+    }
+    setAvatarFile(null);
+    setIsEditOpen(false);
+    setNewPassword("");
+    if (profile) {
+      setFullName(profile.full_name || "");
     }
   };
 
@@ -94,12 +125,15 @@ export const UserProfile = () => {
         avatarUrl = publicUrl;
       }
 
+      const updates = {
+        full_name: fullName,
+        avatar_url: avatarUrl,
+        updated_at: new Date().toISOString(),
+      };
+
       const { error } = await supabase
         .from("profiles")
-        .update({
-          full_name: fullName,
-          avatar_url: avatarUrl,
-        })
+        .update(updates)
         .eq("id", user?.id);
 
       if (error) throw error;
@@ -111,29 +145,14 @@ export const UserProfile = () => {
         if (passwordError) throw passwordError;
       }
 
-      const updatedProfile = {
-        ...profile,
-        full_name: fullName,
-        avatar_url: avatarUrl,
-      };
-      setProfile(updatedProfile);
-
-      // Cleanup
-      if (avatarPreviewUrl) {
-        URL.revokeObjectURL(avatarPreviewUrl);
-      }
-      setAvatarPreviewUrl(null);
-      setAvatarFile(null);
-
-      await fetchProfile(); // Refresh profile data
+      await fetchProfile();
 
       toast({
         title: "Perfil atualizado",
         description: "Suas informações foram atualizadas com sucesso.",
       });
 
-      setIsEditOpen(false);
-      setNewPassword("");
+      handleDialogClose();
     } catch (error: any) {
       console.error("Error updating profile:", error);
       toast({
@@ -172,7 +191,7 @@ export const UserProfile = () => {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
+      <Dialog open={isEditOpen} onOpenChange={handleDialogClose}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Editar Perfil</DialogTitle>
