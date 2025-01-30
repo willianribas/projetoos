@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,6 +64,7 @@ export const UserProfile = () => {
         if (passwordError) throw passwordError;
       }
 
+      // Fetch the updated profile immediately after successful update
       await fetchProfile();
 
       toast({

@@ -19,6 +19,7 @@ export const useProfile = () => {
     try {
       if (!user?.id) {
         setProfile(null);
+        setIsLoading(false);
         return;
       }
 
@@ -26,7 +27,7 @@ export const useProfile = () => {
         .from("profiles")
         .select("id, full_name, avatar_url")
         .eq("id", user.id)
-        .maybeSingle();
+        .single();
 
       if (error) throw error;
       setProfile(data);
