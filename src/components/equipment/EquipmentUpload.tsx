@@ -103,6 +103,24 @@ export const EquipmentUpload = () => {
     }
   };
 
+  const checkForDuplicates = async (equipment: Equipment) => {
+    const { numero_serie, identificador } = equipment;
+    
+    if (!numero_serie && !identificador) return false;
+
+    const query = supabase.from('equipments').select('id');
+    
+    if (numero_serie) {
+      query.eq('numero_serie', numero_serie);
+    }
+    if (identificador) {
+      query.or(`identificador.eq.${identificador}`);
+    }
+
+    const { data } = await query;
+    return data && data.length > 0;
+  };
+
   const handleImport = async () => {
     if (!user) {
       toast({
@@ -116,7 +134,7 @@ export const EquipmentUpload = () => {
     try {
       const mappedData = previewData.map(row => {
         const equipment: Partial<Equipment> = {
-          user_id: user.id, // Add user_id to each equipment
+          user_id: user.id,
         };
         
         Object.entries(columnMapping).forEach(([excelColumn, mapping]) => {
@@ -134,15 +152,28 @@ export const EquipmentUpload = () => {
         throw new Error('Nenhum equipamento válido encontrado para importar');
       }
 
-      const { error } = await supabase
-        .from('equipments')
-        .insert(mappedData);
+      let importedCount = 0;
+      let duplicateCount = 0;
 
-      if (error) throw error;
+      for (const equipment of mappedData) {
+        const isDuplicate = await checkForDuplicates(equipment);
+        
+        if (!isDuplicate) {
+          const { error } = await supabase
+            .from('equipments')
+            .insert([equipment]);
+
+          if (error) throw error;
+          importedCount++;
+        } else {
+          duplicateCount++;
+        }
+      }
 
       toast({
         title: "Sucesso!",
-        description: `${mappedData.length} equipamentos importados com sucesso.`,
+        description: `${importedCount} equipamentos importados. ${duplicateCount} equipamentos ignorados por serem duplicados.`,
+        className: duplicateCount > 0 ? "bg-yellow-500" : "bg-green-500",
       });
 
       setIsOpen(false);
