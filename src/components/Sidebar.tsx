@@ -64,14 +64,14 @@ const Sidebar = () => {
       onMouseEnter={() => setIsOpen(true)}
       onMouseLeave={() => setIsOpen(false)}
     >
-      <div className="px-4 py-3 flex items-center gap-3 overflow-hidden">
+      <div className="px-4 py-3 flex items-center justify-center gap-3 overflow-hidden">
         <Button 
           variant="ghost" 
           size="icon"
           onClick={() => setIsOpen(!isOpen)}
-          className="h-5 w-5 p-0"
+          className="h-7 w-7 p-0"
         >
-          <Menu className="h-5 w-5 text-sidebar-foreground/60" />
+          <Menu className="h-7 w-7 text-sidebar-foreground/60" />
         </Button>
         <span 
           className={cn(
