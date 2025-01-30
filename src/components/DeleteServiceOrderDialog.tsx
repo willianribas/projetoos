@@ -27,8 +27,8 @@ const DeleteServiceOrderDialog = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
           <AlertDialogDescription>
-            Tem certeza que deseja excluir esta Ordem de Serviço? Esta ação não
-            pode ser desfeita.
+            Tem certeza que deseja excluir este equipamento? Esta ação não pode ser
+            desfeita.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>

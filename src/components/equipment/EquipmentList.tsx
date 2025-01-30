@@ -10,10 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Plus, BarChart2 } from "lucide-react";
+import { Search, Plus, BarChart2, X } from "lucide-react";
 import { EquipmentForm } from './EquipmentForm';
 import { EquipmentStats } from './EquipmentStats';
 import ServiceOrderPagination from '@/components/pagination/ServiceOrderPagination';
+import DeleteServiceOrderDialog from '@/components/DeleteServiceOrderDialog';
+import { useToast } from '@/hooks/use-toast';
 
 interface Equipment {
   id: number;
@@ -30,9 +32,12 @@ export const EquipmentList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isStatsOpen, setIsStatsOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [selectedEquipmentId, setSelectedEquipmentId] = useState<number | null>(null);
+  const { toast } = useToast();
   const itemsPerPage = 20;
 
-  const { data: equipments, isLoading } = useQuery({
+  const { data: equipments, isLoading, refetch } = useQuery({
     queryKey: ['equipments', searchTerm, filterField, currentPage],
     queryFn: async () => {
       let query = supabase
@@ -76,6 +81,32 @@ export const EquipmentList = () => {
       return count || 0;
     },
   });
+
+  const handleDeleteEquipment = async () => {
+    if (!selectedEquipmentId) return;
+
+    const { error } = await supabase
+      .from('equipments')
+      .delete()
+      .eq('id', selectedEquipmentId);
+
+    if (error) {
+      toast({
+        title: "Erro ao excluir equipamento",
+        description: "Ocorreu um erro ao tentar excluir o equipamento.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Equipamento excluído",
+        description: "O equipamento foi excluído com sucesso.",
+        className: "bg-green-500 text-white",
+      });
+      refetch();
+    }
+    setDeleteDialogOpen(false);
+    setSelectedEquipmentId(null);
+  };
 
   const totalPages = Math.ceil((totalCount || 0) / itemsPerPage);
 
@@ -129,8 +160,19 @@ export const EquipmentList = () => {
           {equipments.map((equipment) => (
             <div
               key={equipment.id}
-              className="p-4 rounded-lg border bg-card hover:bg-accent/10 transition-colors"
+              className="p-4 rounded-lg border bg-card hover:bg-accent/10 transition-colors relative group"
             >
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute right-2 top-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                onClick={() => {
+                  setSelectedEquipmentId(equipment.id);
+                  setDeleteDialogOpen(true);
+                }}
+              >
+                <X className="h-4 w-4 text-destructive" />
+              </Button>
               <div className="space-y-2">
                 <h3 className="font-medium text-lg">
                   {equipment.tipo_equipamento}
@@ -182,6 +224,12 @@ export const EquipmentList = () => {
         open={isStatsOpen}
         onOpenChange={setIsStatsOpen}
         equipments={equipments || []}
+      />
+
+      <DeleteServiceOrderDialog
+        isOpen={deleteDialogOpen}
+        setIsOpen={setDeleteDialogOpen}
+        onConfirm={handleDeleteEquipment}
       />
     </div>
   );

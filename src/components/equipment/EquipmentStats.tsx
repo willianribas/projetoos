@@ -4,6 +4,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
@@ -44,12 +45,16 @@ export const EquipmentStats = ({ open, onOpenChange, equipments }: EquipmentStat
   };
 
   const stats = getStats();
+  const totalEquipments = equipments.length;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-3xl">
         <DialogHeader>
           <DialogTitle>Estatísticas dos Equipamentos</DialogTitle>
+          <DialogDescription>
+            Total de Equipamentos: {totalEquipments}
+          </DialogDescription>
         </DialogHeader>
         <ScrollArea className="h-[60vh] rounded-md border p-4">
           <div className="space-y-6">
