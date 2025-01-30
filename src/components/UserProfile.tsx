@@ -42,9 +42,10 @@ export const UserProfile = () => {
 
   const updateProfile = async () => {
     if (isUpdating || !user) return;
-    setIsUpdating(true);
-
+    
     try {
+      setIsUpdating(true);
+
       const updates = {
         id: user.id,
         full_name: fullName,
