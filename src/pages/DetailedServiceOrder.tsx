@@ -3,14 +3,7 @@ import { format } from "date-fns";
 import { useServiceOrders } from "@/components/ServiceOrderProvider";
 import SearchBar from "@/components/SearchBar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ServiceOrderHistory } from "@/components/quick-actions/ServiceOrderHistory";
 import { useState } from "react";
@@ -23,7 +16,7 @@ import { statusOptions } from "@/components/ServiceOrderContent";
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 import { SidebarProvider } from "@/components/ui/sidebar-context";
-import { cn } from "@/lib/utils";
+import Header from "@/components/Header";
 
 const DetailedServiceOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -54,8 +47,8 @@ const DetailedServiceOrder = () => {
         <Sidebar />
         <SidebarContent>
           <div className="container mx-auto p-6 space-y-6 animate-fade-in">
+            <Header />
             <h1 className="text-2xl font-bold mb-6">OS Detalhada</h1>
-            
             <SearchBar
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}

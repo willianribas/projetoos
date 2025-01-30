@@ -4,6 +4,7 @@ import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrde
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 import { statusOptions } from "@/components/ServiceOrderContent";
+import Header from "@/components/Header";
 
 const StatisticsContent = () => {
   const { serviceOrders } = useServiceOrders();
@@ -12,7 +13,10 @@ const StatisticsContent = () => {
     <div className="flex min-h-screen w-full">
       <Sidebar />
       <SidebarContent>
-        <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
+        <div className="p-6 space-y-6">
+          <Header />
+          <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
+        </div>
       </SidebarContent>
     </div>
   );

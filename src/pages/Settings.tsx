@@ -14,6 +14,7 @@ import { statusOptions } from "@/components/ServiceOrderContent";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
 import { SidebarProvider } from "@/components/ui/sidebar-context";
+import Header from "@/components/Header";
 
 const Settings = () => {
   const [showHistory, setShowHistory] = useState(false);
@@ -29,6 +30,7 @@ const Settings = () => {
         <Sidebar />
         <SidebarContent>
           <div className="p-4 sm:p-8">
+            <Header />
             <Card className="p-6 bg-card/50 backdrop-blur-sm">
               <h2 className="text-2xl font-bold mb-6">Configurações</h2>
               <ScrollArea className="h-[calc(100vh-12rem)]">

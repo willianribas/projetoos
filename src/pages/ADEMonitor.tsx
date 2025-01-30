@@ -7,12 +7,7 @@ import { ptBR } from 'date-fns/locale';
 import { Clock, AlertCircle } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
-
-const getColorByDays = (days: number): string => {
-  if (days <= 3) return "text-[#0EA5E9]"; // Verde/Azul para 0-3 dias
-  if (days <= 6) return "text-[#F97316]"; // Laranja para 4-6 dias
-  return "text-[#ea384c]"; // Vermelho para 7+ dias
-};
+import Header from "@/components/Header";
 
 const ADEMonitorPage = () => {
   const { serviceOrders } = useServiceOrders();
@@ -29,6 +24,7 @@ const ADEMonitorPage = () => {
       <Sidebar />
       <SidebarContent>
         <div className="p-6 space-y-6 animate-fade-in">
+          <Header />
           <Card className="border-muted bg-card/50 backdrop-blur-sm">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center gap-2">
