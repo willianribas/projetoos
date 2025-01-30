@@ -2,17 +2,15 @@ import { useServiceOrders } from "@/components/ServiceOrderProvider";
 import { ServiceOrder } from "@/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { Clock, AlertCircle, ShoppingCart } from "lucide-react";
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
 import Header from "@/components/Header";
 
 const getColorByDays = (days: number): string => {
-  if (days <= 3) return "text-[#0EA5E9]"; // Verde/Azul para 0-3 dias
-  if (days <= 6) return "text-[#F97316]"; // Laranja para 4-6 dias
-  return "text-[#ea384c]"; // Vermelho para 7+ dias
+  if (days <= 3) return "text-[#0EA5E9]";
+  if (days <= 6) return "text-[#F97316]";
+  return "text-[#ea384c]";
 };
 
 const StatusMonitor = ({ 
@@ -54,7 +52,6 @@ const StatusMonitor = ({
               <TableHead className="w-[120px]">Patrimônio</TableHead>
               <TableHead className="w-[200px]">Equipamento</TableHead>
               <TableHead>Observação</TableHead>
-              <TableHead className="w-[150px]">Adicionado em</TableHead>
               <TableHead className="w-[120px] text-right">Tempo em {title.split(" ").pop()}</TableHead>
             </TableRow>
           </TableHeader>
@@ -73,12 +70,6 @@ const StatusMonitor = ({
                   <TableCell>{order.equipamento}</TableCell>
                   <TableCell className="max-w-[300px] truncate">
                     {order.observacao}
-                  </TableCell>
-                  <TableCell>
-                    {formatDistanceToNow(new Date(order.created_at), {
-                      addSuffix: true,
-                      locale: ptBR,
-                    })}
                   </TableCell>
                   <TableCell className={`text-right font-medium ${colorClass}`}>
                     {days} DIAS

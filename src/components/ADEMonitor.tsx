@@ -13,8 +13,9 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   const navigate = useNavigate();
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
   const criticalAdeOrders = adeOrders.filter(order => order.priority === "critical");
+  const msOrders = serviceOrders.filter(order => order.status === "M.S");
 
-  if (adeOrders.length === 0) {
+  if (adeOrders.length === 0 && msOrders.length === 0) {
     return null;
   }
 
@@ -29,20 +30,35 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between">
-          <p className="text-lg text-foreground/90">
-            Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> {adeOrders.length === 1 ? 'ordem de serviço' : 'ordens de serviço'} em ADE
-            {criticalAdeOrders.length > 0 && (
-              <span>, <span className="text-red-500 font-bold">{criticalAdeOrders.length}</span> OS {criticalAdeOrders.length === 1 ? 'é' : 'são'} equipamento crítico!</span>
-            )}
-          </p>
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/ade-monitor')}
-            className="hover:bg-blue-500/10"
-          >
-            Ver detalhes
-          </Button>
+        <div className="space-y-4">
+          {adeOrders.length > 0 && (
+            <div className="flex items-center justify-between">
+              <p className="text-lg text-foreground/90">
+                Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> ordens de serviço em ADE
+                {criticalAdeOrders.length > 0 && (
+                  <span>, <span className="text-red-500 font-bold">{criticalAdeOrders.length}</span> OS é equipamento crítico!</span>
+                )}
+              </p>
+              <Button 
+                variant="outline"
+                onClick={() => navigate('/ade-monitor')}
+                className="hover:bg-blue-500/10"
+              >
+                Ver detalhes
+              </Button>
+            </div>
+          )}
+          
+          {msOrders.length > 0 && (
+            <p className="text-base text-foreground/90">
+              Material Solicitado na O.S: {msOrders.map((order, index) => (
+                <React.Fragment key={order.id}>
+                  <span className="font-medium">{order.numeroos}</span>
+                  {index < msOrders.length - 1 && " | "}
+                </React.Fragment>
+              ))}
+            </p>
+          )}
         </div>
       </CardContent>
     </Card>
