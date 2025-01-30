@@ -34,7 +34,7 @@ const Sidebar = () => {
       path: "/detailed-service-order",
     },
     {
-      title: "ADE Detalhada",
+      title: "AM/ADE Detalhada",
       icon: Bell,
       path: "/ade-monitor",
     },
