@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 interface Equipment {
   numero_serie?: string;
@@ -30,6 +31,8 @@ export const EquipmentUpload = () => {
   const { toast } = useToast();
   const [isOpen, setIsOpen] = useState(false);
   const [previewData, setPreviewData] = useState<any[]>([]);
+  const [availableColumns, setAvailableColumns] = useState<string[]>([]);
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [columnMapping, setColumnMapping] = useState<ColumnMapping>({
     numero_serie: true,
     identificador: true,
@@ -48,7 +51,20 @@ export const EquipmentUpload = () => {
       const worksheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = utils.sheet_to_json(worksheet);
       
-      setPreviewData(jsonData.slice(0, 5));
+      // Get available columns from the first row
+      if (jsonData.length > 0) {
+        const columns = Object.keys(jsonData[0]);
+        setAvailableColumns(columns);
+        
+        // Initialize column mapping based on available columns
+        const initialMapping: ColumnMapping = {};
+        columns.forEach(col => {
+          initialMapping[col] = true;
+        });
+        setColumnMapping(initialMapping);
+      }
+      
+      setPreviewData(jsonData);
       setIsOpen(true);
     } catch (error) {
       console.error('Error reading file:', error);
@@ -60,33 +76,35 @@ export const EquipmentUpload = () => {
     }
   };
 
+  const filterDataByKeyword = (data: any[]) => {
+    if (!searchKeyword) return data;
+    
+    return data.filter(row => 
+      Object.entries(row).some(([key, value]) => 
+        columnMapping[key] && 
+        String(value).toLowerCase().includes(searchKeyword.toLowerCase())
+      )
+    );
+  };
+
   const handleImport = async () => {
     try {
-      // Filter and validate the data before insertion
-      const validEquipments = previewData
+      const filteredData = filterDataByKeyword(previewData);
+      
+      // Map and validate the filtered data
+      const validEquipments = filteredData
         .map(row => {
           const equipment: Partial<Equipment> = {};
           
-          if (columnMapping.numero_serie && row.numero_serie) {
-            equipment.numero_serie = String(row.numero_serie);
-          }
-          if (columnMapping.identificador && row.identificador) {
-            equipment.identificador = String(row.identificador);
-          }
-          if (columnMapping.tipo_equipamento && row.tipo_equipamento) {
-            equipment.tipo_equipamento = String(row.tipo_equipamento);
-          }
-          if (columnMapping.marca && row.marca) {
-            equipment.marca = String(row.marca);
-          }
-          if (columnMapping.modelo && row.modelo) {
-            equipment.modelo = String(row.modelo);
-          }
+          Object.entries(columnMapping).forEach(([field, isSelected]) => {
+            if (isSelected && row[field]) {
+              equipment[field as keyof Equipment] = String(row[field]);
+            }
+          });
 
           return equipment;
         })
         .filter((equipment): equipment is Equipment => {
-          // Type guard to ensure tipo_equipamento is present
           return typeof equipment.tipo_equipamento === 'string';
         });
 
@@ -138,37 +156,46 @@ export const EquipmentUpload = () => {
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Selecione os campos para importar</DialogTitle>
+            <DialogTitle>Selecione as colunas e filtre os dados</DialogTitle>
           </DialogHeader>
           
           <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              {Object.entries(columnMapping).map(([field, isChecked]) => (
-                <div key={field} className="flex items-center space-x-2">
-                  <Checkbox
-                    id={field}
-                    checked={isChecked}
-                    disabled={field === 'tipo_equipamento'}
-                    onCheckedChange={(checked) => 
-                      setColumnMapping(prev => ({...prev, [field]: checked === true}))
-                    }
-                  />
-                  <Label htmlFor={field}>
-                    {field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
-                    {field === 'tipo_equipamento' && ' (Obrigatório)'}
-                  </Label>
-                </div>
-              ))}
+            <div className="space-y-4">
+              <Input
+                placeholder="Filtrar por palavra-chave..."
+                value={searchKeyword}
+                onChange={(e) => setSearchKeyword(e.target.value)}
+                className="w-full"
+              />
+              
+              <div className="grid grid-cols-2 gap-4">
+                {availableColumns.map((field) => (
+                  <div key={field} className="flex items-center space-x-2">
+                    <Checkbox
+                      id={field}
+                      checked={columnMapping[field]}
+                      disabled={field === 'tipo_equipamento'}
+                      onCheckedChange={(checked) => 
+                        setColumnMapping(prev => ({...prev, [field]: checked === true}))
+                      }
+                    />
+                    <Label htmlFor={field}>
+                      {field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
+                      {field === 'tipo_equipamento' && ' (Obrigatório)'}
+                    </Label>
+                  </div>
+                ))}
+              </div>
             </div>
 
             {previewData.length > 0 && (
               <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">Preview dos dados:</h4>
+                <h4 className="text-sm font-medium mb-2">Preview dos dados filtrados:</h4>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
                       <tr>
-                        {Object.keys(columnMapping).map(field => (
+                        {availableColumns.map(field => (
                           columnMapping[field] && (
                             <th key={field} className="text-left p-2 border">
                               {field.charAt(0).toUpperCase() + field.slice(1).replace('_', ' ')}
@@ -178,9 +205,9 @@ export const EquipmentUpload = () => {
                       </tr>
                     </thead>
                     <tbody>
-                      {previewData.slice(0, 3).map((row, index) => (
+                      {filterDataByKeyword(previewData).slice(0, 3).map((row, index) => (
                         <tr key={index}>
-                          {Object.keys(columnMapping).map(field => (
+                          {availableColumns.map(field => (
                             columnMapping[field] && (
                               <td key={field} className="p-2 border">
                                 {row[field] || '-'}
