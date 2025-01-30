@@ -46,12 +46,12 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background/95 to-background/90 p-4">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background/95 to-background/90 p-4">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md space-y-8 bg-card/50 backdrop-blur-sm p-6 rounded-lg shadow-lg"
+        className="w-full max-w-md space-y-8 bg-white/10 backdrop-blur-md p-8 rounded-lg shadow-xl border border-white/20"
       >
         <motion.div 
           initial={{ scale: 0.8 }}
@@ -84,7 +84,7 @@ const Auth = () => {
               onChange={(e) => setEmail(e.target.value)}
               required
               placeholder="Digite seu email"
-              className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+              className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 bg-white/5 border-white/10"
             />
           </div>
 
@@ -97,7 +97,7 @@ const Auth = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
               placeholder="Digite sua senha"
-              className="transition-all duration-200 focus:ring-2 focus:ring-blue-500"
+              className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 bg-white/5 border-white/10"
             />
           </div>
 
@@ -109,6 +109,14 @@ const Auth = () => {
             {loading ? "Carregando..." : "Entrar"}
           </Button>
         </motion.form>
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+        className="mt-8 text-sm text-foreground/60"
+      >
+        &copy; 2025 Daily.Flow. Todos os direitos reservados.
       </motion.div>
     </div>
   );
