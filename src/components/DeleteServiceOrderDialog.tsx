@@ -52,7 +52,8 @@ const DeleteServiceOrderDialog = ({
             Tem certeza que deseja excluir esta Ordem de Serviço? Esta ação não
             pode ser desfeita.
           </AlertDialogDescription>
-        </AlertDial<AlertDialogFooter>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleConfirm}
