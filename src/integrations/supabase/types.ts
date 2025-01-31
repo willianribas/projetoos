@@ -101,6 +101,41 @@ export type Database = {
         }
         Relationships: []
       }
+      service_order_deadlines: {
+        Row: {
+          created_at: string
+          deadline: string
+          id: number
+          reminder_sent: boolean | null
+          service_order_id: number | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          deadline: string
+          id?: number
+          reminder_sent?: boolean | null
+          service_order_id?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          deadline?: string
+          id?: number
+          reminder_sent?: boolean | null
+          service_order_id?: number | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_deadlines_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       service_order_history: {
         Row: {
           action: string
@@ -154,6 +189,7 @@ export type Database = {
       service_orders: {
         Row: {
           created_at: string
+          deadline: string | null
           equipamento: string
           id: number
           numeroos: string
@@ -165,6 +201,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          deadline?: string | null
           equipamento: string
           id?: number
           numeroos: string
@@ -176,6 +213,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          deadline?: string | null
           equipamento?: string
           id?: number
           numeroos?: string

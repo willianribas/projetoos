@@ -5,11 +5,15 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Clock, ChevronUp, ChevronDown } from "lucide-react";
+import { Clock, ChevronUp, ChevronDown, Calendar } from "lucide-react";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface ServiceOrderFormProps {
   form: UseFormReturn<any>;
@@ -143,6 +147,45 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
                             ))}
                           </SelectContent>
                         </Select>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="deadline"
+                    render={({ field }) => (
+                      <FormItem className="md:col-span-12">
+                        <FormLabel>Prazo</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={"outline"}
+                                className={cn(
+                                  "w-full pl-3 text-left font-normal bg-background/50",
+                                  !field.value && "text-muted-foreground"
+                                )}
+                              >
+                                {field.value ? (
+                                  format(new Date(field.value), "PPP")
+                                ) : (
+                                  <span>Selecione um prazo</span>
+                                )}
+                                <Calendar className="ml-auto h-4 w-4 opacity-50" />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-auto p-0" align="start">
+                            <CalendarComponent
+                              mode="single"
+                              selected={field.value ? new Date(field.value) : undefined}
+                              onSelect={(date) => field.onChange(date?.toISOString())}
+                              disabled={(date) => date < new Date()}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
                       </FormItem>
                     )}
                   />

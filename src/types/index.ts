@@ -8,4 +8,5 @@ export interface ServiceOrder {
   created_at: string;
   user_id?: string;
   priority?: 'normal' | 'critical';
+  deadline?: string;
 }
