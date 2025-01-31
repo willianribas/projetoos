@@ -11,12 +11,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useServiceOrders } from "../ServiceOrderProvider";
 
-interface DeadlineNotificationBellProps {
-  serviceOrders: ServiceOrder[];
-}
-
-const DeadlineNotificationBell = ({ serviceOrders }: DeadlineNotificationBellProps) => {
+const DeadlineNotificationBell = () => {
+  const { serviceOrders } = useServiceOrders();
   const [notifications, setNotifications] = useState<ServiceOrder[]>([]);
   const { toast } = useToast();
 
@@ -135,7 +133,7 @@ const DeadlineNotificationBell = ({ serviceOrders }: DeadlineNotificationBellPro
               <div className="flex items-center justify-between w-full">
                 <span className="font-medium">OS #{order.numeroos}</span>
                 <Badge
-                  variant={isOverdue ? "destructive" : "warning"}
+                  variant={isOverdue ? "destructive" : "secondary"}
                   className="ml-2"
                 >
                   {isOverdue

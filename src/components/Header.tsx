@@ -2,7 +2,7 @@ import React from "react";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import NotificationBell from "./NotificationBell";
 import DeadlineNotificationBell from "./notifications/DeadlineNotificationBell";
-import UserProfile from "./UserProfile";
+import { UserProfile } from "./UserProfile";
 
 const Header = () => {
   const { serviceOrders } = useServiceOrders();
@@ -13,8 +13,8 @@ const Header = () => {
         Daily.Flow
       </h1>
       <div className="flex items-center space-x-4">
-        <DeadlineNotificationBell serviceOrders={serviceOrders} />
-        <NotificationBell serviceOrders={serviceOrders} />
+        <DeadlineNotificationBell />
+        <NotificationBell />
         <UserProfile />
       </div>
     </header>
