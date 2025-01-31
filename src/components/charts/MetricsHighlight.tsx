@@ -12,25 +12,20 @@ import {
   Wrench,
   CalendarClock,
   ShoppingCart,
-  Hammer
+  Hammer,
+  ArrowBigDown,
+  ArrowBigUp,
+  ArrowDownLeft,
+  ArrowDownRight,
+  ArrowUpLeft,
+  ArrowUpRight,
+  CircleCheck,
+  CircleX,
+  Check,
+  X,
+  Plus,
+  Minus
 } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-
-interface MetricsHighlightProps {
-  serviceOrders: ServiceOrder[];
-}
-
-interface MetricCard {
-  id: string;
-  title: string;
-  value: number;
-  icon: any;
-  color: string;
-  bgColor: string;
-  description: string;
-}
 
 const availableIcons = [
   { icon: ClipboardList, name: "Lista" },
@@ -42,7 +37,19 @@ const availableIcons = [
   { icon: Wrench, name: "Ferramenta" },
   { icon: CalendarClock, name: "Calendário" },
   { icon: ShoppingCart, name: "Carrinho" },
-  { icon: Hammer, name: "Martelo" }
+  { icon: Hammer, name: "Martelo" },
+  { icon: ArrowBigDown, name: "Seta Grande Baixo" },
+  { icon: ArrowBigUp, name: "Seta Grande Cima" },
+  { icon: ArrowDownLeft, name: "Seta Diagonal Esquerda" },
+  { icon: ArrowDownRight, name: "Seta Diagonal Direita" },
+  { icon: ArrowUpLeft, name: "Seta Diagonal Cima Esquerda" },
+  { icon: ArrowUpRight, name: "Seta Diagonal Cima Direita" },
+  { icon: CircleCheck, name: "Círculo Check" },
+  { icon: CircleX, name: "Círculo X" },
+  { icon: Check, name: "Check" },
+  { icon: X, name: "X" },
+  { icon: Plus, name: "Mais" },
+  { icon: Minus, name: "Menos" }
 ];
 
 const availableColors = [
@@ -51,18 +58,16 @@ const availableColors = [
   { name: "Laranja", value: "text-orange-500", bg: "bg-orange-50 dark:bg-orange-950/50" },
   { name: "Roxo", value: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-950/50" },
   { name: "Rosa", value: "text-pink-500", bg: "bg-pink-50 dark:bg-pink-950/50" },
-  { name: "Ciano", value: "text-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-950/50" }
-];
-
-const statusOptions = [
-  { value: "ADE", label: "ADE - Aguardando Disponibilidade" },
-  { value: "AVT", label: "AVT - Aguardando vinda técnica" },
-  { value: "EXT", label: "EXT - Serviço Externo" },
-  { value: "A.M", label: "A.M - Aquisição de Material" },
-  { value: "INST", label: "INST - Instalação" },
-  { value: "M.S", label: "M.S - Material Solicitado" },
-  { value: "OSP", label: "OSP - Ordem de Serviço Pronta" },
-  { value: "E.E", label: "E.E - Em Execução" }
+  { name: "Ciano", value: "text-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-950/50" },
+  { name: "Vermelho RGB", value: "text-[#FF0000]", bg: "bg-[#FFE5E5] dark:bg-[#4D0000]/50" },
+  { name: "Verde RGB", value: "text-[#00FF00]", bg: "bg-[#E5FFE5] dark:bg-[#004D00]/50" },
+  { name: "Azul RGB", value: "text-[#0000FF]", bg: "bg-[#E5E5FF] dark:bg-[#00004D]/50" },
+  { name: "Amarelo RGB", value: "text-[#FFFF00]", bg: "bg-[#FFFFF0] dark:bg-[#4D4D00]/50" },
+  { name: "Magenta RGB", value: "text-[#FF00FF]", bg: "bg-[#FFE5FF] dark:bg-[#4D004D]/50" },
+  { name: "Ciano RGB", value: "text-[#00FFFF]", bg: "bg-[#E5FFFF] dark:bg-[#004D4D]/50" },
+  { name: "Coral RGB", value: "text-[#FF7F50]", bg: "bg-[#FFE5DC] dark:bg-[#4D2517]/50" },
+  { name: "Violeta RGB", value: "text-[#8A2BE2]", bg: "bg-[#EDE5FF] dark:bg-[#290D44]/50" },
+  { name: "Lima RGB", value: "text-[#32CD32]", bg: "bg-[#E8FFE8] dark:bg-[#0F3D0F]/50" }
 ];
 
 const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
@@ -137,12 +142,10 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
         }
 
         if (data?.dashboard_layout) {
-          // Ensure we're working with a string before parsing
           const savedMetrics = typeof data.dashboard_layout === 'string' 
             ? JSON.parse(data.dashboard_layout)
             : data.dashboard_layout;
 
-          // Merge saved metrics with current values
           const updatedMetrics = defaultMetrics.map(defaultMetric => {
             const savedMetric = savedMetrics.find((m: MetricCard) => m.id === defaultMetric.id);
             return savedMetric ? { ...defaultMetric, title: savedMetric.title, description: savedMetric.description, icon: savedMetric.icon, color: savedMetric.color, bgColor: savedMetric.bgColor } : defaultMetric;
