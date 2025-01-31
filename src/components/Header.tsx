@@ -9,7 +9,7 @@ const Header = () => {
   
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-b-xl shadow-lg transition-all duration-300 hover:shadow-xl">
-      <div className="flex items-center justify-between p-6">
+      <div className="flex items-center justify-between px-6 py-3">
         <div className="flex items-center gap-3">
           <Boxes className="h-12 w-12 text-blue-500 self-center" />
           <div className="flex flex-col">
