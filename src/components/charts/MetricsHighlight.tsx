@@ -4,7 +4,7 @@ import { ServiceOrder } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import * as Icons from "lucide-react";
+import { ClipboardList, CheckCircle2, Clock, AlertTriangle, Building2, Package, Wrench, CalendarClock, ShoppingCart, Hammer, ArrowBigDown, ArrowBigUp, ArrowDownLeft, ArrowDownRight, ArrowUpLeft, ArrowUpRight, CircleCheck, CircleX, Check, X, Plus, Minus, ChevronDown } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface MetricsHighlightProps {
@@ -32,7 +32,33 @@ const statusOptions = [
   { value: "E.E", label: "E.E - Em Execução" }
 ];
 
-const availableIcons: Array<{ name: string; label: string }> = [
+const iconComponents: Record<string, LucideIcon> = {
+  ClipboardList,
+  CheckCircle2,
+  Clock,
+  AlertTriangle,
+  Building2,
+  Package,
+  Wrench,
+  CalendarClock,
+  ShoppingCart,
+  Hammer,
+  ArrowBigDown,
+  ArrowBigUp,
+  ArrowDownLeft,
+  ArrowDownRight,
+  ArrowUpLeft,
+  ArrowUpRight,
+  CircleCheck,
+  CircleX,
+  Check,
+  X,
+  Plus,
+  Minus,
+  ChevronDown
+};
+
+const availableIcons = [
   { name: "ClipboardList", label: "Lista" },
   { name: "CheckCircle2", label: "Concluído" },
   { name: "Clock", label: "Relógio" },
@@ -210,7 +236,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
   };
 
   const renderIcon = (iconName: string) => {
-    const IconComponent = (Icons as Record<string, LucideIcon>)[iconName];
+    const IconComponent = iconComponents[iconName];
     return IconComponent ? <IconComponent className="h-6 w-6" /> : null;
   };
 
