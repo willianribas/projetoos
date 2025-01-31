@@ -21,20 +21,8 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
   useEffect(() => {
     if (preferences?.dashboard_layout) {
       setCurrentLayout(preferences.dashboard_layout);
-    } else {
-      // Default layout if none exists
-      const defaultLayout = children.map((_, i) => ({
-        i: i.toString(),
-        x: (i % 3) * 4,
-        y: Math.floor(i / 3) * 4,
-        w: 4,
-        h: 4,
-        minW: 2,
-        minH: 2,
-      }));
-      setCurrentLayout(defaultLayout);
     }
-  }, [preferences, children]);
+  }, [preferences]);
 
   const handleLayoutChange = (layout: DashboardLayout[]) => {
     if (isEditing) {

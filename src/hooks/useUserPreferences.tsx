@@ -22,6 +22,13 @@ interface UserPreferencesDB {
   updated_at: string;
 }
 
+// Layout padrão do dashboard
+const defaultDashboardLayout: DashboardLayout[] = [
+  { i: "0", x: 0, y: 0, w: 12, h: 4, minW: 6, minH: 2 }, // MetricsHighlight
+  { i: "1", x: 0, y: 4, w: 12, h: 4, minW: 6, minH: 2 }, // ADEMonitor
+  { i: "2", x: 0, y: 8, w: 12, h: 8, minW: 6, minH: 4 }, // ServiceOrderContent
+];
+
 export const useUserPreferences = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -37,14 +44,14 @@ export const useUserPreferences = () => {
 
       if (error) {
         console.error("Error fetching user preferences:", error);
-        return null;
+        return { dashboard_layout: defaultDashboardLayout };
       }
 
       const typedData = data as UserPreferencesDB;
 
       // Parse the JSON data and ensure it matches our expected type
       return {
-        dashboard_layout: (typedData?.dashboard_layout as unknown as DashboardLayout[]) || []
+        dashboard_layout: (typedData?.dashboard_layout as unknown as DashboardLayout[]) || defaultDashboardLayout
       };
     },
     enabled: !!user?.id,
