@@ -4,11 +4,17 @@ import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
 
 export interface DashboardLayout {
-  id: string;
+  i: string;
   x: number;
   y: number;
   w: number;
   h: number;
+  minW?: number;
+  minH?: number;
+}
+
+export interface UserPreferences {
+  dashboard_layout?: DashboardLayout[];
 }
 
 export const useUserPreferences = () => {
@@ -40,14 +46,11 @@ export const useUserPreferences = () => {
 
       const { error } = await supabase
         .from("user_preferences")
-        .upsert(
-          {
-            user_id: user.id,
-            dashboard_layout: layout,
-            updated_at: new Date().toISOString(),
-          },
-          { onConflict: "user_id" }
-        );
+        .upsert({
+          user_id: user.id,
+          dashboard_layout: layout as any, // Type assertion needed due to Supabase JSONB limitations
+          updated_at: new Date().toISOString(),
+        });
 
       if (error) throw error;
     },

@@ -20,7 +20,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
 
   useEffect(() => {
     if (preferences?.dashboard_layout) {
-      setCurrentLayout(preferences.dashboard_layout);
+      setCurrentLayout(preferences.dashboard_layout as DashboardLayout[]);
     } else {
       // Default layout if none exists
       const defaultLayout = children.map((_, i) => ({
