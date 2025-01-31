@@ -93,7 +93,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
             .from('user_preferences')
             .insert({
               user_id: user.id,
-              dashboard_layout: defaultMetrics,
+              dashboard_layout: JSON.stringify(defaultMetrics),
             });
 
           if (insertError) {
@@ -159,25 +159,23 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       setMetrics(updatedMetrics);
       setIsEditing(null);
 
-      if (field !== "selectedStatuses") {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (user) {
-          const { error } = await supabase
-            .from('user_preferences')
-            .upsert({
-              user_id: user.id,
-              dashboard_layout: updatedMetrics
-            }, {
-              onConflict: 'user_id'
-            });
-
-          if (error) throw error;
-
-          toast({
-            title: "Personalização salva",
-            description: "Suas alterações foram salvas com sucesso!",
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { error } = await supabase
+          .from('user_preferences')
+          .upsert({
+            user_id: user.id,
+            dashboard_layout: JSON.stringify(updatedMetrics)
+          }, {
+            onConflict: 'user_id'
           });
-        }
+
+        if (error) throw error;
+
+        toast({
+          title: "Personalização salva",
+          description: "Suas alterações foram salvas com sucesso!",
+        });
       }
     } catch (error) {
       console.error('Error saving preferences:', error);
