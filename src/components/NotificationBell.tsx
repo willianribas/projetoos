@@ -77,7 +77,7 @@ const NotificationBell = () => {
           </Badge>
         )}
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+      <PopoverContent className="w-80 -mt-2" align="end">
         <div className="px-4 py-2 font-medium border-b">
           Notificações
         </div>
