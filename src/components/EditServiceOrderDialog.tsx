@@ -18,11 +18,6 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ServiceOrder } from "@/types";
-import { Calendar } from "lucide-react";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 
 interface EditServiceOrderDialogProps {
   isOpen: boolean;
@@ -130,41 +125,6 @@ const EditServiceOrderDialog = ({
                 </Label>
               </div>
             </RadioGroup>
-          </div>
-          <div className="space-y-2">
-            <Label>Prazo</Label>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full pl-3 text-left font-normal",
-                    !editedOrder.deadline && "text-muted-foreground"
-                  )}
-                >
-                  {editedOrder.deadline ? (
-                    format(new Date(editedOrder.deadline), "PPP")
-                  ) : (
-                    <span>Selecione um prazo</span>
-                  )}
-                  <Calendar className="ml-auto h-4 w-4 opacity-50" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <CalendarComponent
-                  mode="single"
-                  selected={editedOrder.deadline ? new Date(editedOrder.deadline) : undefined}
-                  onSelect={(date) =>
-                    setEditedOrder({
-                      ...editedOrder,
-                      deadline: date?.toISOString(),
-                    })
-                  }
-                  disabled={(date) => date < new Date()}
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
           </div>
           <div className="space-y-2">
             <label>Observação</label>

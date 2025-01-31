@@ -14,7 +14,6 @@ import Settings from "./pages/Settings";
 import ADEMonitorPage from "./pages/ADEMonitor";
 import DetailedServiceOrder from "./pages/DetailedServiceOrder";
 import { useAuth } from "./components/AuthProvider";
-import { CommentNotifications } from "./components/comments/CommentNotifications";
 
 const queryClient = new QueryClient();
 
@@ -92,7 +91,6 @@ const App = () => (
           <AuthProvider>
             <SidebarProvider>
               <AppRoutes />
-              <CommentNotifications />
               <Toaster />
               <Sonner />
             </SidebarProvider>
