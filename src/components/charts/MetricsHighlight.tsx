@@ -90,7 +90,11 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
         }
 
         if (data?.dashboard_layout) {
-          const savedMetrics = JSON.parse(data.dashboard_layout);
+          // Ensure we're working with a string before parsing
+          const savedMetrics = typeof data.dashboard_layout === 'string' 
+            ? JSON.parse(data.dashboard_layout)
+            : data.dashboard_layout;
+
           // Merge saved metrics with current values
           const updatedMetrics = defaultMetrics.map(defaultMetric => {
             const savedMetric = savedMetrics.find((m: MetricCard) => m.id === defaultMetric.id);
