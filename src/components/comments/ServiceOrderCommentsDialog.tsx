@@ -15,11 +15,9 @@ interface Comment {
   content: string;
   created_at: string;
   user_id: string;
-  user: {
-    profiles: {
-      full_name: string;
-    }[];
-  };
+  profiles: {
+    full_name: string | null;
+  }[];
 }
 
 interface ServiceOrderCommentsDialogProps {
@@ -43,10 +41,8 @@ export default function ServiceOrderCommentsDialog({
       .from("service_order_comments")
       .select(`
         *,
-        user:user_id (
-          profiles (
-            full_name
-          )
+        profiles!service_order_comments_user_id_fkey (
+          full_name
         )
       `)
       .eq("service_order_id", serviceOrderId)
@@ -136,7 +132,7 @@ export default function ServiceOrderCommentsDialog({
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <span className="font-medium">
-                      {comment.user?.profiles?.[0]?.full_name || "Usuário"}
+                      {comment.profiles[0]?.full_name || "Usuário"}
                     </span>
                     <span className="text-sm text-muted-foreground">
                       {format(new Date(comment.created_at), "dd/MM/yyyy HH:mm")}
