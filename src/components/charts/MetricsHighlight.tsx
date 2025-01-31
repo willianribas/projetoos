@@ -27,7 +27,8 @@ import {
   Check,
   X,
   Plus,
-  Minus
+  Minus,
+  type LucideIcon
 } from "lucide-react";
 
 interface MetricsHighlightProps {
@@ -38,7 +39,7 @@ interface MetricCard {
   id: string;
   title: string;
   value: number;
-  icon: any;
+  icon: LucideIcon;
   color: string;
   bgColor: string;
   description: string;
@@ -55,7 +56,7 @@ const statusOptions = [
   { value: "E.E", label: "E.E - Em Execução" }
 ];
 
-const availableIcons = [
+const availableIcons: Array<{ icon: LucideIcon; name: string }> = [
   { icon: ClipboardList, name: "Lista" },
   { icon: CheckCircle2, name: "Concluído" },
   { icon: Clock, name: "Relógio" },
