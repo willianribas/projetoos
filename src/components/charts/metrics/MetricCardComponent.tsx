@@ -25,18 +25,31 @@ interface MetricCardComponentProps {
   availableIcons: IconOption[];
 }
 
-const iconComponents: Record<string, LucideIcon> = Object.entries(LucideIcons).reduce(
-  (acc, [key, value]) => {
-    if (typeof value === "function" && key !== "createLucideIcon") {
-      acc[key] = value as LucideIcon;
-    }
-    return acc;
-  },
-  {} as Record<string, LucideIcon>
-);
+// Predefined set of relevant icons
+const relevantIcons = {
+  ClipboardList: LucideIcons.ClipboardList,
+  CheckCircle2: LucideIcons.CheckCircle2,
+  Clock: LucideIcons.Clock,
+  AlertTriangle: LucideIcons.AlertTriangle,
+  FileText: LucideIcons.FileText,
+  Settings: LucideIcons.Settings,
+  Tool: LucideIcons.Tool,
+  Wrench: LucideIcons.Wrench,
+  Package: LucideIcons.Package,
+  Hammer: LucideIcons.Hammer,
+  Building2: LucideIcons.Building2,
+  CalendarClock: LucideIcons.CalendarClock,
+  ShoppingCart: LucideIcons.ShoppingCart,
+  BarChart: LucideIcons.BarChart,
+  PieChart: LucideIcons.PieChart,
+  LineChart: LucideIcons.LineChart,
+  Database: LucideIcons.Database,
+  Users: LucideIcons.Users,
+  Bell: LucideIcons.Bell,
+} as Record<string, LucideIcon>;
 
 const renderIcon = (iconName: string) => {
-  const IconComponent = iconComponents[iconName];
+  const IconComponent = relevantIcons[iconName];
   return IconComponent ? <IconComponent className="h-6 w-6" /> : null;
 };
 
@@ -51,7 +64,6 @@ export const MetricCardComponent: React.FC<MetricCardComponentProps> = ({
   customBgColor,
   setCustomBgColor,
   availableColors,
-  availableIcons,
 }) => {
   return (
     <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all group">
@@ -67,20 +79,6 @@ export const MetricCardComponent: React.FC<MetricCardComponentProps> = ({
             </PopoverTrigger>
             <PopoverContent className="w-64 p-2">
               <div className="space-y-4">
-                <div className="grid grid-cols-5 gap-2 max-h-64 overflow-y-auto">
-                  {availableIcons.map((iconOption, index) => (
-                    <button
-                      key={index}
-                      className={`p-2 rounded-lg hover:bg-accent ${
-                        metric.iconName === iconOption.name ? "bg-accent" : ""
-                      }`}
-                      onClick={() => onCustomize(metric.id, "iconName", iconOption.name)}
-                      title={iconOption.label}
-                    >
-                      {renderIcon(iconOption.name)}
-                    </button>
-                  ))}
-                </div>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <input
@@ -107,24 +105,38 @@ export const MetricCardComponent: React.FC<MetricCardComponentProps> = ({
                       Aplicar
                     </button>
                   </div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {availableColors.map((color, index) => (
-                      <button
-                        key={index}
-                        className={`p-2 rounded-lg ${color.bg} hover:opacity-80 ${
-                          metric.color === color.value ? "ring-2 ring-primary" : ""
-                        }`}
-                        onClick={() =>
-                          onCustomize(metric.id, "color", {
-                            value: color.value,
-                            bg: color.bg,
-                          })
-                        }
-                      >
-                        <div className={`h-5 w-5 rounded-full ${color.value}`} />
-                      </button>
-                    ))}
-                  </div>
+                </div>
+                <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                  {Object.keys(relevantIcons).map((iconName) => (
+                    <button
+                      key={iconName}
+                      className={`p-2 rounded-lg hover:bg-accent ${
+                        metric.iconName === iconName ? "bg-accent" : ""
+                      }`}
+                      onClick={() => onCustomize(metric.id, "iconName", iconName)}
+                      title={iconName}
+                    >
+                      {renderIcon(iconName)}
+                    </button>
+                  ))}
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {availableColors.map((color, index) => (
+                    <button
+                      key={index}
+                      className={`p-2 rounded-lg ${color.bg} hover:opacity-80 ${
+                        metric.color === color.value ? "ring-2 ring-primary" : ""
+                      }`}
+                      onClick={() =>
+                        onCustomize(metric.id, "color", {
+                          value: color.value,
+                          bg: color.bg,
+                        })
+                      }
+                    >
+                      <div className={`h-5 w-5 rounded-full ${color.value}`} />
+                    </button>
+                  ))}
                 </div>
               </div>
             </PopoverContent>
