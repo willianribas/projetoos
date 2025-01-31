@@ -17,7 +17,7 @@ export interface DashboardLayout {
 interface UserPreferencesDB {
   id: number;
   user_id: string;
-  dashboard_layout: DashboardLayout[];
+  dashboard_layout: Json;
   created_at: string;
   updated_at: string;
 }
@@ -40,9 +40,11 @@ export const useUserPreferences = () => {
         return null;
       }
 
+      const typedData = data as UserPreferencesDB;
+
       // Parse the JSON data and ensure it matches our expected type
       return {
-        dashboard_layout: (data?.dashboard_layout as unknown as DashboardLayout[]) || []
+        dashboard_layout: (typedData?.dashboard_layout as unknown as DashboardLayout[]) || []
       };
     },
     enabled: !!user?.id,
