@@ -6,6 +6,8 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MessageSquare, FileText } from "lucide-react";
 
+import { CommentThread } from "@/components/comments/CommentThread";
+
 const DetailedServiceOrder = () => {
   const location = useLocation();
   const serviceOrder = location.state?.serviceOrder as ServiceOrder;
@@ -68,7 +70,7 @@ const DetailedServiceOrder = () => {
         <TabsContent value="comments">
           <Card>
             <CardContent className="pt-6">
-              <ServiceOrderComments serviceOrderId={serviceOrder.id} />
+              <CommentThread serviceOrderId={serviceOrder.id} />
             </CardContent>
           </Card>
         </TabsContent>
