@@ -1,5 +1,5 @@
-import React from "react";
-import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import React, { useState } from "react";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,8 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
+import { useServiceOrders } from "./ServiceOrderProvider";
+import { toast } from "@/hooks/use-toast";
 
 interface ServiceOrderFormProps {
   form: UseFormReturn<any>;
@@ -24,6 +26,34 @@ interface ServiceOrderFormProps {
 }
 
 const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: ServiceOrderFormProps) => {
+  const { serviceOrders } = useServiceOrders();
+  const currentYear = new Date().getFullYear();
+  const yearSuffix = currentYear.toString().slice(-2);
+  const [selectedYear, setSelectedYear] = useState(yearSuffix);
+
+  const years = Array.from({ length: 12 }, (_, i) => (24 + i).toString());
+
+  const handleSubmit = async (data: any) => {
+    const formattedOSNumber = `${selectedYear}.${data.numeroos.padStart(2, '0')}`;
+    
+    // Check for duplicate OS numbers
+    const isDuplicate = serviceOrders.some(order => order.numeroos === formattedOSNumber);
+    
+    if (isDuplicate) {
+      toast({
+        title: "Erro ao criar OS",
+        description: `Já existe uma OS com o número ${formattedOSNumber}`,
+        variant: "destructive",
+      });
+      return;
+    }
+
+    onSubmit({
+      ...data,
+      numeroos: formattedOSNumber,
+    });
+  };
+
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen} className="mb-8">
       <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300">
@@ -48,7 +78,7 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
         <CollapsibleContent>
           <CardContent>
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+              <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
                   <FormField
                     control={form.control}
@@ -56,9 +86,31 @@ const ServiceOrderForm = ({ form, isOpen, setIsOpen, onSubmit, statusOptions }: 
                     render={({ field }) => (
                       <FormItem className="md:col-span-4">
                         <FormLabel>Número OS</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Digite o número da OS" className="bg-background/50" {...field} />
-                        </FormControl>
+                        <div className="flex gap-2">
+                          <Select
+                            value={selectedYear}
+                            onValueChange={setSelectedYear}
+                          >
+                            <SelectTrigger className="w-24">
+                              <SelectValue placeholder="Ano" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {years.map((year) => (
+                                <SelectItem key={year} value={year}>
+                                  20{year}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormControl>
+                            <Input 
+                              placeholder="Número"
+                              className="bg-background/50"
+                              {...field}
+                            />
+                          </FormControl>
+                        </div>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
