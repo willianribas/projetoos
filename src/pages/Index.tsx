@@ -3,6 +3,7 @@ import ADEMonitor from "@/components/ADEMonitor";
 import ServiceOrderContent from "@/components/ServiceOrderContent";
 import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
 import ADENotification from "@/components/ADENotification";
+import DeadlineNotification from "@/components/DeadlineNotification";
 import MetricsHighlight from "@/components/charts/MetricsHighlight";
 import Sidebar from "@/components/Sidebar";
 import { SidebarContent } from "@/components/ui/sidebar";
@@ -18,6 +19,7 @@ const IndexContent = () => {
         <SidebarContent>
           <div className="space-y-4 sm:space-y-6 animate-fade-in">
             <ADENotification serviceOrders={serviceOrders} />
+            <DeadlineNotification serviceOrders={serviceOrders} />
             <Header />
             <div className="px-2 sm:px-0">
               <MetricsHighlight serviceOrders={serviceOrders} />
