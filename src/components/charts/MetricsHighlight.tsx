@@ -80,13 +80,30 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
           .from('user_preferences')
           .select('dashboard_layout')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (error && error.code !== 'PGRST116') {
           console.error('Error loading preferences:', error);
           return;
         }
 
+        // If no preferences exist, create default ones
+        if (!data) {
+          const { error: insertError } = await supabase
+            .from('user_preferences')
+            .insert({
+              user_id: user.id,
+              dashboard_layout: defaultMetrics,
+            });
+
+          if (insertError) {
+            console.error('Error creating default preferences:', insertError);
+          }
+          setMetrics(defaultMetrics);
+          return;
+        }
+
+        // If preferences exist, use them
         if (data?.dashboard_layout) {
           const savedMetrics = typeof data.dashboard_layout === 'string'
             ? JSON.parse(data.dashboard_layout)
@@ -109,6 +126,11 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       }
     } catch (error) {
       console.error('Error loading preferences:', error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar preferências",
+        description: "Não foi possível carregar suas preferências do dashboard.",
+      });
     }
   };
 
@@ -144,7 +166,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
             .from('user_preferences')
             .upsert({
               user_id: user.id,
-              dashboard_layout: updatedMetrics.map(({ selectedStatuses, ...rest }) => rest)
+              dashboard_layout: updatedMetrics
             }, {
               onConflict: 'user_id'
             });
@@ -160,9 +182,9 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
     } catch (error) {
       console.error('Error saving preferences:', error);
       toast({
+        variant: "destructive",
         title: "Erro ao salvar",
         description: "Não foi possível salvar suas alterações.",
-        variant: "destructive",
       });
     }
   };
