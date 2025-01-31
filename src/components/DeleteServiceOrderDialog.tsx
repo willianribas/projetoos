@@ -9,6 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useToast } from "@/hooks/use-toast";
 
 interface DeleteServiceOrderDialogProps {
   isOpen: boolean;
@@ -21,6 +22,27 @@ const DeleteServiceOrderDialog = ({
   setIsOpen,
   onConfirm,
 }: DeleteServiceOrderDialogProps) => {
+  const { toast } = useToast();
+
+  const handleConfirm = async () => {
+    try {
+      await onConfirm();
+      toast({
+        title: "Ordem de serviço excluída",
+        description: "A ordem de serviço foi excluída com sucesso.",
+        variant: "default",
+      });
+      setIsOpen(false);
+    } catch (error: any) {
+      console.error("Error deleting service order:", error);
+      toast({
+        title: "Erro ao excluir ordem de serviço",
+        description: error.message || "Não foi possível excluir a ordem de serviço.",
+        variant: "destructive",
+      });
+    }
+  };
+
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent>
@@ -30,11 +52,10 @@ const DeleteServiceOrderDialog = ({
             Tem certeza que deseja excluir esta Ordem de Serviço? Esta ação não
             pode ser desfeita.
           </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
+        </AlertDial<AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            onClick={onConfirm}
+            onClick={handleConfirm}
             className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
           >
             Excluir
