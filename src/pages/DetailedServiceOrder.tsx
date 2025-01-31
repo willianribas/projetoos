@@ -49,124 +49,125 @@ const DetailedServiceOrder = () => {
         <SidebarContent>
           <div className="container mx-auto p-6 space-y-6 animate-fade-in">
             <Header />
-            <h1 className="text-2xl font-bold mb-6">OS Detalhada</h1>
-            <SearchBar
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              searchField={searchField}
-              setSearchField={setSearchField}
-              searchCriteria={searchCriteria}
-              setSearchCriteria={setSearchCriteria}
-            />
+            <div className="px-2 sm:px-0">
+              <SearchBar
+                searchQuery={searchQuery}
+                setSearchQuery={setSearchQuery}
+                searchField={searchField}
+                setSearchField={setSearchField}
+                searchCriteria={searchCriteria}
+                setSearchCriteria={setSearchCriteria}
+              />
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Ordens de Serviço</CardTitle>
-                <ScrollArea className="w-full whitespace-nowrap">
-                  <div className="flex space-x-2 pb-4">
-                    <Badge
-                      variant={selectedStatus === null ? "default" : "outline"}
-                      className="cursor-pointer flex items-center gap-1 font-medium"
-                      onClick={() => setSelectedStatus(null)}
-                    >
-                      Todos
-                    </Badge>
-                    {statusOptions.map((status) => {
-                      const Icon = status.icon;
-                      return (
-                        <Badge
-                          key={status.value}
-                          variant={selectedStatus === status.value ? "default" : "outline"}
-                          className={`cursor-pointer flex items-center gap-1 font-medium ${
-                            selectedStatus === status.value ? "bg-primary text-primary-foreground" : status.color
-                          }`}
-                          onClick={() => setSelectedStatus(status.value)}
-                        >
-                          <Icon className="h-3 w-3" />
-                          {status.value}
-                        </Badge>
-                      );
-                    })}
-                  </div>
-                  <ScrollBar orientation="horizontal" />
-                </ScrollArea>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[600px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Número OS</TableHead>
-                        <TableHead>Patrimônio</TableHead>
-                        <TableHead>Equipamento</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Observação</TableHead>
-                        <TableHead className="text-center">
-                          <Clock className="h-4 w-4 inline-block mr-2" />
-                          Data/Hora
-                        </TableHead>
-                        <TableHead className="text-center">
-                          <History className="h-4 w-4 inline-block mr-2" />
-                          Histórico
-                        </TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {paginatedOrders.map((order) => (
-                        <TableRow
-                          key={order.id}
-                          className="cursor-pointer hover:bg-muted/50"
-                          onClick={() => setSelectedOrderId(order.id)}
-                        >
-                          <TableCell>{order.numeroos}</TableCell>
-                          <TableCell>{order.patrimonio}</TableCell>
-                          <TableCell>{order.equipamento}</TableCell>
-                          <TableCell>
-                            <span className={cn("px-2 py-1 rounded-md text-xs font-medium", getStatusColor(order.status))}>
-                              {order.status}
-                            </span>
-                          </TableCell>
-                          <TableCell className="max-w-[200px] truncate">
-                            {order.observacao}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            {format(new Date(order.created_at), "dd/MM/yyyy HH:mm")}
-                          </TableCell>
-                          <TableCell className="text-center">
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedOrderId(order.id);
-                              }}
-                              className="text-primary hover:text-primary/80"
-                            >
-                              <History className="h-4 w-4" />
-                            </button>
-                          </TableCell>
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle>Ordens de Serviço</CardTitle>
+                  <ScrollArea className="w-full whitespace-nowrap">
+                    <div className="flex space-x-2 pb-4">
+                      <Badge
+                        variant={selectedStatus === null ? "default" : "outline"}
+                        className="cursor-pointer flex items-center gap-1 font-medium"
+                        onClick={() => setSelectedStatus(null)}
+                      >
+                        Todos
+                      </Badge>
+                      {statusOptions.map((status) => {
+                        const Icon = status.icon;
+                        return (
+                          <Badge
+                            key={status.value}
+                            variant={selectedStatus === status.value ? "default" : "outline"}
+                            className={`cursor-pointer flex items-center gap-1 font-medium ${
+                              selectedStatus === status.value ? "bg-primary text-primary-foreground" : status.color
+                            }`}
+                            onClick={() => setSelectedStatus(status.value)}
+                          >
+                            <Icon className="h-3 w-3" />
+                            {status.value}
+                          </Badge>
+                        );
+                      })}
+                    </div>
+                    <ScrollBar orientation="horizontal" />
+                  </ScrollArea>
+                </CardHeader>
+                <CardContent>
+                  <ScrollArea className="h-[600px]">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Número OS</TableHead>
+                          <TableHead>Patrimônio</TableHead>
+                          <TableHead>Equipamento</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Observação</TableHead>
+                          <TableHead className="text-center">
+                            <Clock className="h-4 w-4 inline-block mr-2" />
+                            Data/Hora
+                          </TableHead>
+                          <TableHead className="text-center">
+                            <History className="h-4 w-4 inline-block mr-2" />
+                            Histórico
+                          </TableHead>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </ScrollArea>
+                      </TableHeader>
+                      <TableBody>
+                        {paginatedOrders.map((order) => (
+                          <TableRow
+                            key={order.id}
+                            className="cursor-pointer hover:bg-muted/50"
+                            onClick={() => setSelectedOrderId(order.id)}
+                          >
+                            <TableCell>{order.numeroos}</TableCell>
+                            <TableCell>{order.patrimonio}</TableCell>
+                            <TableCell>{order.equipamento}</TableCell>
+                            <TableCell>
+                              <span className={cn("px-2 py-1 rounded-md text-xs font-medium", getStatusColor(order.status))}>
+                                {order.status}
+                              </span>
+                            </TableCell>
+                            <TableCell className="max-w-[200px] truncate">
+                              {order.observacao}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              {format(new Date(order.created_at), "dd/MM/yyyy HH:mm")}
+                            </TableCell>
+                            <TableCell className="text-center">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setSelectedOrderId(order.id);
+                                }}
+                                className="text-primary hover:text-primary/80"
+                              >
+                                <History className="h-4 w-4" />
+                              </button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </ScrollArea>
 
-                {totalPages > 1 && (
-                  <div className="mt-4">
-                    <ServiceOrderPagination
-                      currentPage={currentPage}
-                      totalPages={totalPages}
-                      onPageChange={setCurrentPage}
-                    />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                  {totalPages > 1 && (
+                    <div className="mt-4">
+                      <ServiceOrderPagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        onPageChange={setCurrentPage}
+                      />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-            <Dialog open={selectedOrderId !== null} onOpenChange={() => setSelectedOrderId(null)}>
-              <DialogContent className="max-w-3xl">
-                <DialogTitle>Histórico da Ordem de Serviço</DialogTitle>
-                {selectedOrderId && <ServiceOrderHistory serviceOrderId={selectedOrderId} />}
-              </DialogContent>
-            </Dialog>
+              <Dialog open={selectedOrderId !== null} onOpenChange={() => setSelectedOrderId(null)}>
+                <DialogContent className="max-w-3xl">
+                  <DialogTitle>Histórico da Ordem de Serviço</DialogTitle>
+                  {selectedOrderId && <ServiceOrderHistory serviceOrderId={selectedOrderId} />}
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
         </SidebarContent>
       </div>

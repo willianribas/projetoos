@@ -13,9 +13,11 @@ const StatisticsContent = () => {
     <div className="flex min-h-screen w-full">
       <Sidebar />
       <SidebarContent>
-        <div className="p-6 space-y-6">
+        <div className="container mx-auto p-6 space-y-6 animate-fade-in">
           <Header />
-          <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
+          <div className="px-2 sm:px-0">
+            <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
+          </div>
         </div>
       </SidebarContent>
     </div>
