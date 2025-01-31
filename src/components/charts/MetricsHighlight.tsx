@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ServiceOrder } from "@/types";
 import { ClipboardList, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
@@ -28,7 +28,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
     ["AVT", "EXT", "A.M", "INST", "M.S", "E.E"].includes(order.status)
   ).length;
 
-  const [metrics, setMetrics] = useState<MetricCard[]>([
+  const defaultMetrics: MetricCard[] = [
     {
       id: "total",
       title: "Total de OS",
@@ -65,9 +65,44 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       bgColor: "bg-purple-50 dark:bg-purple-950/50",
       description: "Em processo de execução"
     },
-  ]);
+  ];
 
+  const [metrics, setMetrics] = useState<MetricCard[]>(defaultMetrics);
   const [isEditing, setIsEditing] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadUserPreferences();
+  }, []);
+
+  const loadUserPreferences = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const { data, error } = await supabase
+          .from('user_preferences')
+          .select('dashboard_layout')
+          .eq('user_id', user.id)
+          .single();
+
+        if (error && error.code !== 'PGRST116') {
+          console.error('Error loading preferences:', error);
+          return;
+        }
+
+        if (data?.dashboard_layout) {
+          const savedMetrics = JSON.parse(data.dashboard_layout);
+          // Merge saved metrics with current values
+          const updatedMetrics = defaultMetrics.map(defaultMetric => {
+            const savedMetric = savedMetrics.find((m: MetricCard) => m.id === defaultMetric.id);
+            return savedMetric ? { ...defaultMetric, title: savedMetric.title, description: savedMetric.description } : defaultMetric;
+          });
+          setMetrics(updatedMetrics);
+        }
+      }
+    } catch (error) {
+      console.error('Error loading preferences:', error);
+    }
+  };
 
   const handleCustomize = async (metricId: string, field: 'title' | 'description', value: string) => {
     try {
@@ -80,10 +115,8 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       setMetrics(updatedMetrics);
       setIsEditing(null);
 
-      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        // Use upsert instead of insert
         const { error } = await supabase
           .from('user_preferences')
           .upsert({
