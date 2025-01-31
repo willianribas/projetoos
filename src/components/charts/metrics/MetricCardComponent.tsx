@@ -2,6 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import * as LucideIcons from "lucide-react";
+import type { LucideIcon } from 'lucide-react';
 import { MetricCard, ColorOption, IconOption } from "./types";
 import { ServiceOrder } from "@/types";
 import { statusOptions } from "@/components/ServiceOrderContent";
