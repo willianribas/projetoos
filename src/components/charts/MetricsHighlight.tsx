@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ServiceOrder } from "@/types";
-import { ClipboardList, CheckCircle2, Clock, AlertTriangle, Settings2 } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
+import { ClipboardList, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
 interface MetricsHighlightProps {
@@ -80,14 +80,17 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       setMetrics(updatedMetrics);
       setIsEditing(null);
 
-      // Save to user preferences
+      // Get current user
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
+        // Use upsert instead of insert
         const { error } = await supabase
           .from('user_preferences')
           .upsert({
             user_id: user.id,
             dashboard_layout: JSON.stringify(updatedMetrics)
+          }, {
+            onConflict: 'user_id'
           });
 
         if (error) throw error;
@@ -98,6 +101,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
         });
       }
     } catch (error) {
+      console.error('Error saving preferences:', error);
       toast({
         title: "Erro ao salvar",
         description: "Não foi possível salvar suas alterações.",
