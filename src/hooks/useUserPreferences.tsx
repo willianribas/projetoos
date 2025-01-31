@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/components/AuthProvider";
 import { toast } from "sonner";
+import { Json } from "@/integrations/supabase/types";
 
 export interface DashboardLayout {
   i: string;
@@ -41,7 +42,7 @@ export const useUserPreferences = () => {
 
       // Parse the JSON data and ensure it matches our expected type
       return {
-        dashboard_layout: (data?.dashboard_layout as DashboardLayout[]) || []
+        dashboard_layout: (data?.dashboard_layout as unknown as DashboardLayout[]) || []
       };
     },
     enabled: !!user?.id,
