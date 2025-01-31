@@ -35,7 +35,7 @@ export const useUserPreferences = () => {
         return null;
       }
 
-      return data;
+      return data as { dashboard_layout: DashboardLayout[] } | null;
     },
     enabled: !!user?.id,
   });
@@ -48,7 +48,7 @@ export const useUserPreferences = () => {
         .from("user_preferences")
         .upsert({
           user_id: user.id,
-          dashboard_layout: layout as any, // Type assertion needed due to Supabase JSONB limitations
+          dashboard_layout: layout,
           updated_at: new Date().toISOString(),
         });
 

@@ -20,7 +20,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
 
   useEffect(() => {
     if (preferences?.dashboard_layout) {
-      setCurrentLayout(preferences.dashboard_layout as DashboardLayout[]);
+      setCurrentLayout(preferences.dashboard_layout);
     } else {
       // Default layout if none exists
       const defaultLayout = children.map((_, i) => ({
@@ -77,7 +77,7 @@ export const DashboardGrid = ({ children }: DashboardGridProps) => {
         breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480 }}
         cols={{ lg: 12, md: 10, sm: 6, xs: 4 }}
         rowHeight={100}
-        onLayoutChange={(layout) => handleLayoutChange(layout)}
+        onLayoutChange={(layout) => handleLayoutChange(layout as DashboardLayout[])}
         isDraggable={isEditing}
         isResizable={isEditing}
         margin={[16, 16]}
