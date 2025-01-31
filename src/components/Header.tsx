@@ -11,9 +11,7 @@ const Header = () => {
     <div className="mb-6 p-4 bg-card/50 backdrop-blur-sm rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3 pl-2">
-          <div className="p-2 bg-blue-500/10 rounded-lg">
-            <Boxes className="h-6 w-6 text-blue-500" />
-          </div>
+          <Boxes className="h-6 w-6 text-blue-500" />
           <div className="flex flex-col">
             <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
               Daily.Flow
