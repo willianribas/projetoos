@@ -2,9 +2,7 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import * as LucideIcons from "lucide-react";
-import type { LucideIcon } from 'lucide-react';
 import { MetricCard, ColorOption, IconOption } from "./types";
-import { ServiceOrder } from "@/types";
 import { statusOptions } from "@/components/ServiceOrderContent";
 
 interface MetricCardComponentProps {
@@ -33,23 +31,20 @@ const relevantIcons = {
   AlertTriangle: LucideIcons.AlertTriangle,
   FileText: LucideIcons.FileText,
   Settings: LucideIcons.Settings,
-  Tool: LucideIcons.Tool,
-  Wrench: LucideIcons.Wrench,
-  Package: LucideIcons.Package,
-  Hammer: LucideIcons.Hammer,
-  Building2: LucideIcons.Building2,
-  CalendarClock: LucideIcons.CalendarClock,
-  ShoppingCart: LucideIcons.ShoppingCart,
   BarChart: LucideIcons.BarChart,
   PieChart: LucideIcons.PieChart,
   LineChart: LucideIcons.LineChart,
   Database: LucideIcons.Database,
   Users: LucideIcons.Users,
   Bell: LucideIcons.Bell,
-} as Record<string, LucideIcon>;
+  Search: LucideIcons.Search,
+  Filter: LucideIcons.Filter,
+  Calendar: LucideIcons.Calendar,
+  ChevronDown: LucideIcons.ChevronDown,
+} as const;
 
 const renderIcon = (iconName: string) => {
-  const IconComponent = relevantIcons[iconName];
+  const IconComponent = relevantIcons[iconName as keyof typeof relevantIcons];
   return IconComponent ? <IconComponent className="h-6 w-6" /> : null;
 };
 
@@ -106,7 +101,7 @@ export const MetricCardComponent: React.FC<MetricCardComponentProps> = ({
                     </button>
                   </div>
                 </div>
-                <div className="grid grid-cols-4 gap-2 max-h-64 overflow-y-auto">
+                <div className="grid grid-cols-4 gap-2">
                   {Object.keys(relevantIcons).map((iconName) => (
                     <button
                       key={iconName}
