@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { ServiceOrder } from "@/types";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { 
   ClipboardList, 
   CheckCircle2, 
@@ -26,6 +29,31 @@ import {
   Plus,
   Minus
 } from "lucide-react";
+
+interface MetricsHighlightProps {
+  serviceOrders: ServiceOrder[];
+}
+
+interface MetricCard {
+  id: string;
+  title: string;
+  value: number;
+  icon: any;
+  color: string;
+  bgColor: string;
+  description: string;
+}
+
+const statusOptions = [
+  { value: "ADE", label: "ADE - Aguardando Disponibilidade" },
+  { value: "AVT", label: "AVT - Aguardando vinda técnica" },
+  { value: "EXT", label: "EXT - Serviço Externo" },
+  { value: "A.M", label: "A.M - Aquisição de Material" },
+  { value: "INST", label: "INST - Instalação" },
+  { value: "M.S", label: "M.S - Material Solicitado" },
+  { value: "OSP", label: "OSP - Ordem de Serviço Pronta" },
+  { value: "E.E", label: "E.E - Em Execução" }
+];
 
 const availableIcons = [
   { icon: ClipboardList, name: "Lista" },
