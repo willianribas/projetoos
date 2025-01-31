@@ -1,0 +1,17 @@
+export const availableColors = [
+  { name: "Azul", value: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-950/50" },
+  { name: "Verde", value: "text-green-500", bg: "bg-green-50 dark:bg-green-950/50" },
+  { name: "Laranja", value: "text-orange-500", bg: "bg-orange-50 dark:bg-orange-950/50" },
+  { name: "Roxo", value: "text-purple-500", bg: "bg-purple-50 dark:bg-purple-950/50" },
+  { name: "Rosa", value: "text-pink-500", bg: "bg-pink-50 dark:bg-pink-950/50" },
+  { name: "Ciano", value: "text-cyan-500", bg: "bg-cyan-50 dark:bg-cyan-950/50" },
+  { name: "Vermelho RGB", value: "text-[#FF0000]", bg: "bg-[#FFE5E5] dark:bg-[#4D0000]/50" },
+  { name: "Verde RGB", value: "text-[#00FF00]", bg: "bg-[#E5FFE5] dark:bg-[#004D00]/50" },
+  { name: "Azul RGB", value: "text-[#0000FF]", bg: "bg-[#E5E5FF] dark:bg-[#00004D]/50" },
+  { name: "Amarelo RGB", value: "text-[#FFFF00]", bg: "bg-[#FFFFF0] dark:bg-[#4D4D00]/50" },
+  { name: "Magenta RGB", value: "text-[#FF00FF]", bg: "bg-[#FFE5FF] dark:bg-[#4D004D]/50" },
+  { name: "Ciano RGB", value: "text-[#00FFFF]", bg: "bg-[#E5FFFF] dark:bg-[#004D4D]/50" },
+  { name: "Coral RGB", value: "text-[#FF7F50]", bg: "bg-[#FFE5DC] dark:bg-[#4D2517]/50" },
+  { name: "Violeta RGB", value: "text-[#8A2BE2]", bg: "bg-[#EDE5FF] dark:bg-[#290D44]/50" },
+  { name: "Lima RGB", value: "text-[#32CD32]", bg: "bg-[#E8FFE8] dark:bg-[#0F3D0F]/50" },
+];
