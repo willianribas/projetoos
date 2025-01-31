@@ -13,8 +13,12 @@ export interface DashboardLayout {
   minH?: number;
 }
 
-export interface UserPreferences {
-  dashboard_layout?: DashboardLayout[];
+interface UserPreferencesDB {
+  id: number;
+  user_id: string;
+  dashboard_layout: DashboardLayout[];
+  created_at: string;
+  updated_at: string;
 }
 
 export const useUserPreferences = () => {
@@ -35,7 +39,10 @@ export const useUserPreferences = () => {
         return null;
       }
 
-      return data as { dashboard_layout: DashboardLayout[] } | null;
+      // Parse the JSON data and ensure it matches our expected type
+      return {
+        dashboard_layout: (data?.dashboard_layout as DashboardLayout[]) || []
+      };
     },
     enabled: !!user?.id,
   });
@@ -48,7 +55,7 @@ export const useUserPreferences = () => {
         .from("user_preferences")
         .upsert({
           user_id: user.id,
-          dashboard_layout: layout,
+          dashboard_layout: layout as unknown as Json,
           updated_at: new Date().toISOString(),
         });
 
