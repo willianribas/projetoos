@@ -15,8 +15,8 @@ interface Comment {
   content: string;
   created_at: string;
   user_id: string;
-  user?: {
-    profiles?: {
+  user: {
+    profiles: {
       full_name: string;
     }[];
   };
@@ -57,7 +57,7 @@ export default function ServiceOrderCommentsDialog({
       return;
     }
 
-    setComments(data || []);
+    setComments(data as Comment[]);
   };
 
   React.useEffect(() => {
