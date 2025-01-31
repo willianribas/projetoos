@@ -9,6 +9,38 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      comment_notifications: {
+        Row: {
+          comment_id: number | null
+          created_at: string
+          id: number
+          is_read: boolean | null
+          user_id: string | null
+        }
+        Insert: {
+          comment_id?: number | null
+          created_at?: string
+          id?: number
+          is_read?: boolean | null
+          user_id?: string | null
+        }
+        Update: {
+          comment_id?: number | null
+          created_at?: string
+          id?: number
+          is_read?: boolean | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_notifications_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "service_order_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipments: {
         Row: {
           created_at: string
@@ -100,6 +132,51 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: []
+      }
+      service_order_comments: {
+        Row: {
+          content: string
+          created_at: string
+          id: number
+          parent_id: number | null
+          service_order_id: number | null
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          id?: number
+          parent_id?: number | null
+          service_order_id?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          id?: number
+          parent_id?: number | null
+          service_order_id?: number | null
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "service_order_comments_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "service_order_comments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_comments_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "service_orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       service_order_deadlines: {
         Row: {

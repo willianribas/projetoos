@@ -10,3 +10,21 @@ export interface ServiceOrder {
   priority?: 'normal' | 'critical';
   deadline?: string;
 }
+
+export interface Comment {
+  id: number;
+  service_order_id: number;
+  user_id: string;
+  content: string;
+  parent_id?: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommentNotification {
+  id: number;
+  comment_id: number;
+  user_id: string;
+  is_read: boolean;
+  created_at: string;
+}
