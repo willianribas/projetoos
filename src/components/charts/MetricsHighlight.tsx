@@ -4,7 +4,7 @@ import { ServiceOrder } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { ClipboardList, CheckCircle2, Clock, AlertTriangle, Building2, Package, Wrench, CalendarClock, ShoppingCart, Hammer, ArrowBigDown, ArrowBigUp, ArrowDownLeft, ArrowDownRight, ArrowUpLeft, ArrowUpRight, CircleCheck, CircleX, Check, X, Plus, Minus, ChevronDown } from "lucide-react";
+import * as LucideIcons from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
 interface MetricsHighlightProps {
@@ -19,6 +19,7 @@ interface MetricCard {
   color: string;
   bgColor: string;
   description: string;
+  selectedStatus: string | null;
 }
 
 const statusOptions = [
@@ -32,56 +33,18 @@ const statusOptions = [
   { value: "E.E", label: "E.E - Em Execução" }
 ];
 
-const iconComponents: Record<string, LucideIcon> = {
-  ClipboardList,
-  CheckCircle2,
-  Clock,
-  AlertTriangle,
-  Building2,
-  Package,
-  Wrench,
-  CalendarClock,
-  ShoppingCart,
-  Hammer,
-  ArrowBigDown,
-  ArrowBigUp,
-  ArrowDownLeft,
-  ArrowDownRight,
-  ArrowUpLeft,
-  ArrowUpRight,
-  CircleCheck,
-  CircleX,
-  Check,
-  X,
-  Plus,
-  Minus,
-  ChevronDown
-};
+// Convert Lucide icons to a Record type
+const iconComponents: Record<string, LucideIcon> = Object.entries(LucideIcons).reduce((acc, [key, value]) => {
+  if (typeof value === 'function' && key !== 'createLucideIcon') {
+    acc[key] = value as LucideIcon;
+  }
+  return acc;
+}, {} as Record<string, LucideIcon>);
 
-const availableIcons = [
-  { name: "ClipboardList", label: "Lista" },
-  { name: "CheckCircle2", label: "Concluído" },
-  { name: "Clock", label: "Relógio" },
-  { name: "AlertTriangle", label: "Alerta" },
-  { name: "Building2", label: "Prédio" },
-  { name: "Package", label: "Pacote" },
-  { name: "Wrench", label: "Ferramenta" },
-  { name: "CalendarClock", label: "Calendário" },
-  { name: "ShoppingCart", label: "Carrinho" },
-  { name: "Hammer", label: "Martelo" },
-  { name: "ArrowBigDown", label: "Seta Grande Baixo" },
-  { name: "ArrowBigUp", label: "Seta Grande Cima" },
-  { name: "ArrowDownLeft", label: "Seta Diagonal Esquerda" },
-  { name: "ArrowDownRight", label: "Seta Diagonal Direita" },
-  { name: "ArrowUpLeft", label: "Seta Diagonal Cima Esquerda" },
-  { name: "ArrowUpRight", label: "Seta Diagonal Cima Direita" },
-  { name: "CircleCheck", label: "Círculo Check" },
-  { name: "CircleX", label: "Círculo X" },
-  { name: "Check", label: "Check" },
-  { name: "X", label: "X" },
-  { name: "Plus", label: "Mais" },
-  { name: "Minus", label: "Menos" }
-];
+const availableIcons = Object.keys(iconComponents).map(name => ({
+  name,
+  label: name.replace(/([A-Z])/g, ' $1').trim() // Convert camelCase to spaces
+}));
 
 const availableColors = [
   { name: "Azul", value: "text-blue-500", bg: "bg-blue-50 dark:bg-blue-950/50" },
@@ -118,7 +81,8 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       iconName: "ClipboardList",
       color: "text-blue-500",
       bgColor: "bg-blue-50 dark:bg-blue-950/50",
-      description: "Ordens de serviço registradas"
+      description: "Ordens de serviço registradas",
+      selectedStatus: null
     },
     {
       id: "completed",
@@ -127,7 +91,8 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       iconName: "CheckCircle2",
       color: "text-green-500",
       bgColor: "bg-green-50 dark:bg-green-950/50",
-      description: "Ordens de serviço concluídas"
+      description: "Ordens de serviço concluídas",
+      selectedStatus: null
     },
     {
       id: "pending",
@@ -136,7 +101,8 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       iconName: "Clock",
       color: "text-orange-500",
       bgColor: "bg-orange-50 dark:bg-orange-950/50",
-      description: "Aguardando disponibilidade"
+      description: "Aguardando disponibilidade",
+      selectedStatus: null
     },
     {
       id: "inProgress",
@@ -145,13 +111,15 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       iconName: "AlertTriangle",
       color: "text-purple-500",
       bgColor: "bg-purple-50 dark:bg-purple-950/50",
-      description: "Em processo de execução"
+      description: "Em processo de execução",
+      selectedStatus: null
     },
   ];
 
   const [metrics, setMetrics] = useState<MetricCard[]>(defaultMetrics);
   const [isEditing, setIsEditing] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [customColor, setCustomColor] = useState<string>("#000000");
+  const [customBgColor, setCustomBgColor] = useState<string>("#FFFFFF");
 
   useEffect(() => {
     loadUserPreferences();
@@ -179,7 +147,15 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
 
           const updatedMetrics = defaultMetrics.map(defaultMetric => {
             const savedMetric = savedMetrics.find((m: MetricCard) => m.id === defaultMetric.id);
-            return savedMetric ? { ...defaultMetric, title: savedMetric.title, description: savedMetric.description, iconName: savedMetric.iconName, color: savedMetric.color, bgColor: savedMetric.bgColor } : defaultMetric;
+            return savedMetric ? { 
+              ...defaultMetric, 
+              title: savedMetric.title, 
+              description: savedMetric.description, 
+              iconName: savedMetric.iconName, 
+              color: savedMetric.color, 
+              bgColor: savedMetric.bgColor,
+              selectedStatus: null // Reset selected status on load
+            } : defaultMetric;
           });
           setMetrics(updatedMetrics);
         }
@@ -189,7 +165,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
     }
   };
 
-  const handleCustomize = async (metricId: string, field: 'title' | 'description' | 'iconName' | 'color', value: any) => {
+  const handleCustomize = async (metricId: string, field: 'title' | 'description' | 'iconName' | 'color' | 'selectedStatus', value: any) => {
     try {
       const updatedMetrics = metrics.map(metric => {
         if (metric.id === metricId) {
@@ -203,23 +179,26 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
       setMetrics(updatedMetrics);
       setIsEditing(null);
 
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { error } = await supabase
-          .from('user_preferences')
-          .upsert({
-            user_id: user.id,
-            dashboard_layout: updatedMetrics
-          }, {
-            onConflict: 'user_id'
+      // Only save to Supabase if we're not updating selectedStatus
+      if (field !== 'selectedStatus') {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { error } = await supabase
+            .from('user_preferences')
+            .upsert({
+              user_id: user.id,
+              dashboard_layout: updatedMetrics.map(({ selectedStatus, ...rest }) => rest) // Remove selectedStatus before saving
+            }, {
+              onConflict: 'user_id'
+            });
+
+          if (error) throw error;
+
+          toast({
+            title: "Personalização salva",
+            description: "Suas alterações foram salvas com sucesso!",
           });
-
-        if (error) throw error;
-
-        toast({
-          title: "Personalização salva",
-          description: "Suas alterações foram salvas com sucesso!",
-        });
+        }
       }
     } catch (error) {
       console.error('Error saving preferences:', error);
@@ -259,7 +238,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
                 </PopoverTrigger>
                 <PopoverContent className="w-64 p-2">
                   <div className="space-y-4">
-                    <div className="grid grid-cols-5 gap-2">
+                    <div className="grid grid-cols-5 gap-2 max-h-64 overflow-y-auto">
                       {availableIcons.map((iconOption, index) => (
                         <button
                           key={index}
@@ -271,16 +250,41 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
                         </button>
                       ))}
                     </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {availableColors.map((color, index) => (
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="color"
+                          value={customColor}
+                          onChange={(e) => setCustomColor(e.target.value)}
+                          className="w-full h-8"
+                        />
+                        <input
+                          type="color"
+                          value={customBgColor}
+                          onChange={(e) => setCustomBgColor(e.target.value)}
+                          className="w-full h-8"
+                        />
                         <button
-                          key={index}
-                          className={`p-2 rounded-lg ${color.bg} hover:opacity-80 ${metric.color === color.value ? 'ring-2 ring-primary' : ''}`}
-                          onClick={() => handleCustomize(metric.id, 'color', { value: color.value, bg: color.bg })}
+                          className="px-2 py-1 rounded bg-primary text-primary-foreground"
+                          onClick={() => handleCustomize(metric.id, 'color', {
+                            value: `text-[${customColor}]`,
+                            bg: `bg-[${customBgColor}]`
+                          })}
                         >
-                          <div className={`h-5 w-5 rounded-full ${color.value}`} />
+                          Aplicar
                         </button>
-                      ))}
+                      </div>
+                      <div className="grid grid-cols-3 gap-2">
+                        {availableColors.map((color, index) => (
+                          <button
+                            key={index}
+                            className={`p-2 rounded-lg ${color.bg} hover:opacity-80 ${metric.color === color.value ? 'ring-2 ring-primary' : ''}`}
+                            onClick={() => handleCustomize(metric.id, 'color', { value: color.value, bg: color.bg })}
+                          >
+                            <div className={`h-5 w-5 rounded-full ${color.value}`} />
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </PopoverContent>
@@ -306,7 +310,7 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
                   <Popover>
                     <PopoverTrigger asChild>
                       <button className="text-2xl font-bold hover:text-primary transition-colors flex items-center gap-1">
-                        {selectedStatus && metric.id === "total" ? calculateStatusValue(selectedStatus) : metric.value}
+                        {metric.selectedStatus ? calculateStatusValue(metric.selectedStatus) : metric.value}
                         {renderIcon("ChevronDown")}
                       </button>
                     </PopoverTrigger>
@@ -316,14 +320,14 @@ const MetricsHighlight = ({ serviceOrders }: MetricsHighlightProps) => {
                           <button
                             key={status.value}
                             className="w-full text-left px-2 py-1 rounded hover:bg-accent"
-                            onClick={() => setSelectedStatus(status.value)}
+                            onClick={() => handleCustomize(metric.id, 'selectedStatus', status.value)}
                           >
                             {status.label} ({calculateStatusValue(status.value)})
                           </button>
                         ))}
                         <button
                           className="w-full text-left px-2 py-1 rounded hover:bg-accent text-primary"
-                          onClick={() => setSelectedStatus(null)}
+                          onClick={() => handleCustomize(metric.id, 'selectedStatus', null)}
                         >
                           Mostrar total geral
                         </button>
