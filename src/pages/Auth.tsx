@@ -59,9 +59,9 @@ const Auth = () => {
           className="flex flex-col items-center gap-2"
         >
           <img 
-            src="/lovable-uploads/e971481a-504b-460d-aa75-ac55eb50b05a.png" 
+            src="/lovable-uploads/3bfab654-e541-4930-a97d-6447b525b0b4.png" 
             alt="Daily.Flow Logo" 
-            className="h-16 object-contain"
+            className="h-13 object-contain"
           />
           <p className="text-foreground/60 text-sm">
             Sistema de Gerenciamento de Ordens de Serviço
