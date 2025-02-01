@@ -15,9 +15,7 @@ vi.mock('@/components/ServiceOrderProvider', () => ({
 
 // Mock the toast
 vi.mock('@/hooks/use-toast', () => ({
-  useToast: () => ({
-    toast: vi.fn(),
-  }),
+  toast: vi.fn(),
 }));
 
 const MockServiceOrderForm = () => {
@@ -25,8 +23,6 @@ const MockServiceOrderForm = () => {
   return (
     <ServiceOrderForm
       form={form}
-      isOpen={true}
-      setIsOpen={() => {}}
       onSubmit={() => {}}
       statusOptions={statusOptions}
     />
@@ -37,6 +33,10 @@ describe('ServiceOrderForm', () => {
   it('renders all form fields', () => {
     render(<MockServiceOrderForm />);
     
+    // Open the dialog by clicking the trigger button
+    const openButton = screen.getByRole('button', { name: /Nova Ordem de Serviço/i });
+    fireEvent.click(openButton);
+    
     expect(screen.getByLabelText(/Número OS/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Patrimônio/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/Equipamento/i)).toBeInTheDocument();
@@ -46,6 +46,10 @@ describe('ServiceOrderForm', () => {
 
   it('form fields can be filled without triggering actual submission', async () => {
     render(<MockServiceOrderForm />);
+    
+    // Open the dialog by clicking the trigger button
+    const openButton = screen.getByRole('button', { name: /Nova Ordem de Serviço/i });
+    fireEvent.click(openButton);
     
     const numeroOsInput = screen.getByLabelText(/Número OS/i);
     const patrimonioInput = screen.getByLabelText(/Patrimônio/i);
