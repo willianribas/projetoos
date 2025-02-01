@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Boxes } from "lucide-react";
 import { motion } from "framer-motion";
 
 const Auth = () => {
@@ -59,10 +58,11 @@ const Auth = () => {
           transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           className="flex flex-col items-center gap-2"
         >
-          <Boxes className="h-12 w-12 text-blue-500" />
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent">
-            Daily.Flow
-          </h1>
+          <img 
+            src="/lovable-uploads/e971481a-504b-460d-aa75-ac55eb50b05a.png" 
+            alt="Daily.Flow Logo" 
+            className="h-16 object-contain"
+          />
           <p className="text-foreground/60 text-sm">
             Sistema de Gerenciamento de Ordens de Serviço
           </p>

@@ -1,5 +1,4 @@
 import React from "react";
-import { Boxes } from "lucide-react";
 import NotificationBell from "./NotificationBell";
 import { UserProfile } from "./UserProfile";
 import { motion } from "framer-motion";
@@ -11,11 +10,12 @@ const Header = () => {
     <div className="bg-card/50 backdrop-blur-sm rounded-b-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex items-start justify-between mb-1 pt-0">
         <div className="flex items-center gap-2">
-          <Boxes className="h-12 w-12 text-blue-500 self-center" />
+          <img 
+            src="/lovable-uploads/e971481a-504b-460d-aa75-ac55eb50b05a.png" 
+            alt="Daily.Flow Logo" 
+            className="h-12 object-contain"
+          />
           <div className="flex flex-col">
-            <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-              Daily.Flow
-            </h1>
             <div className="flex flex-wrap">
               {text.map((char, index) => (
                 <motion.span
