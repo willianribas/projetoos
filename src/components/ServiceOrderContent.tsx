@@ -42,7 +42,6 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
   const [searchCriteria, setSearchCriteria] = useState<SearchCriteria[]>([]);
   const [showTable, setShowTable] = useState(showTableByDefault);
   const [showStats, setShowStats] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const itemsPerPage = 10;
@@ -72,7 +71,6 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
   const onSubmit = (data: Omit<ServiceOrder, "id" | "created_at">) => {
     createServiceOrder(data);
     form.reset();
-    setIsOpen(false);
     setShowTable(true);
     setShowStats(false);
   };
@@ -107,8 +105,6 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
     <div className="space-y-4">
       <ServiceOrderForm 
         form={form}
-        isOpen={isOpen}
-        setIsOpen={setIsOpen}
         onSubmit={onSubmit}
         statusOptions={statusOptions}
       />
