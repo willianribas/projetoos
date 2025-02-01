@@ -13,7 +13,7 @@ const Header = () => {
           <img 
             src="/lovable-uploads/3bfab654-e541-4930-a97d-6447b525b0b4.png" 
             alt="Daily.Flow Logo" 
-            className="h-16 w-auto object-contain"
+            className="h-[52px] w-auto object-contain"
           />
           <div className="flex flex-wrap">
             {text.map((char, index) => (
