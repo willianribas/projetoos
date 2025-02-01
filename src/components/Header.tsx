@@ -11,9 +11,9 @@ const Header = () => {
       <div className="flex items-start justify-between mb-1 pt-0">
         <div className="flex flex-col items-center gap-2">
           <img 
-            src="/lovable-uploads/e971481a-504b-460d-aa75-ac55eb50b05a.png" 
+            src="/lovable-uploads/7f297658-31fe-41e9-9d68-ea274f31a85f.png" 
             alt="Daily.Flow Logo" 
-            className="h-20 w-auto object-contain"
+            className="h-24 w-auto object-contain"
           />
           <div className="flex flex-wrap justify-center">
             {text.map((char, index) => (
