@@ -9,13 +9,13 @@ const Header = () => {
   return (
     <div className="bg-card/50 backdrop-blur-sm rounded-b-xl shadow-lg transition-all duration-300 hover:shadow-xl">
       <div className="flex items-start justify-between mb-1 pt-0">
-        <div className="flex flex-col items-center gap-2">
+        <div className="flex flex-col items-start gap-2">
           <img 
-            src="/lovable-uploads/7f297658-31fe-41e9-9d68-ea274f31a85f.png" 
+            src="/lovable-uploads/3bfab654-e541-4930-a97d-6447b525b0b4.png" 
             alt="Daily.Flow Logo" 
-            className="h-24 w-auto object-contain"
+            className="h-16 w-auto object-contain"
           />
-          <div className="flex flex-wrap justify-center">
+          <div className="flex flex-wrap">
             {text.map((char, index) => (
               <motion.span
                 key={index}
