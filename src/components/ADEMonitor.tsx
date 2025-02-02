@@ -91,6 +91,16 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
     );
   };
 
+  const renderMSNotification = (orders: ServiceOrder[]) => {
+    if (orders.length === 0) return null;
+    
+    return (
+      <div className="text-sm text-foreground/90 mt-2">
+        Material Solicitado na O.S: {orders.map(order => `"${order.numeroos}"`).join(" | ")}
+      </div>
+    );
+  };
+
   return (
     <Card className="mb-8 mt-4 border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -120,17 +130,15 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
         ) : (
           <>
             {adeOrders.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-foreground/90">Ordens em ADE</h3>
+              <div>
+                <div className="text-sm font-medium text-foreground/90">
+                  Você tem {adeOrders.length} {adeOrders.length === 1 ? 'ordem' : 'ordens'} de serviço em ADE
+                  {criticalAdeOrders.length > 0 && `, ${criticalAdeOrders.length} OS ${criticalAdeOrders.length === 1 ? 'é' : 'são'} equipamento crítico`}!
+                </div>
                 {renderSimpleList(adeOrders)}
               </div>
             )}
-            {msOrders.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-foreground/90">Material Solicitado</h3>
-                {renderSimpleList(msOrders)}
-              </div>
-            )}
+            {msOrders.length > 0 && renderMSNotification(msOrders)}
             {amOrders.length > 0 && (
               <div className="space-y-2">
                 <h3 className="text-sm font-medium text-foreground/90">Aquisição de Material</h3>
