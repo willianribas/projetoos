@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, Clock } from "lucide-react";
 import { ServiceOrder } from "@/types";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -13,6 +13,9 @@ interface ADEMonitorProps {
 
 const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isDetailPage = location.pathname === "/ade-monitor";
+  
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
   const criticalAdeOrders = adeOrders.filter(order => order.priority === "critical");
   const msOrders = serviceOrders.filter(order => order.status === "M.S");
@@ -22,7 +25,30 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
     return null;
   }
 
-  const renderOrderList = (orders: ServiceOrder[], title: string) => {
+  const renderSimpleList = (orders: ServiceOrder[]) => {
+    if (orders.length === 0) return null;
+
+    return (
+      <div className="space-y-2">
+        {orders.map((order) => (
+          <div
+            key={order.id}
+            className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
+          >
+            <div className="flex items-center gap-2">
+              <Clock className="h-4 w-4 text-blue-500" />
+              <span>OS {order.numeroos}</span>
+            </div>
+            <span className="text-sm text-muted-foreground">
+              {format(new Date(order.created_at), "dd/MM HH:mm", { locale: ptBR })}
+            </span>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
+  const renderDetailedList = (orders: ServiceOrder[], title: string) => {
     if (orders.length === 0) return null;
 
     return (
@@ -74,18 +100,45 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
             Notificações
           </span>
         </CardTitle>
-        <Button 
-          variant="outline"
-          onClick={() => navigate('/ade-monitor')}
-          className="hover:bg-blue-500/10"
-        >
-          Ver todos
-        </Button>
+        {!isDetailPage && (
+          <Button 
+            variant="outline"
+            onClick={() => navigate('/ade-monitor')}
+            className="hover:bg-blue-500/10"
+          >
+            Ver todos
+          </Button>
+        )}
       </CardHeader>
       <CardContent className="space-y-6">
-        {renderOrderList(adeOrders, "Ordens em ADE")}
-        {renderOrderList(msOrders, "Ordens com Material Solicitado")}
-        {renderOrderList(amOrders, "Ordens em Aquisição de Material")}
+        {isDetailPage ? (
+          <>
+            {renderDetailedList(adeOrders, "Ordens em ADE")}
+            {renderDetailedList(msOrders, "Ordens com Material Solicitado")}
+            {renderDetailedList(amOrders, "Ordens em Aquisição de Material")}
+          </>
+        ) : (
+          <>
+            {adeOrders.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-foreground/90">Ordens em ADE</h3>
+                {renderSimpleList(adeOrders)}
+              </div>
+            )}
+            {msOrders.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-foreground/90">Material Solicitado</h3>
+                {renderSimpleList(msOrders)}
+              </div>
+            )}
+            {amOrders.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-sm font-medium text-foreground/90">Aquisição de Material</h3>
+                {renderSimpleList(amOrders)}
+              </div>
+            )}
+          </>
+        )}
       </CardContent>
     </Card>
   );
