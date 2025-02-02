@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell, Clock } from "lucide-react";
 import { ServiceOrder } from "@/types";
 import { Button } from "@/components/ui/button";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -13,9 +13,6 @@ interface ADEMonitorProps {
 
 const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const isDetailPage = location.pathname === "/ade-monitor";
-  
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
   const criticalAdeOrders = adeOrders.filter(order => order.priority === "critical");
   const msOrders = serviceOrders.filter(order => order.status === "M.S");
@@ -25,30 +22,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
     return null;
   }
 
-  const renderSimpleList = (orders: ServiceOrder[]) => {
-    if (orders.length === 0) return null;
-
-    return (
-      <div className="space-y-2">
-        {orders.map((order) => (
-          <div
-            key={order.id}
-            className="flex items-center justify-between p-2 rounded-lg hover:bg-muted/50"
-          >
-            <div className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-blue-500" />
-              <span>OS {order.numeroos}</span>
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {format(new Date(order.created_at), "dd/MM HH:mm", { locale: ptBR })}
-            </span>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  const renderDetailedList = (orders: ServiceOrder[], title: string) => {
+  const renderOrderList = (orders: ServiceOrder[], title: string) => {
     if (orders.length === 0) return null;
 
     return (
@@ -91,16 +65,6 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
     );
   };
 
-  const renderMSNotification = (orders: ServiceOrder[]) => {
-    if (orders.length === 0) return null;
-    
-    return (
-      <div className="text-sm text-foreground/90 mt-2">
-        Material Solicitado na O.S: {orders.map(order => `"${order.numeroos}"`).join(" | ")}
-      </div>
-    );
-  };
-
   return (
     <Card className="mb-8 mt-4 border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-shadow duration-300 animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
@@ -110,43 +74,18 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
             Notificações
           </span>
         </CardTitle>
-        {!isDetailPage && (
-          <Button 
-            variant="outline"
-            onClick={() => navigate('/ade-monitor')}
-            className="hover:bg-blue-500/10"
-          >
-            Ver todos
-          </Button>
-        )}
+        <Button 
+          variant="outline"
+          onClick={() => navigate('/ade-monitor')}
+          className="hover:bg-blue-500/10"
+        >
+          Ver todos
+        </Button>
       </CardHeader>
       <CardContent className="space-y-6">
-        {isDetailPage ? (
-          <>
-            {renderDetailedList(adeOrders, "Ordens em ADE")}
-            {renderDetailedList(msOrders, "Ordens com Material Solicitado")}
-            {renderDetailedList(amOrders, "Ordens em Aquisição de Material")}
-          </>
-        ) : (
-          <>
-            {adeOrders.length > 0 && (
-              <div>
-                <div className="text-sm font-medium text-foreground/90">
-                  Você tem {adeOrders.length} {adeOrders.length === 1 ? 'ordem' : 'ordens'} de serviço em ADE
-                  {criticalAdeOrders.length > 0 && `, ${criticalAdeOrders.length} OS ${criticalAdeOrders.length === 1 ? 'é' : 'são'} equipamento crítico`}!
-                </div>
-                {renderSimpleList(adeOrders)}
-              </div>
-            )}
-            {msOrders.length > 0 && renderMSNotification(msOrders)}
-            {amOrders.length > 0 && (
-              <div className="space-y-2">
-                <h3 className="text-sm font-medium text-foreground/90">Aquisição de Material</h3>
-                {renderSimpleList(amOrders)}
-              </div>
-            )}
-          </>
-        )}
+        {renderOrderList(adeOrders, "Ordens em ADE")}
+        {renderOrderList(msOrders, "Ordens com Material Solicitado")}
+        {renderOrderList(amOrders, "Ordens em Aquisição de Material")}
       </CardContent>
     </Card>
   );
