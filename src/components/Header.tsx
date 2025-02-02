@@ -7,15 +7,15 @@ const Header = () => {
   const text = "Sistema de Gerenciamento de Ordens de Serviço".split("");
   
   return (
-    <div className="bg-card/50 backdrop-blur-sm rounded-b-xl shadow-lg transition-all duration-300 hover:shadow-xl">
-      <div className="flex items-start justify-between mb-1 pt-0">
-        <div className="flex flex-col items-start gap-2">
+    <div className="bg-card/50 backdrop-blur-sm rounded-b-xl shadow-lg transition-all duration-300 hover:shadow-xl p-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="flex flex-col items-center sm:items-start gap-2 w-full sm:w-auto">
           <img 
             src="/lovable-uploads/3bfab654-e541-4930-a97d-6447b525b0b4.png" 
             alt="Daily.Flow Logo" 
-            className="h-[52px] w-auto object-contain"
+            className="h-[40px] sm:h-[52px] w-auto object-contain"
           />
-          <div className="flex flex-wrap">
+          <div className="flex flex-wrap justify-center sm:justify-start">
             {text.map((char, index) => (
               <motion.span
                 key={index}
@@ -28,7 +28,7 @@ const Header = () => {
                   repeatDelay: 5,
                   ease: [0.43, 0.13, 0.23, 0.96]
                 }}
-                className="text-muted-foreground text-xs"
+                className="text-muted-foreground text-xs sm:text-sm"
               >
                 {char === " " ? "\u00A0" : char}
               </motion.span>

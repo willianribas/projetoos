@@ -34,7 +34,6 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
   const handleSubmit = async (data: any) => {
     const formattedOSNumber = `${selectedYear}.${data.numeroos.padStart(2, '0')}`;
     
-    // Check for duplicate OS numbers
     const isDuplicate = serviceOrders.some(order => order.numeroos === formattedOSNumber);
     
     if (isDuplicate) {
@@ -63,15 +62,15 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
           Nova Ordem de Serviço
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[800px] w-[95%] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-xl font-semibold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
             Nova Ordem de Serviço
           </DialogTitle>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
               <FormField
                 control={form.control}
                 name="numeroos"
@@ -201,7 +200,7 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
                   <FormControl>
                     <Textarea 
                       placeholder="Digite as observações da OS"
-                      className="min-h-[100px] bg-background/50"
+                      className="min-h-[120px] bg-background/50"
                       {...field}
                     />
                   </FormControl>
