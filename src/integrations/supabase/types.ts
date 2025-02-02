@@ -74,36 +74,6 @@ export type Database = {
         }
         Relationships: []
       }
-      gets_monitoring: {
-        Row: {
-          created_at: string
-          equipment: string | null
-          id: number
-          os_number: string
-          patrimony: string | null
-          status: string
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string
-          equipment?: string | null
-          id?: number
-          os_number: string
-          patrimony?: string | null
-          status: string
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string
-          equipment?: string | null
-          id?: number
-          os_number?: string
-          patrimony?: string | null
-          status?: string
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       notification_states: {
         Row: {
           created_at: string | null
