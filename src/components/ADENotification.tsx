@@ -3,6 +3,7 @@ import { toast } from "@/hooks/use-toast";
 import { ServiceOrder } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "./AuthProvider";
 
 interface ADENotificationProps {
   serviceOrders: ServiceOrder[];
@@ -11,6 +12,7 @@ interface ADENotificationProps {
 const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
   const [notifiedOrders, setNotifiedOrders] = useState<Set<number>>(new Set());
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   const createNotificationMutation = useMutation({
     mutationFn: async (serviceOrderId: number) => {
@@ -18,7 +20,7 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
         .from('notification_states')
         .insert({
           service_order_id: serviceOrderId,
-          user_id: (await supabase.auth.getUser()).data.user?.id,
+          user_id: user?.id,
           notification_type: 'ADE_8_DAYS',
           is_read: false
         });
@@ -38,7 +40,10 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
 
   useEffect(() => {
     const checkADEOrders = async () => {
-      const adeOrders = serviceOrders.filter(order => {
+      // Filter orders to only include those owned by the current user
+      const userOrders = serviceOrders.filter(order => order.user_id === user?.id);
+      
+      const adeOrders = userOrders.filter(order => {
         const days = calculateDays(order.created_at || "");
         return order.status === "ADE" && days >= 8 && !notifiedOrders.has(order.id);
       });
@@ -72,8 +77,10 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
       }
     };
 
-    checkADEOrders();
-  }, [serviceOrders]);
+    if (user) {
+      checkADEOrders();
+    }
+  }, [serviceOrders, user]);
 
   return null;
 };
