@@ -35,45 +35,50 @@ const ADEMonitorPage = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Hash className="h-4 w-4" />
                     <span>Número OS</span>
                   </div>
                 </TableHead>
                 <TableHead>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Building2 className="h-4 w-4" />
                     <span>Patrimônio</span>
                   </div>
                 </TableHead>
                 <TableHead>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-2">
                     <Settings2 className="h-4 w-4" />
                     <span>Equipamento</span>
                   </div>
                 </TableHead>
                 <TableHead>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-2">
                     <StickyNote className="h-4 w-4" />
                     <span>Observação</span>
                   </div>
                 </TableHead>
                 <TableHead>
-                  <div className="flex items-center justify-center gap-2">
+                  <div className="flex items-center gap-2">
                     <ActivitySquare className="h-4 w-4" />
                     <span>Status</span>
                   </div>
                 </TableHead>
-                <TableHead>Data da Alteração</TableHead>
+                <TableHead>
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" />
+                    <span>Data da Alteração</span>
+                  </div>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {orders.map((order) => (
                 <TableRow key={order.id}>
-                  <TableCell>{order.numeroos}</TableCell>
-                  <TableCell>{order.patrimonio}</TableCell>
-                  <TableCell>{order.equipamento}</TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">{order.numeroos}</TableCell>
+                  <TableCell className="text-left">{order.patrimonio}</TableCell>
+                  <TableCell className="text-left">{order.equipamento}</TableCell>
+                  <TableCell className="text-left">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger>
@@ -89,12 +94,12 @@ const ADEMonitorPage = () => {
                       </Tooltip>
                     </TooltipProvider>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">
                     <span className={cn("px-2 py-1 rounded-md text-xs font-medium", getStatusColor(order.status))}>
                       {order.status}
                     </span>
                   </TableCell>
-                  <TableCell>
+                  <TableCell className="text-left">
                     {format(new Date(order.created_at), "dd/MM/yyyy HH:mm")}
                   </TableCell>
                 </TableRow>
