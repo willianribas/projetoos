@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Trash2 } from "lucide-react";
 import { ServiceOrder } from "@/types";
+import { Tooltip } from "@/components/ui/tooltip";
+import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ServiceOrderTableRowProps {
   order: ServiceOrder;
@@ -29,8 +31,21 @@ const ServiceOrderTableRow = ({
       <TableCell className="text-center font-medium">{order.numeroos}</TableCell>
       <TableCell className="text-center">{order.patrimonio}</TableCell>
       <TableCell className="text-center">{order.equipamento}</TableCell>
-      <TableCell className="hidden md:table-cell">
-        {order.observacao || "-"}
+      <TableCell className="text-center">
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              <div className="max-w-[200px] truncate">
+                {order.observacao || "-"}
+              </div>
+            </TooltipTrigger>
+            {order.observacao && (
+              <TooltipContent>
+                <p className="max-w-[300px] text-sm">{order.observacao}</p>
+              </TooltipContent>
+            )}
+          </Tooltip>
+        </TooltipProvider>
       </TableCell>
       <TableCell className="text-center">
         <div className="flex flex-col gap-1 items-center">

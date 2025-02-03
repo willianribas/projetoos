@@ -21,6 +21,7 @@ import {
   MessageSquare, 
   GripHorizontal,
   Filter,
+  StickyNote,
 } from "lucide-react";
 
 interface ServiceOrderTableProps {
@@ -87,7 +88,10 @@ const ServiceOrderTable = ({
     <>
       <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg animate-fade-in">
         <CardHeader className="space-y-4">
-          <CardTitle className="text-foreground font-bold">Ordens de Serviço Registradas</CardTitle>
+          <CardTitle className="text-foreground font-bold flex items-center gap-2">
+            <ActivitySquare className="h-5 w-5 text-primary" />
+            Ordens de Serviço em Monitoramento
+          </CardTitle>
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex space-x-2 pb-4">
               <Badge
@@ -144,10 +148,11 @@ const ServiceOrderTable = ({
                       <span className="sm:hidden">Equip.</span>
                     </div>
                   </TableHead>
-                  <TableHead className="text-center text-foreground/90 font-semibold hidden md:table-cell">
+                  <TableHead className="text-center text-foreground/90 font-semibold">
                     <div className="flex items-center justify-center gap-2">
-                      <MessageSquare className="h-4 w-4" />
-                      Observação
+                      <StickyNote className="h-4 w-4" />
+                      <span className="hidden sm:inline">Observação</span>
+                      <span className="sm:hidden">Obs.</span>
                     </div>
                   </TableHead>
                   <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
