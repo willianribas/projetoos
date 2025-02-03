@@ -13,7 +13,7 @@ const Header = () => {
           <img 
             src="/lovable-uploads/3bfab654-e541-4930-a97d-6447b525b0b4.png" 
             alt="Daily.Flow Logo" 
-            className="h-[40px] sm:h-[52px] w-auto object-contain"
+            className="h-[45px] sm:h-[45px] w-auto object-contain"
           />
           <div className="flex flex-wrap justify-center sm:justify-start">
             {text.map((char, index) => (
@@ -28,7 +28,7 @@ const Header = () => {
                   repeatDelay: 5,
                   ease: [0.43, 0.13, 0.23, 0.96]
                 }}
-                className="text-muted-foreground text-xs sm:text-sm"
+                  className="text-muted-foreground text-[9px] sm:text-[10px] h-[1px] flex items-center"
               >
                 {char === " " ? "\u00A0" : char}
               </motion.span>
