@@ -16,10 +16,15 @@ const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
 
     const totalHours = ordersInStatus.reduce((acc, order) => {
       const hours = (new Date().getTime() - new Date(order.created_at).getTime()) / (1000 * 60 * 60);
+      // Limit to 120 hours (5 days) for ADE and M.S
+      if ((status === "ADE" || status === "M.S") && hours > 120) {
+        return acc + 120;
+      }
       return acc + hours;
     }, 0);
 
-    return Math.round(totalHours / ordersInStatus.length);
+    const avgHours = totalHours / ordersInStatus.length;
+    return (status === "ADE" || status === "M.S") ? Math.min(avgHours, 120) : avgHours;
   };
 
   const statuses = ["ADE", "A.M", "M.S"];
@@ -114,7 +119,7 @@ const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
                   {status}
                 </span>
                 <span className="text-muted-foreground">
-                  {days} dias ({hours} horas)
+                  {days} dias ({Math.round(hours)} horas)
                 </span>
               </div>
               <Progress 
