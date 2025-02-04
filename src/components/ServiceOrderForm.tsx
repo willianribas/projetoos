@@ -56,10 +56,10 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button 
-          className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700"
+          className="h-9 px-4 bg-gradient-to-r from-white via-pink-100 to-pink-300 text-pink-700 hover:from-white hover:to-pink-400 border border-pink-200"
         >
-          <Plus className="mr-2 h-4 w-4" />
-          Nova Ordem de Serviço
+          <Plus className="h-4 w-4" />
+          Adicionar OS
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[800px] w-[95%] max-h-[90vh] overflow-y-auto">
