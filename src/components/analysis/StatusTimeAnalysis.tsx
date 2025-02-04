@@ -84,7 +84,7 @@ const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
                   border: "1px solid hsl(var(--border))",
                   borderRadius: "var(--radius)",
                 }}
-                className="animate-fade-in"
+                wrapperStyle={{ outline: 'none' }}
               />
               <Bar 
                 dataKey="hours" 
