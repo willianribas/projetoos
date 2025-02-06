@@ -1,15 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ServiceOrder } from "@/types";
 import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Clock, BarChart2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface StatusTimeAnalysisProps {
   serviceOrders: ServiceOrder[];
 }
 
 const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+
   const calculateAverageTimeInStatus = (status: string) => {
     const ordersInStatus = serviceOrders.filter(order => order.status === status);
     if (ordersInStatus.length === 0) return 0;
@@ -39,15 +42,23 @@ const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "ADE":
-        return "#3b82f6";
+        return "#3b82f6"; // blue
       case "A.M":
-        return "#10b981";
+        return "#ea384c"; // red
       case "M.S":
-        return "#f59e0b";
+        return "#33C3F0"; // cyan
       default:
         return "#6b7280";
     }
   };
+
+  const handleStatusClick = (status: string) => {
+    setSelectedStatus(selectedStatus === status ? null : status);
+  };
+
+  const filteredData = selectedStatus 
+    ? averageTimes.filter(item => item.status === selectedStatus)
+    : averageTimes;
 
   return (
     <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
@@ -58,12 +69,29 @@ const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
             Análise de Tempo por Status
           </span>
         </CardTitle>
-        <BarChart2 className="h-5 w-5 text-muted-foreground" />
+        <div className="flex gap-2">
+          {statuses.map((status) => (
+            <Button
+              key={status}
+              variant={selectedStatus === status ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleStatusClick(status)}
+              className="transition-all duration-300 hover:scale-105"
+              style={{ 
+                backgroundColor: selectedStatus === status ? getStatusColor(status) : 'transparent',
+                borderColor: getStatusColor(status),
+                color: selectedStatus === status ? 'white' : getStatusColor(status)
+              }}
+            >
+              {status}
+            </Button>
+          ))}
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="h-[300px] animate-scale-in">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={averageTimes} className="animate-fade-in">
+            <BarChart data={filteredData} className="animate-fade-in">
               <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
               <XAxis 
                 dataKey="status" 
@@ -80,7 +108,7 @@ const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
                 stroke="currentColor"
               />
               <Tooltip 
-                formatter={(value: number, name: string) => [
+                formatter={(value: number) => [
                   `${Math.round(value / 24 * 10) / 10} dias (${Math.round(value)} horas)`,
                   "Tempo Médio"
                 ]}
@@ -91,25 +119,32 @@ const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
                 }}
                 wrapperStyle={{ outline: 'none' }}
               />
-              <Bar 
-                dataKey="hours" 
-                fill="url(#colorGradient)"
-                radius={[4, 4, 0, 0]}
-                className="animate-fade-in"
-              />
-              <defs>
-                <linearGradient id="colorGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
-                  <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity={0.3}/>
-                </linearGradient>
-              </defs>
+              {filteredData.map((item) => (
+                <Bar
+                  key={item.status}
+                  dataKey="hours"
+                  fill={getStatusColor(item.status)}
+                  radius={[4, 4, 0, 0]}
+                  className="animate-fade-in"
+                />
+              ))}
             </BarChart>
           </ResponsiveContainer>
         </div>
 
         <div className="space-y-4 animate-fade-in">
           {averageTimes.map(({ status, hours, days }) => (
-            <div key={status} className="space-y-2 hover:bg-muted/50 p-2 rounded-lg transition-colors">
+            <div 
+              key={status} 
+              className={`space-y-2 p-3 rounded-lg transition-all duration-300 cursor-pointer hover:bg-muted/50 ${
+                selectedStatus === status ? 'ring-2 ring-offset-2' : ''
+              }`}
+              style={{ 
+                borderColor: getStatusColor(status),
+                backgroundColor: selectedStatus === status ? `${getStatusColor(status)}10` : undefined
+              }}
+              onClick={() => handleStatusClick(status)}
+            >
               <div className="flex justify-between text-sm">
                 <span className="flex items-center gap-2">
                   <div 
