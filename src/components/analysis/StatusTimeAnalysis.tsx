@@ -13,21 +13,31 @@ interface StatusTimeAnalysisProps {
 const StatusTimeAnalysis = ({ serviceOrders }: StatusTimeAnalysisProps) => {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
 
+  const getMaxHoursForStatus = (status: string) => {
+    switch (status) {
+      case "ADE":
+        return 13 * 24; // 13 days in hours
+      case "A.M":
+        return 500 * 24; // 500 days in hours
+      case "M.S":
+        return 5 * 24; // 5 days in hours
+      default:
+        return 24;
+    }
+  };
+
   const calculateAverageTimeInStatus = (status: string) => {
     const ordersInStatus = serviceOrders.filter(order => order.status === status);
     if (ordersInStatus.length === 0) return 0;
 
+    const maxHours = getMaxHoursForStatus(status);
+
     const totalHours = ordersInStatus.reduce((acc, order) => {
       const hours = (new Date().getTime() - new Date(order.created_at).getTime()) / (1000 * 60 * 60);
-      // Limit to 120 hours (5 days) for ADE and M.S
-      if ((status === "ADE" || status === "M.S") && hours > 120) {
-        return acc + 120;
-      }
-      return acc + hours;
+      return acc + Math.min(hours, maxHours);
     }, 0);
 
-    const avgHours = totalHours / ordersInStatus.length;
-    return (status === "ADE" || status === "M.S") ? Math.min(avgHours, 120) : avgHours;
+    return Math.min(totalHours / ordersInStatus.length, maxHours);
   };
 
   const statuses = ["ADE", "A.M", "M.S"];
