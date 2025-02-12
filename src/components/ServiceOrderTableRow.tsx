@@ -1,4 +1,3 @@
-
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -14,7 +13,6 @@ interface ServiceOrderTableRowProps {
   getStatusColor: (status: string) => string;
   onRowClick: (order: ServiceOrder, index: number) => void;
   onDelete: (e: React.MouseEvent, index: number) => void;
-  statusArray?: string[];
 }
 
 const ServiceOrderTableRow = ({
@@ -23,7 +21,6 @@ const ServiceOrderTableRow = ({
   getStatusColor,
   onRowClick,
   onDelete,
-  statusArray,
 }: ServiceOrderTableRowProps) => {
   return (
     <TableRow
@@ -52,15 +49,14 @@ const ServiceOrderTableRow = ({
       </TableCell>
       <TableCell className="text-center">
         <div className="flex flex-col gap-1 items-center">
-          {(statusArray || [order.status]).map((status, idx) => (
-            <Badge
-              key={idx}
-              variant="outline"
-              className={`${getStatusColor(status)} transition-colors duration-200`}
-            >
-              {status}
-            </Badge>
-          ))}
+          <Badge
+            variant="outline"
+            className={`${getStatusColor(
+              order.status
+            )} transition-colors duration-200`}
+          >
+            {order.status}
+          </Badge>
           <Badge
             variant="outline"
             className={`${

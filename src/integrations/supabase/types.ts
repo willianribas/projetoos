@@ -255,7 +255,6 @@ export type Database = {
           priority: string | null
           service_order_id: number | null
           status: string
-          status_array: string[] | null
           user_id: string | null
         }
         Insert: {
@@ -269,7 +268,6 @@ export type Database = {
           priority?: string | null
           service_order_id?: number | null
           status: string
-          status_array?: string[] | null
           user_id?: string | null
         }
         Update: {
@@ -283,7 +281,6 @@ export type Database = {
           priority?: string | null
           service_order_id?: number | null
           status?: string
-          status_array?: string[] | null
           user_id?: string | null
         }
         Relationships: [
@@ -307,7 +304,6 @@ export type Database = {
           patrimonio: string
           priority: string | null
           status: string
-          status_array: string[] | null
           user_id: string | null
         }
         Insert: {
@@ -320,7 +316,6 @@ export type Database = {
           patrimonio: string
           priority?: string | null
           status: string
-          status_array?: string[] | null
           user_id?: string | null
         }
         Update: {
@@ -333,7 +328,6 @@ export type Database = {
           patrimonio?: string
           priority?: string | null
           status?: string
-          status_array?: string[] | null
           user_id?: string | null
         }
         Relationships: []
