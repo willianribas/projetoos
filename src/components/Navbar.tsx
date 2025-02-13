@@ -12,6 +12,7 @@ import {
 import { useAuth } from "./AuthProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
+import { motion } from "framer-motion";
 
 const NavItem = ({
   icon: Icon,
@@ -35,7 +36,6 @@ const NavItem = ({
       className={cn(
         "relative h-12 transition-all duration-300 group",
         "hover:bg-[#FFDEE2] dark:hover:bg-[#FFDEE2]/10",
-        isActive && "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-['']",
         isHovered ? "w-auto px-4" : "w-12"
       )}
     >
@@ -45,15 +45,30 @@ const NavItem = ({
           isActive ? "text-primary" : "text-muted-foreground",
           "group-hover:text-[#ff8fa3] dark:group-hover:text-[#ff8fa3]"
         )} />
-        <span 
-          className={cn(
-            "transition-all duration-300 whitespace-nowrap overflow-hidden",
-            isHovered ? "w-auto opacity-100" : "w-0 opacity-0"
-          )}
+        <motion.span 
+          initial={{ width: 0, opacity: 0 }}
+          animate={{ 
+            width: isHovered ? "auto" : 0,
+            opacity: isHovered ? 1 : 0
+          }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+          className="whitespace-nowrap overflow-hidden"
         >
           {title}
-        </span>
+        </motion.span>
       </div>
+      {isActive && (
+        <motion.div
+          layoutId="activeTab"
+          className="absolute bottom-0 left-0 h-0.5 w-full bg-primary"
+          initial={false}
+          transition={{
+            type: "spring",
+            stiffness: 500,
+            damping: 30
+          }}
+        />
+      )}
     </Button>
   );
 };
@@ -88,7 +103,7 @@ const Navbar = () => {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-      <div className="flex h-16 items-center justify-between px-4">
+      <div className="flex h-16 items-center justify-center px-4 relative">
         <div className="flex items-center space-x-2">
           {menuItems.map((item) => (
             <NavItem
@@ -101,7 +116,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="flex items-center space-x-2">
+        <div className="absolute right-4 flex items-center space-x-2">
           <NavItem
             icon={Settings}
             title="Configurações"
