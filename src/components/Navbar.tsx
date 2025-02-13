@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { 
   Home, 
@@ -12,7 +12,6 @@ import {
 import { useAuth } from "./AuthProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 
 const NavItem = ({
   icon: Icon,
@@ -25,30 +24,37 @@ const NavItem = ({
   isActive: boolean;
   onClick: () => void;
 }) => {
+  const [isHovered, setIsHovered] = useState(false);
+
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={onClick}
-            variant="ghost"
-            size="icon"
-            className={cn(
-              "relative h-12 w-12 transition-all duration-300 hover:bg-accent",
-              isActive && "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-['']"
-            )}
-          >
-            <Icon className={cn(
-              "h-5 w-5 transition-colors duration-300",
-              isActive ? "text-primary" : "text-muted-foreground",
-            )} />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>
-          <p>{title}</p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Button
+      onClick={onClick}
+      variant="ghost"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={cn(
+        "relative h-12 transition-all duration-300 group",
+        "hover:bg-[#FFDEE2] dark:hover:bg-[#FFDEE2]/10",
+        isActive && "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary after:content-['']",
+        isHovered ? "w-auto px-4" : "w-12"
+      )}
+    >
+      <div className="flex items-center gap-2">
+        <Icon className={cn(
+          "h-5 w-5 transition-colors duration-300",
+          isActive ? "text-primary" : "text-muted-foreground",
+          "group-hover:text-[#ff8fa3] dark:group-hover:text-[#ff8fa3]"
+        )} />
+        <span 
+          className={cn(
+            "transition-all duration-300 whitespace-nowrap overflow-hidden",
+            isHovered ? "w-auto opacity-100" : "w-0 opacity-0"
+          )}
+        >
+          {title}
+        </span>
+      </div>
+    </Button>
   );
 };
 
