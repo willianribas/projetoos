@@ -1,36 +1,33 @@
+
 import Header from "@/components/Header";
 import ADEMonitor from "@/components/ADEMonitor";
 import ServiceOrderContent from "@/components/ServiceOrderContent";
 import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
 import ADENotification from "@/components/ADENotification";
 import MetricsHighlight from "@/components/charts/MetricsHighlight";
-import Sidebar from "@/components/Sidebar";
-import { SidebarContent } from "@/components/ui/sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar-context";
+import Navbar from "@/components/Navbar";
 
 const IndexContent = () => {
   const { serviceOrders } = useServiceOrders();
   
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <Sidebar />
-        <SidebarContent>
-          <div className="space-y-4 sm:space-y-6 animate-fade-in">
-            <ADENotification serviceOrders={serviceOrders} />
-            <Header />
-            <div className="px-2 sm:px-0">
-              <MetricsHighlight serviceOrders={serviceOrders} />
-              <ADEMonitor serviceOrders={serviceOrders} />
-              <ServiceOrderContent showTableByDefault={true} />
-            </div>
-            <div className="text-center text-sm text-foreground/60 py-4">
-              &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
-            </div>
+    <div className="min-h-screen w-full">
+      <Navbar />
+      <div className="pt-16">
+        <div className="space-y-4 sm:space-y-6 p-4 sm:p-8 animate-fade-in">
+          <ADENotification serviceOrders={serviceOrders} />
+          <Header />
+          <div className="px-2 sm:px-0">
+            <MetricsHighlight serviceOrders={serviceOrders} />
+            <ADEMonitor serviceOrders={serviceOrders} />
+            <ServiceOrderContent showTableByDefault={true} />
           </div>
-        </SidebarContent>
+          <div className="text-center text-sm text-foreground/60 py-4">
+            &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
+          </div>
+        </div>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
