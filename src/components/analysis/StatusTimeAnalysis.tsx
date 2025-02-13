@@ -67,7 +67,7 @@ const StatusTimeAnalysis = ({
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2 text-lg font-semibold">
           <Clock className="h-5 w-5 text-primary animate-pulse" />
-          <span className="bg-gradient-to-r from-white-400 to-purple-500 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-white to-purple-500 bg-clip-text text-transparent">
             Análise de Tempo por Status
           </span>
         </CardTitle>
