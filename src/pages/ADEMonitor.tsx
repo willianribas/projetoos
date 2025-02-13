@@ -6,13 +6,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { getStatusColor } from "@/components/filters/ServiceOrderFilters";
-import Sidebar from "@/components/Sidebar";
-import { SidebarContent } from "@/components/ui/sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar-context";
 import Header from "@/components/Header";
 import StatusTimeAnalysis from "@/components/analysis/StatusTimeAnalysis";
 import { Hash, Building2, Settings2, StickyNote, ActivitySquare, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import Navbar from "@/components/Navbar";
 
 const ADEMonitorPage = () => {
   const { serviceOrders } = useServiceOrders();
@@ -112,22 +110,20 @@ const ADEMonitorPage = () => {
   );
 
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full">
-        <Sidebar />
-        <SidebarContent>
-          <div className="container mx-auto p-6 space-y-6 animate-fade-in">
-            <Header />
-            <div className="grid gap-6">
-              <TableWithObservation orders={adeOrders} title="Ordens de Serviço em ADE" />
-              <TableWithObservation orders={amOrders} title="Ordens de Serviço em A.M" />
-              <TableWithObservation orders={msOrders} title="Ordens de Serviço em M.S" />
-              <StatusTimeAnalysis serviceOrders={serviceOrders} />
-            </div>
+    <div className="min-h-screen w-full">
+      <Navbar />
+      <div className="pt-16">
+        <div className="container mx-auto p-6 space-y-6 animate-fade-in">
+          <Header />
+          <div className="grid gap-6">
+            <TableWithObservation orders={adeOrders} title="Ordens de Serviço em ADE" />
+            <TableWithObservation orders={amOrders} title="Ordens de Serviço em A.M" />
+            <TableWithObservation orders={msOrders} title="Ordens de Serviço em M.S" />
+            <StatusTimeAnalysis serviceOrders={serviceOrders} />
           </div>
-        </SidebarContent>
+        </div>
       </div>
-    </SidebarProvider>
+    </div>
   );
 };
 
