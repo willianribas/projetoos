@@ -103,8 +103,8 @@ const Navbar = () => {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
-      <div className="flex h-16 items-center justify-center px-4 relative">
-        <div className="flex items-center space-x-2">
+      <div className="flex h-16 items-center justify-between px-4">
+        <div className="flex items-center space-x-2 ml-0">
           {menuItems.map((item) => (
             <NavItem
               key={item.title}
@@ -116,7 +116,7 @@ const Navbar = () => {
           ))}
         </div>
 
-        <div className="absolute right-4 flex items-center space-x-2">
+        <div className="flex items-center space-x-2">
           <NavItem
             icon={Settings}
             title="Configurações"
