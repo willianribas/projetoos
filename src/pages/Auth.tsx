@@ -85,7 +85,7 @@ const Auth = () => {
             <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Digite sua senha" className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 bg-white/5 border-white/10" />
           </div>
 
-          <Button type="submit" disabled={loading} className="w-full animate-gradient bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 rounded-full text-black">
+          <Button type="submit" disabled={loading} className="w-full animate-gradient bg-gradient-to-r from-blue-500 via-purple-600 to-pink-600 rounded-full text-gray-50">
             {loading ? "Carregando..." : "Entrar"}
           </Button>
         </motion.form>
