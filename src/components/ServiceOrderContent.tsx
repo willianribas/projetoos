@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import SearchBar from "@/components/SearchBar";
@@ -17,56 +16,18 @@ import {
   Wrench, 
   Package, 
   CheckCircle2, 
-  AlertCircle,
-  Clock4,
-  Hammer,
-  CircleCheck,
-  CircleDashed
+  Hammer 
 } from "lucide-react";
 
 export const statusOptions = [
-  { 
-    value: "OSP", 
-    label: "OS Pendente", 
-    color: "text-yellow-500",
-    icon: Clock
-  },
-  { 
-    value: "A.M", 
-    label: "Aguardando Manutenção", 
-    color: "text-red-500",
-    icon: Clock4
-  },
-  { 
-    value: "EMAND", 
-    label: "Em Andamento", 
-    color: "text-[#f59e0b]",
-    icon: Hammer
-  },
-  { 
-    value: "CONC", 
-    label: "Concluída", 
-    color: "text-green-500",
-    icon: CircleCheck
-  },
-  { 
-    value: "CANC", 
-    label: "Cancelada", 
-    color: "text-pink-500",
-    icon: CircleDashed
-  },
-  { 
-    value: "ADE", 
-    label: "Aguardando Decisão da Empresa", 
-    color: "text-blue-500",
-    icon: AlertCircle
-  },
-  { 
-    value: "M.S", 
-    label: "Manutenção Solicitada", 
-    color: "#33C3F0",
-    icon: Wrench
-  }
+  { value: "ADE", label: "ADE - Aguardando Disponibilidade", color: "text-blue-900", icon: Clock },
+  { value: "AVT", label: "AVT - Aguardando vinda técnica", color: "text-[#F97316]", icon: CalendarClock },
+  { value: "EXT", label: "EXT - Serviço Externo", color: "text-[#9b87f5]", icon: Building2 },
+  { value: "A.M", label: "A.M - Aquisição de Material", color: "text-[#ea384c]", icon: ShoppingCart },
+  { value: "INST", label: "INST - Instalação", color: "text-pink-500", icon: Wrench },
+  { value: "M.S", label: "M.S - Material Solicitado", color: "text-[#33C3F0]", icon: Package },
+  { value: "OSP", label: "OSP - Ordem de Serviço Pronta", color: "text-[#22c55e]", icon: CheckCircle2 },
+  { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]", icon: Hammer }
 ];
 
 interface SearchCriteria {
