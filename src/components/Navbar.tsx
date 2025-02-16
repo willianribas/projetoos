@@ -12,7 +12,7 @@ import {
 import { useAuth } from "./AuthProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 const NavItem = ({
   icon: Icon,
@@ -39,23 +39,25 @@ const NavItem = ({
         isHovered ? "w-auto px-4" : "w-12"
       )}
     >
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 relative">
         <Icon className={cn(
           "h-5 w-5 transition-colors duration-300",
           isActive ? "text-primary" : "text-muted-foreground",
           "group-hover:text-[#ff8fa3] dark:group-hover:text-[#ff8fa3]"
         )} />
-        <motion.span 
-          initial={{ width: 0, opacity: 0 }}
-          animate={{ 
-            width: isHovered ? "auto" : 0,
-            opacity: isHovered ? 1 : 0
-          }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="whitespace-nowrap overflow-hidden"
-        >
-          {title}
-        </motion.span>
+        <AnimatePresence>
+          {isHovered && (
+            <motion.span 
+              initial={{ width: 0, opacity: 0 }}
+              animate={{ width: "auto", opacity: 1 }}
+              exit={{ width: 0, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="whitespace-nowrap overflow-hidden absolute left-7"
+            >
+              {title}
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
       {isActive && (
         <motion.div
