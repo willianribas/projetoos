@@ -18,15 +18,18 @@ import {
   Package, 
   CheckCircle2, 
   AlertCircle,
-  Clock4
+  Clock4,
+  Hammer,
+  CircleCheck,
+  CircleDashed
 } from "lucide-react";
 
 export const statusOptions = [
   { 
-    value: "ADE", 
-    label: "Aguardando Decisão da Empresa", 
-    color: "text-blue-500",
-    icon: AlertCircle
+    value: "OSP", 
+    label: "OS Pendente", 
+    color: "text-yellow-500",
+    icon: Clock
   },
   { 
     value: "A.M", 
@@ -35,11 +38,35 @@ export const statusOptions = [
     icon: Clock4
   },
   { 
+    value: "EMAND", 
+    label: "Em Andamento", 
+    color: "text-[#f59e0b]",
+    icon: Hammer
+  },
+  { 
+    value: "CONC", 
+    label: "Concluída", 
+    color: "text-green-500",
+    icon: CircleCheck
+  },
+  { 
+    value: "CANC", 
+    label: "Cancelada", 
+    color: "text-pink-500",
+    icon: CircleDashed
+  },
+  { 
+    value: "ADE", 
+    label: "Aguardando Decisão da Empresa", 
+    color: "text-blue-500",
+    icon: AlertCircle
+  },
+  { 
     value: "M.S", 
     label: "Manutenção Solicitada", 
     color: "#33C3F0",
     icon: Wrench
-  },
+  }
 ];
 
 interface SearchCriteria {
