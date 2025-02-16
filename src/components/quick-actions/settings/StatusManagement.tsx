@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { PlusCircle, X } from "lucide-react";
+import { PlusCircle, X, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface StatusOption {
   value: string;
   label: string;
   color: string;
+  icon: any;
 }
 
 interface StatusManagementProps {
@@ -48,6 +49,7 @@ export const StatusManagement = ({ statusOptions, onStatusAdd, onStatusRemove }:
       value: newStatusValue,
       label: newStatusLabel,
       color: newStatusColor,
+      icon: AlertCircle // Usando AlertCircle como ícone padrão
     });
 
     setNewStatusValue('');

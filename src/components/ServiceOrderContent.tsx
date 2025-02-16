@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import SearchBar from "@/components/SearchBar";
@@ -16,13 +17,29 @@ import {
   Wrench, 
   Package, 
   CheckCircle2, 
-  Hammer 
+  AlertCircle,
+  Clock4
 } from "lucide-react";
 
 export const statusOptions = [
-  { value: "ADE", label: "Aguardando Decisão da Empresa", color: "text-blue-500" },
-  { value: "A.M", label: "Aguardando Manutenção", color: "text-red-500" },
-  { value: "M.S", label: "Manutenção Solicitada", color: "#33C3F0" },
+  { 
+    value: "ADE", 
+    label: "Aguardando Decisão da Empresa", 
+    color: "text-blue-500",
+    icon: AlertCircle
+  },
+  { 
+    value: "A.M", 
+    label: "Aguardando Manutenção", 
+    color: "text-red-500",
+    icon: Clock4
+  },
+  { 
+    value: "M.S", 
+    label: "Manutenção Solicitada", 
+    color: "#33C3F0",
+    icon: Wrench
+  },
 ];
 
 interface SearchCriteria {
