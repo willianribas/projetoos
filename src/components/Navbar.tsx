@@ -39,7 +39,7 @@ const NavItem = ({
         isHovered ? "w-auto px-4" : "w-12"
       )}
     >
-      <div className="flex items-center gap-2 relative">
+      <div className="flex items-center gap-2">
         <Icon className={cn(
           "h-5 w-5 transition-colors duration-300",
           isActive ? "text-primary" : "text-muted-foreground",
@@ -52,7 +52,7 @@ const NavItem = ({
               animate={{ width: "auto", opacity: 1 }}
               exit={{ width: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="whitespace-nowrap overflow-hidden absolute left-7"
+              className="whitespace-nowrap overflow-hidden pl-6"
             >
               {title}
             </motion.span>
