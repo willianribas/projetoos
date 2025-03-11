@@ -2,23 +2,26 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/components/AuthProvider";
 
 export const usePermanentDeleteServiceOrder = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (id: number) => {
       const { error } = await supabase
         .from("service_orders")
         .delete()
-        .eq("id", id);
+        .eq("id", id)
+        .eq("user_id", user?.id);
 
       if (error) throw error;
       return id;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["deleted_service_orders"] });
+      queryClient.invalidateQueries({ queryKey: ["deleted_service_orders", user?.id] });
       toast({
         title: "Ordem de Serviço excluída permanentemente",
         description: "A OS foi excluída permanentemente do sistema.",

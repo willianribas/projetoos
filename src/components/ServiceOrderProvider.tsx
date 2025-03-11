@@ -115,6 +115,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["deleted_service_orders", user?.id] });
       toast({
         title: "Ordem de serviço excluída",
         description: "A ordem de serviço foi movida para a lixeira. Você pode restaurá-la nas configurações.",

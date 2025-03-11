@@ -60,6 +60,9 @@ export const RecycleBin = () => {
         <CardTitle className="text-xl flex items-center gap-2">
           <Trash2 className="h-5 w-5 text-muted-foreground" />
           Lixeira
+          <Badge variant="outline" className="ml-2 text-yellow-600 border-yellow-300 bg-yellow-50 dark:bg-yellow-900/20 dark:border-yellow-800 dark:text-yellow-400">
+            Auto-excluir em 3 dias
+          </Badge>
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -79,7 +82,7 @@ export const RecycleBin = () => {
               <AlertCircle className="h-4 w-4 text-yellow-600 dark:text-yellow-400" />
               <AlertTitle>Importante</AlertTitle>
               <AlertDescription>
-                As ordens de serviço excluídas permanecem aqui até que sejam restauradas ou excluídas permanentemente.
+                As ordens de serviço excluídas permanecem aqui por 3 dias e depois são excluídas permanentemente. Restaure-as se quiser mantê-las.
               </AlertDescription>
             </Alert>
             
