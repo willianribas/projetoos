@@ -16,17 +16,20 @@ interface DeleteServiceOrderDialogProps {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   onConfirm: () => void;
+  serviceOrderId?: number;
 }
 
 const DeleteServiceOrderDialog = ({
   isOpen,
   setIsOpen,
   onConfirm,
+  serviceOrderId,
 }: DeleteServiceOrderDialogProps) => {
   const { toast } = useToast();
 
   const handleConfirm = async () => {
     try {
+      console.log("Confirming deletion of service order ID:", serviceOrderId);
       await onConfirm();
       setIsOpen(false);
     } catch (error: any) {

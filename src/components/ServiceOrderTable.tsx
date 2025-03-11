@@ -35,7 +35,7 @@ interface ServiceOrderTableProps {
     icon: any;
   }>;
   onUpdateServiceOrder: (index: number, updatedOrder: ServiceOrder) => void;
-  onDeleteServiceOrder: (index: number) => void;
+  onDeleteServiceOrder: (id: number) => void;
   selectedStatus: string | null;
   onStatusChange: (status: string | null) => void;
 }
@@ -56,7 +56,7 @@ const ServiceOrderTable = ({
     index: number;
   } | null>(null);
   const [editedOrder, setEditedOrder] = useState<ServiceOrder | null>(null);
-  const [deleteIndex, setDeleteIndex] = useState<number | null>(null);
+  const [deleteOrderId, setDeleteOrderId] = useState<number | null>(null);
 
   const handleRowClick = (order: ServiceOrder, index: number) => {
     setSelectedOrder({ order, index });
@@ -71,17 +71,19 @@ const ServiceOrderTable = ({
     }
   };
 
-  const handleDelete = (e: React.MouseEvent, index: number) => {
+  const handleDelete = (e: React.MouseEvent, order: ServiceOrder) => {
     e.stopPropagation();
-    setDeleteIndex(index);
+    console.log("Delete clicked for service order ID:", order.id, "Number:", order.numeroos);
+    setDeleteOrderId(order.id);
     setIsDeleteDialogOpen(true);
   };
 
   const confirmDelete = () => {
-    if (deleteIndex !== null) {
-      onDeleteServiceOrder(deleteIndex);
+    if (deleteOrderId !== null) {
+      console.log("Confirming delete for service order ID:", deleteOrderId);
+      onDeleteServiceOrder(deleteOrderId);
       setIsDeleteDialogOpen(false);
-      setDeleteIndex(null);
+      setDeleteOrderId(null);
     }
   };
 
@@ -200,6 +202,7 @@ const ServiceOrderTable = ({
         isOpen={isDeleteDialogOpen}
         setIsOpen={setIsDeleteDialogOpen}
         onConfirm={confirmDelete}
+        serviceOrderId={deleteOrderId ?? undefined}
       />
     </>
   );

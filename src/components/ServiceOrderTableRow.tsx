@@ -1,3 +1,4 @@
+
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ interface ServiceOrderTableRowProps {
   index: number;
   getStatusColor: (status: string) => string;
   onRowClick: (order: ServiceOrder, index: number) => void;
-  onDelete: (e: React.MouseEvent, index: number) => void;
+  onDelete: (e: React.MouseEvent, order: ServiceOrder) => void;
 }
 
 const ServiceOrderTableRow = ({
@@ -74,7 +75,7 @@ const ServiceOrderTableRow = ({
           variant="ghost"
           size="icon"
           className="hover:bg-destructive/10 hover:text-destructive transition-colors"
-          onClick={(e) => onDelete(e, index)}
+          onClick={(e) => onDelete(e, order)}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

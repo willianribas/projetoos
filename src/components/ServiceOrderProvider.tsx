@@ -105,7 +105,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   // Delete mutation - now soft delete
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
-      console.log("Deleting service order with ID:", id);
+      console.log("Deleting service order with ID in provider:", id);
       const { error } = await supabase
         .from("service_orders")
         .update({ deleted_at: new Date().toISOString() }) // Soft delete

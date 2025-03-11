@@ -83,12 +83,9 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
     }
   };
 
-  const handleDeleteServiceOrder = (index: number) => {
-    const order = serviceOrders[index];
-    if (order) {
-      console.log("Deleting service order from content component:", order.id, order.numeroos);
-      deleteServiceOrder(order.id);
-    }
+  const handleDeleteServiceOrder = (id: number) => {
+    console.log("Deleting service order with ID:", id);
+    deleteServiceOrder(id);
   };
 
   const filteredOrders = filterServiceOrders({
