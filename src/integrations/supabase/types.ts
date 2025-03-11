@@ -134,6 +134,13 @@ export type Database = {
             foreignKeyName: "notification_states_service_order_id_fkey"
             columns: ["service_order_id"]
             isOneToOne: false
+            referencedRelation: "deleted_service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notification_states_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
             referencedRelation: "service_orders"
             referencedColumns: ["id"]
           },
@@ -203,6 +210,13 @@ export type Database = {
             foreignKeyName: "service_order_comments_service_order_id_fkey"
             columns: ["service_order_id"]
             isOneToOne: false
+            referencedRelation: "deleted_service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_comments_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
             referencedRelation: "service_orders"
             referencedColumns: ["id"]
           },
@@ -234,6 +248,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "service_order_deadlines_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
+            referencedRelation: "deleted_service_orders"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "service_order_deadlines_service_order_id_fkey"
             columns: ["service_order_id"]
@@ -291,6 +312,13 @@ export type Database = {
             foreignKeyName: "service_order_history_service_order_id_fkey"
             columns: ["service_order_id"]
             isOneToOne: false
+            referencedRelation: "deleted_service_orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "service_order_history_service_order_id_fkey"
+            columns: ["service_order_id"]
+            isOneToOne: false
             referencedRelation: "service_orders"
             referencedColumns: ["id"]
           },
@@ -300,6 +328,7 @@ export type Database = {
         Row: {
           created_at: string
           deadline: string | null
+          deleted_at: string | null
           equipamento: string
           id: number
           numeroos: string
@@ -313,6 +342,7 @@ export type Database = {
         Insert: {
           created_at?: string
           deadline?: string | null
+          deleted_at?: string | null
           equipamento: string
           id?: number
           numeroos: string
@@ -326,6 +356,7 @@ export type Database = {
         Update: {
           created_at?: string
           deadline?: string | null
+          deleted_at?: string | null
           equipamento?: string
           id?: number
           numeroos?: string
@@ -385,7 +416,51 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      deleted_service_orders: {
+        Row: {
+          created_at: string | null
+          deadline: string | null
+          deleted_at: string | null
+          equipamento: string | null
+          id: number | null
+          numeroos: string | null
+          observacao: string | null
+          patrimonio: string | null
+          priority: string | null
+          status: string | null
+          status_array: string[] | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          deadline?: string | null
+          deleted_at?: string | null
+          equipamento?: string | null
+          id?: number | null
+          numeroos?: string | null
+          observacao?: string | null
+          patrimonio?: string | null
+          priority?: string | null
+          status?: string | null
+          status_array?: string[] | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          deadline?: string | null
+          deleted_at?: string | null
+          equipamento?: string | null
+          id?: number | null
+          numeroos?: string | null
+          observacao?: string | null
+          patrimonio?: string | null
+          priority?: string | null
+          status?: string | null
+          status_array?: string[] | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       has_role: {

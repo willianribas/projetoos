@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext } from "react";
 import { ServiceOrder } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,7 +20,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   const { user } = useAuth();
   const queryClient = useQueryClient();
 
-  // Fetch service orders with React Query
+  // Fetch service orders with React Query - exclude deleted items
   const { data: serviceOrders = [], isLoading } = useQuery({
     queryKey: ["service_orders", user?.id],
     queryFn: async () => {
@@ -27,6 +28,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
         .from("service_orders")
         .select("*")
         .eq("user_id", user?.id)
+        .is("deleted_at", null) // Only get non-deleted items
         .order("created_at", { ascending: false });
 
       if (error) {
@@ -100,12 +102,12 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     },
   });
 
-  // Delete mutation
+  // Delete mutation - now soft delete
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
       const { error } = await supabase
         .from("service_orders")
-        .delete()
+        .update({ deleted_at: new Date().toISOString() }) // Soft delete
         .eq("id", id)
         .eq("user_id", user?.id);
 
@@ -115,7 +117,8 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
       toast({
         title: "Ordem de serviço excluída",
-        description: "A ordem de serviço foi excluída com sucesso.",
+        description: "A ordem de serviço foi movida para a lixeira. Você pode restaurá-la nas configurações.",
+        className: "bg-red-500 text-white border-none",
       });
     },
     onError: (error) => {

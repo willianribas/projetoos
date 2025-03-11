@@ -8,6 +8,7 @@ import { ExportExcel } from "@/components/quick-actions/settings/ExportExcel";
 import { HistoryToggle } from "@/components/quick-actions/settings/HistoryToggle";
 import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
 import { UserManagementContainer } from "@/components/quick-actions/settings/UserManagementContainer";
+import { RecycleBin } from "@/components/quick-actions/settings/RecycleBin";
 import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import { useAuth } from "@/components/AuthProvider";
@@ -59,6 +60,8 @@ const Settings = () => {
                     </Button>
                   </div>
                 )}
+                
+                <RecycleBin />
               </div>
             </ScrollArea>
           </Card>

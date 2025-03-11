@@ -1,3 +1,4 @@
+
 export interface ServiceOrder {
   id: number;
   numeroos: string;
@@ -8,4 +9,5 @@ export interface ServiceOrder {
   created_at: string;
   user_id?: string;
   priority?: 'normal' | 'critical';
+  deleted_at?: string | null;
 }
