@@ -1,3 +1,4 @@
+
 import React from "react";
 import {
   AlertDialog,
@@ -27,11 +28,6 @@ const DeleteServiceOrderDialog = ({
   const handleConfirm = async () => {
     try {
       await onConfirm();
-      toast({
-        title: "Ordem de serviço excluída",
-        description: "A ordem de serviço foi excluída com sucesso.",
-        variant: "default",
-      });
       setIsOpen(false);
     } catch (error: any) {
       console.error("Error deleting service order:", error);

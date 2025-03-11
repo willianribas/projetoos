@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -172,7 +173,7 @@ const ServiceOrderTable = ({
               <TableBody>
                 {serviceOrders.map((order, index) => (
                   <ServiceOrderTableRow
-                    key={index}
+                    key={order.id}
                     order={order}
                     index={index}
                     getStatusColor={getStatusColor}

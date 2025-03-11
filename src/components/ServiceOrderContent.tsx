@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import SearchBar from "@/components/SearchBar";
@@ -85,6 +86,7 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
   const handleDeleteServiceOrder = (index: number) => {
     const order = serviceOrders[index];
     if (order) {
+      console.log("Deleting service order from content component:", order.id, order.numeroos);
       deleteServiceOrder(order.id);
     }
   };

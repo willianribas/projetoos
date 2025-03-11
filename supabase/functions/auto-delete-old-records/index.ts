@@ -1,72 +1,67 @@
 
-// Follow this setup guide to integrate the Deno standard library
-// https://github.com/denoland/deno_std/tree/main/http/server
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.48.0';
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.4";
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
 serve(async (req) => {
-  // Handle CORS preflight requests
-  if (req.method === 'OPTIONS') {
-    return new Response(null, { headers: corsHeaders });
+  if (req.method === "OPTIONS") {
+    return new Response("ok", { headers: corsHeaders });
   }
-
+  
   try {
-    // Create a Supabase client with the Auth context of the function
-    const supabaseClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      {
-        global: {
-          headers: { Authorization: req.headers.get('Authorization')! },
-        },
-      }
-    );
-
-    // Calculate date 3 days ago
-    const threeDaysAgo = new Date();
-    threeDaysAgo.setDate(threeDaysAgo.getDate() - 3);
-    const threeDaysAgoISO = threeDaysAgo.toISOString();
-
-    console.log(`Deleting service orders marked as deleted before ${threeDaysAgoISO}`);
-
-    // Permanently delete service orders that were soft deleted more than 3 days ago
-    const { data, error } = await supabaseClient
-      .from('service_orders')
+    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+    
+    const supabase = createClient(supabaseUrl, supabaseKey);
+    
+    // Get the current date
+    const now = new Date();
+    
+    // Get date 3 days ago
+    const threeDaysAgo = new Date(now);
+    threeDaysAgo.setDate(now.getDate() - 3);
+    
+    // Format date for Postgres
+    const formattedDate = threeDaysAgo.toISOString();
+    
+    console.log(`Deleting service orders deleted before: ${formattedDate}`);
+    
+    // Delete service orders that were soft-deleted more than 3 days ago
+    const { data, error } = await supabase
+      .from("service_orders")
       .delete()
-      .lt('deleted_at', threeDaysAgoISO);
-
+      .lt("deleted_at", formattedDate)
+      .not("deleted_at", "is", null);
+    
     if (error) {
-      console.error('Error deleting old service orders:', error);
-      throw error;
+      console.error("Error deleting old records:", error);
+      return new Response(JSON.stringify({ error: error.message }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
     }
-
-    console.log('Successfully cleaned up old records');
+    
+    console.log("Successfully deleted old records");
     
     return new Response(
       JSON.stringify({ 
-        success: true, 
-        message: 'Successfully deleted old service orders',
-        timestamp: new Date().toISOString()
+        message: "Auto-deletion completed successfully",
+        deletedRecords: data?.length || 0
       }),
       {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 200,
       }
     );
   } catch (error) {
-    console.error('Error in auto-delete function:', error);
-    
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 400,
-      }
-    );
+    console.error("Server error:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+      status: 500,
+    });
   }
 });

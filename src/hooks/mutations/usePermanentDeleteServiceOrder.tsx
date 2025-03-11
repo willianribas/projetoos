@@ -11,16 +11,21 @@ export const usePermanentDeleteServiceOrder = () => {
 
   return useMutation({
     mutationFn: async (id: number) => {
+      console.log("Permanently deleting service order with ID:", id);
       const { error } = await supabase
         .from("service_orders")
         .delete()
         .eq("id", id)
         .eq("user_id", user?.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error in permanent delete mutation:", error);
+        throw error;
+      }
       return id;
     },
-    onSuccess: () => {
+    onSuccess: (id) => {
+      console.log("Successfully permanently deleted service order with ID:", id);
       queryClient.invalidateQueries({ queryKey: ["deleted_service_orders", user?.id] });
       toast({
         title: "Ordem de Serviço excluída permanentemente",

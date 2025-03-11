@@ -105,15 +105,21 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   // Delete mutation - now soft delete
   const deleteMutation = useMutation({
     mutationFn: async (id: number) => {
+      console.log("Deleting service order with ID:", id);
       const { error } = await supabase
         .from("service_orders")
         .update({ deleted_at: new Date().toISOString() }) // Soft delete
         .eq("id", id)
         .eq("user_id", user?.id);
 
-      if (error) throw error;
+      if (error) {
+        console.error("Error in delete mutation:", error);
+        throw error;
+      }
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (id) => {
+      console.log("Successfully deleted service order with ID:", id);
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
       queryClient.invalidateQueries({ queryKey: ["deleted_service_orders", user?.id] });
       toast({
@@ -123,6 +129,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       });
     },
     onError: (error) => {
+      console.error("Error deleting service order:", error);
       toast({
         title: "Erro ao excluir ordem de serviço",
         description: error.message,
@@ -140,6 +147,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   };
 
   const deleteServiceOrder = (id: number) => {
+    console.log("Deleting service order with ID from provider:", id);
     deleteMutation.mutate(id);
   };
 
