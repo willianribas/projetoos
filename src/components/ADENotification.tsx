@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { toast } from "@/hooks/use-toast";
 import { ServiceOrder } from "@/types";
@@ -15,13 +16,13 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
   const { user } = useAuth();
 
   const createNotificationMutation = useMutation({
-    mutationFn: async (serviceOrderId: number) => {
+    mutationFn: async ({ serviceOrderId, notificationType }: { serviceOrderId: number; notificationType: string }) => {
       const { error } = await supabase
         .from('notification_states')
         .insert({
           service_order_id: serviceOrderId,
           user_id: user?.id,
-          notification_type: 'ADE_8_DAYS',
+          notification_type: notificationType,
           is_read: false
         });
 
@@ -39,15 +40,24 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
   };
 
   useEffect(() => {
-    const checkADEOrders = async () => {
+    const checkStatusOrders = async () => {
       // Filter orders to only include those owned by the current user
-      const userOrders = serviceOrders.filter(order => order.user_id === user?.id);
+      if (!user) return;
       
+      const userOrders = serviceOrders.filter(order => order.user_id === user.id);
+      
+      // Check for ADE orders
       const adeOrders = userOrders.filter(order => {
         const days = calculateDays(order.created_at || "");
         return order.status === "ADE" && days >= 8 && !notifiedOrders.has(order.id);
       });
 
+      // Check for ADPD orders
+      const adpdOrders = userOrders.filter(order => 
+        order.status === "ADPD" && !notifiedOrders.has(order.id)
+      );
+
+      // Handle ADE notifications
       for (const order of adeOrders) {
         const days = calculateDays(order.created_at || "");
         
@@ -61,7 +71,10 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
 
         if (!existingNotification) {
           try {
-            await createNotificationMutation.mutateAsync(order.id);
+            await createNotificationMutation.mutateAsync({
+              serviceOrderId: order.id,
+              notificationType: 'ADE_8_DAYS'
+            });
 
             toast({
               title: "Ordem de Serviço em ADE",
@@ -75,10 +88,27 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
           }
         }
       }
+
+      // Handle ADPD notifications
+      if (adpdOrders.length > 0) {
+        const serviceOrdersCount = adpdOrders.length;
+        
+        // Create group notification for ADPD orders
+        toast({
+          title: "Ordens de Serviço em ADPD",
+          description: `Você tem ${serviceOrdersCount} ${serviceOrdersCount === 1 ? 'OS' : 'ordens de serviço'} aguardando decisão de proposta de desativação.`,
+          duration: 5000,
+        });
+        
+        // Mark as notified
+        adpdOrders.forEach(order => {
+          setNotifiedOrders(prev => new Set([...prev, order.id]));
+        });
+      }
     };
 
     if (user) {
-      checkADEOrders();
+      checkStatusOrders();
     }
   }, [serviceOrders, user]);
 

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Bell } from "lucide-react";
 import {
@@ -10,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Database } from "@/integrations/supabase/types";
+import { useAuth } from "@/components/AuthProvider";
 
 type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
 
@@ -23,8 +25,11 @@ const NotificationBell = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
+    if (!user) return;
+    
     const channel = supabase
       .channel('service-orders-changes')
       .on(
@@ -33,6 +38,7 @@ const NotificationBell = () => {
           event: 'UPDATE',
           schema: 'public',
           table: 'service_orders',
+          filter: `user_id=eq.${user.id}`, // Filter for current user only
         },
         (payload) => {
           const oldStatus = payload.old?.status;
@@ -56,7 +62,7 @@ const NotificationBell = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [user]);
 
   const handleOpenChange = (open: boolean) => {
     if (open) {

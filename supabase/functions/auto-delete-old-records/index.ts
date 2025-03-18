@@ -45,7 +45,7 @@ serve(async (req) => {
       });
     }
     
-    console.log("Successfully deleted old records");
+    console.log("Successfully deleted old records:", data?.length || 0);
     
     return new Response(
       JSON.stringify({ 
