@@ -1,3 +1,4 @@
+
 import { ServiceOrder } from "@/types";
 import { statusOptions } from "@/components/ServiceOrderContent";
 
@@ -44,7 +45,7 @@ export const filterServiceOrders = ({
     // Se não passar nos critérios avançados, já retorna false
     if (!matchesCriteria) return false;
 
-    // Depois aplica a busca simples si houver
+    // Depois aplica a busca simples se houver
     const searchLower = searchQuery.toLowerCase().trim();
     
     if (!searchLower) {
