@@ -44,7 +44,7 @@ export const filterServiceOrders = ({
     // Se não passar nos critérios avançados, já retorna false
     if (!matchesCriteria) return false;
 
-    // Depois aplica a busca simples se houver
+    // Depois aplica a busca simples si houver
     const searchLower = searchQuery.toLowerCase().trim();
     
     if (!searchLower) {

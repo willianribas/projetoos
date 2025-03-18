@@ -17,7 +17,8 @@ import {
   Wrench, 
   Package, 
   CheckCircle2, 
-  Hammer 
+  Hammer,
+  FilePenLine
 } from "lucide-react";
 
 export const statusOptions = [
@@ -28,7 +29,8 @@ export const statusOptions = [
   { value: "INST", label: "INST - Instalação", color: "text-pink-500", icon: Wrench },
   { value: "M.S", label: "M.S - Material Solicitado", color: "text-[#33C3F0]", icon: Package },
   { value: "OSP", label: "OSP - Ordem de Serviço Pronta", color: "text-[#22c55e]", icon: CheckCircle2 },
-  { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]", icon: Hammer }
+  { value: "E.E", label: "E.E - Em Execução", color: "text-[#F97316]", icon: Hammer },
+  { value: "ADPD", label: "ADPD - Aguardando Decisão de Proposta de Desativação", color: "text-[#D946EF]", icon: FilePenLine }
 ];
 
 interface SearchCriteria {

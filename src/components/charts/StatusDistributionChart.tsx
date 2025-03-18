@@ -56,6 +56,7 @@ const StatusDistributionChart = ({
       "[#22c55e]": "#22c55e",
       "[#f59e0b]": "#f59e0b",
       "blue-900": "#1E3A8A",
+      "[#D946EF]": "#D946EF"
     };
 
     return colorMap[color] || "#666666"; // Fallback color
