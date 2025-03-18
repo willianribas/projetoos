@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Bell } from "lucide-react";
@@ -13,9 +14,10 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   const navigate = useNavigate();
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
   const criticalAdeOrders = adeOrders.filter(order => order.priority === "critical");
+  const adpdOrders = serviceOrders.filter(order => order.status === "ADPD");
   const msOrders = serviceOrders.filter(order => order.status === "M.S");
 
-  if (adeOrders.length === 0 && msOrders.length === 0) {
+  if (adeOrders.length === 0 && msOrders.length === 0 && adpdOrders.length === 0) {
     return null;
   }
 
@@ -31,12 +33,22 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          {adeOrders.length > 0 && (
+          {(adeOrders.length > 0 || adpdOrders.length > 0) && (
             <div className="flex items-center justify-between animate-fade-in">
               <p className="text-lg text-foreground/90">
-                Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> ordens de serviço em ADE
-                {criticalAdeOrders.length > 0 && (
-                  <span>, <span className="text-red-500 font-bold animate-pulse">{criticalAdeOrders.length}</span> OS é equipamento crítico!</span>
+                {adeOrders.length > 0 && (
+                  <>
+                    Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> {adeOrders.length === 1 ? 'OS' : 'ordens de serviço'} em ADE
+                    {criticalAdeOrders.length > 0 && (
+                      <span>, <span className="text-red-500 font-bold animate-pulse">{criticalAdeOrders.length}</span> OS é equipamento crítico!</span>
+                    )}
+                  </>
+                )}
+                {adeOrders.length > 0 && adpdOrders.length > 0 && ", e "}
+                {adpdOrders.length > 0 && (
+                  <>
+                    <span className="font-bold text-fuchsia-400">{adpdOrders.length}</span> {adpdOrders.length === 1 ? 'OS' : 'ordens de serviço'} em ADPD
+                  </>
                 )}
               </p>
               <Button 
