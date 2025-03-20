@@ -109,12 +109,25 @@ export default {
             'background-size': '200% 200%',
             'background-position': 'right center'
           }
+        },
+        fadeIn: {
+          from: { opacity: '0', transform: 'translateY(10px)' },
+          to: { opacity: '1', transform: 'translateY(0)' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'gradient': 'gradient 3s ease infinite'
+        'gradient': 'gradient 3s ease infinite',
+        'fade-in': 'fadeIn 0.5s ease-out forwards'
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-card': 'linear-gradient(180deg, rgba(30, 30, 30, 0.3) 0%, rgba(15, 15, 15, 0.4) 100%)'
+      },
+      boxShadow: {
+        'glass': '0 4px 20px 0 rgba(0, 0, 0, 0.05)',
+        'glass-hover': '0 8px 30px 0 rgba(0, 0, 0, 0.1), 0 0 10px 0 rgba(97, 218, 251, 0.2)'
       }
     }
   },

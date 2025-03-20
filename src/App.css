@@ -17,7 +17,7 @@
   height: 4em;
   padding: 1em;
   will-change: filter;
-  transition: filter 300ms;
+  transition: all 300ms ease;
 }
 
 @media (min-width: 768px) {
@@ -28,10 +28,12 @@
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+  filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.7));
+  transform: scale(1.05);
 }
+
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+  filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.7));
 }
 
 @keyframes logo-spin {
@@ -51,6 +53,16 @@
 
 .card {
   padding: 1.5em;
+  border-radius: var(--radius);
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 
 @media (min-width: 768px) {
@@ -60,12 +72,46 @@
 }
 
 .read-the-docs {
-  color: #888;
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.875rem;
+  transition: color 0.3s ease;
+}
+
+.read-the-docs:hover {
+  color: rgba(255, 255, 255, 0.9);
 }
 
 @media (min-width: 768px) {
   .read-the-docs {
     font-size: 1rem;
   }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.glass-card {
+  background: rgba(30, 30, 30, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(97, 218, 251, 0.3);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
