@@ -1,11 +1,14 @@
+
 import React from "react";
 import NotificationBell from "./NotificationBell";
 import { UserProfile } from "./UserProfile";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+
 const Header = () => {
   const isMobile = useIsMobile();
   const text = "Sistema de Gerenciamento de Ordens de Serviço".split("");
+  
   return <motion.div initial={{
     y: -10,
     opacity: 0
@@ -15,10 +18,14 @@ const Header = () => {
   }} transition={{
     duration: 0.3
   }} className="glass-panel rounded-xl shadow-lg border-white/5 transition-all duration-300 hover:shadow-xl p-4 bg-transparent">
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex flex-col items-center sm:items-start gap-2 w-full sm:w-auto">
+      <div className="flex items-center justify-between gap-4">
+        {/* Empty div to balance the flex layout */}
+        <div className="w-[120px] sm:w-[180px]"></div>
+        
+        {/* Centered logo and title */}
+        <div className="flex flex-col items-center gap-2">
           <img src="/lovable-uploads/3bfab654-e541-4930-a97d-6447b525b0b4.png" alt="Daily.Flow Logo" className="h-[40px] sm:h-[45px] w-auto object-contain drop-shadow-md" />
-          <div className="flex flex-wrap justify-center sm:justify-start">
+          <div className="flex flex-wrap justify-center">
             {text.map((char, index) => <motion.span key={index} initial={{
             opacity: 0,
             y: 10
@@ -36,11 +43,14 @@ const Header = () => {
               </motion.span>)}
           </div>
         </div>
-        <div className="flex items-center gap-4">
+        
+        {/* User profile and notifications on the right */}
+        <div className="flex items-center gap-4 w-[120px] sm:w-[180px] justify-end">
           <UserProfile />
           <NotificationBell />
         </div>
       </div>
     </motion.div>;
 };
+
 export default Header;
