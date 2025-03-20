@@ -83,7 +83,7 @@ const App = () => (
     <ThemeProvider
       attribute="class"
       defaultTheme="dark"
-      enableSystem={true}
+      enableSystem={false}
       disableTransitionOnChange
     >
       <TooltipProvider>
