@@ -8,7 +8,7 @@ const Header = () => {
   const text = "Sistema de Gerenciamento de Ordens de Serviço".split("");
   
   return (
-    <div className="bg-card/50 backdrop-blur-sm rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl border border-white/5 p-4">
+    <div className="bg-background/50 backdrop-blur-sm rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl p-4">
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex flex-col items-center sm:items-start gap-2 w-full sm:w-auto">
           <img 
