@@ -13,6 +13,8 @@ import { useAuth } from "./AuthProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
 import { motion, AnimatePresence } from "framer-motion";
+import { UserProfile } from "./UserProfile";
+import NotificationBell from "./NotificationBell";
 
 const NavItem = ({
   icon: Icon,
@@ -119,6 +121,8 @@ const Navbar = () => {
         </div>
 
         <div className="flex items-center space-x-2">
+          <UserProfile />
+          <NotificationBell />
           <NavItem
             icon={Settings}
             title="Configurações"

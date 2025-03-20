@@ -1,7 +1,5 @@
 
 import React from "react";
-import NotificationBell from "./NotificationBell";
-import { UserProfile } from "./UserProfile";
 import { motion } from "framer-motion";
 
 const Header = () => {
@@ -33,10 +31,6 @@ const Header = () => {
               </motion.span>
             ))}
           </div>
-        </div>
-        <div className="flex items-center gap-4">
-          <UserProfile />
-          <NotificationBell />
         </div>
       </div>
     </div>
