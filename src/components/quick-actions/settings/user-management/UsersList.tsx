@@ -311,6 +311,7 @@ export const UsersList = () => {
       }
     },
     enabled: !!user && user.email === "williann.dev@gmail.com",
+    refetchOnWindowFocus: true,
   });
 
   if (isLoading) {

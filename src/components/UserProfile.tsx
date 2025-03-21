@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
@@ -15,9 +16,19 @@ import { useProfile } from "./profile/ProfileFetcher";
 import { EditProfileDialog } from "./profile/EditProfileDialog";
 
 export const UserProfile = () => {
-  const { user, signOut } = useAuth();
-  const { profile, isLoading } = useProfile();
+  const { user, signOut, refreshUser } = useAuth();
+  const { profile, isLoading, fetchProfile } = useProfile();
   const [isEditOpen, setIsEditOpen] = useState(false);
+
+  // When the edit dialog closes, refresh user data
+  const handleEditDialogChange = (open: boolean) => {
+    setIsEditOpen(open);
+    if (!open) {
+      // Refresh both auth user and profile data
+      refreshUser();
+      fetchProfile();
+    }
+  };
 
   if (isLoading) {
     return (
@@ -61,7 +72,7 @@ export const UserProfile = () => {
 
       <EditProfileDialog
         open={isEditOpen}
-        onOpenChange={setIsEditOpen}
+        onOpenChange={handleEditDialogChange}
         user={user}
         initialFullName={profile?.full_name || ""}
       />

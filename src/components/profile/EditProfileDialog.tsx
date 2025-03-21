@@ -6,6 +6,7 @@ import { useProfileUpdate } from "@/hooks/useProfileUpdate";
 import { User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -26,6 +27,7 @@ export const EditProfileDialog = ({
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { isUpdating, updateProfile } = useProfileUpdate();
   const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     setFullName(initialFullName);
@@ -70,6 +72,9 @@ export const EditProfileDialog = ({
             description: "Um link de verificação foi enviado para seu novo email.",
             className: "bg-blue-500 text-white border-none",
           });
+          
+          // Invalidate users query to refresh user management data
+          queryClient.invalidateQueries({ queryKey: ["users"] });
         });
         
         updatePromises.push(emailPromise);
