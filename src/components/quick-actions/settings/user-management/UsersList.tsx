@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Key, Trash2, UserCog, Edit } from "lucide-react";
+import { Key, Trash2, UserCog, Edit, Mail } from "lucide-react";
 
 type AppRole = 'admin' | 'user';
 
@@ -135,6 +135,69 @@ const EditUserDialog = ({ user, currentName }: { user: User; currentName: string
         </div>
         <DialogFooter>
           <Button onClick={handleUpdateName}>Atualizar Nome</Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const ChangeEmailDialog = ({ user }: { user: User }) => {
+  const [newEmail, setNewEmail] = useState(user.email || "");
+  const [isOpen, setIsOpen] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const handleUpdateEmail = async () => {
+    try {
+      const { data, error } = await supabase.auth.admin.updateUserById(
+        user.id,
+        { email: newEmail, email_confirm: true }
+      );
+
+      if (error) throw error;
+
+      toast({
+        title: "Email atualizado",
+        description: "O email do usuário foi atualizado com sucesso",
+      });
+
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      setIsOpen(false);
+    } catch (error: any) {
+      console.error("Error updating email:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao atualizar email",
+        description: error.message || "Não foi possível atualizar o email",
+      });
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm" className="mr-2">
+          <Mail className="h-4 w-4 mr-1" />
+          Alterar Email
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Alterar Email</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 py-4">
+          <div className="space-y-2">
+            <Label htmlFor="newEmail">Novo Email</Label>
+            <Input
+              id="newEmail"
+              type="email"
+              value={newEmail}
+              onChange={(e) => setNewEmail(e.target.value)}
+            />
+          </div>
+        </div>
+        <DialogFooter>
+          <Button onClick={handleUpdateEmail}>Atualizar Email</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -280,7 +343,6 @@ export const UsersList = () => {
 
         if (usersError) throw usersError;
 
-        // Fetch profiles to get full names
         const { data: profilesData, error: profilesError } = await supabase
           .from('profiles')
           .select('id, full_name');
@@ -348,6 +410,7 @@ export const UsersList = () => {
             </TableCell>
             <TableCell className="space-x-2">
               <EditUserDialog user={user} currentName={user.full_name} />
+              <ChangeEmailDialog user={user} />
               <ChangePasswordDialog user={user} />
               <ChangeRoleDialog user={user} currentRole={user.role} />
               <DeleteAccountDialog user={user} onDelete={() => {}} />

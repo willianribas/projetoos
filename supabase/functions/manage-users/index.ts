@@ -1,3 +1,4 @@
+
 import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -23,7 +24,7 @@ serve(async (req) => {
       }
     )
 
-    const { action, userId, newPassword, email, password, fullName } = await req.json()
+    const { action, userId, newPassword, email, password, fullName, newEmail } = await req.json()
 
     const authHeader = req.headers.get('Authorization')
     const token = authHeader?.replace('Bearer ', '')
@@ -101,6 +102,27 @@ serve(async (req) => {
           )
         }
         result = { user: updateData.user }
+        break
+
+      case 'update-email':
+        if (!userId || !newEmail) {
+          return new Response(
+            JSON.stringify({ error: 'ID do usuário e novo email são obrigatórios' }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
+        const { data: updateEmailData, error: updateEmailError } = await supabaseAdmin.auth.admin.updateUserById(
+          userId,
+          { email: newEmail, email_confirm: true }
+        )
+        if (updateEmailError) {
+          console.error('Error updating email:', updateEmailError)
+          return new Response(
+            JSON.stringify({ error: updateEmailError.message }),
+            { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 400 }
+          )
+        }
+        result = { user: updateEmailData.user }
         break
 
       case 'delete':
