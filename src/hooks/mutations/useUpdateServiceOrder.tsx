@@ -1,3 +1,4 @@
+
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ServiceOrder } from "@/types";
@@ -8,13 +9,12 @@ export const useUpdateServiceOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      ...updatedOrder
-    }: ServiceOrder) => {
+    mutationFn: async (updatedOrder: ServiceOrder) => {
+      const { id, ...dataToUpdate } = updatedOrder;
+      
       const { data, error } = await supabase
         .from("service_orders")
-        .update(updatedOrder)
+        .update(dataToUpdate)
         .eq("id", id)
         .select()
         .single();

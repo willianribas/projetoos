@@ -10,7 +10,7 @@ interface ServiceOrderContextType {
   serviceOrders: ServiceOrder[];
   isLoading: boolean;
   createServiceOrder: (data: Omit<ServiceOrder, "id" | "created_at">) => void;
-  updateServiceOrder: (id: number, data: ServiceOrder) => void;
+  updateServiceOrder: (data: ServiceOrder) => void;
   deleteServiceOrder: (id: number) => void;
 }
 
@@ -77,14 +77,23 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
 
   // Update mutation
   const updateMutation = useMutation({
-    mutationFn: async ({ id, data }: { id: number; data: ServiceOrder }) => {
+    mutationFn: async (data: ServiceOrder) => {
       const { error } = await supabase
         .from("service_orders")
-        .update(data)
-        .eq("id", id)
+        .update({
+          numeroos: data.numeroos,
+          patrimonio: data.patrimonio,
+          equipamento: data.equipamento,
+          status: data.status,
+          priority: data.priority,
+          observacao: data.observacao,
+          // Exclude id, user_id, created_at and other fields that shouldn't be updated
+        })
+        .eq("id", data.id)
         .eq("user_id", user?.id);
 
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
@@ -142,8 +151,8 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     createMutation.mutate(data);
   };
 
-  const updateServiceOrder = (id: number, data: ServiceOrder) => {
-    updateMutation.mutate({ id, data });
+  const updateServiceOrder = (data: ServiceOrder) => {
+    updateMutation.mutate(data);
   };
 
   const deleteServiceOrder = (id: number) => {
