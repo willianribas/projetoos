@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,9 +8,11 @@ import { Loader2 } from "lucide-react";
 interface ProfileFormProps {
   fullName: string;
   email: string | undefined;
+  newEmail: string | undefined;
   newPassword: string;
   isLoading: boolean;
   onFullNameChange: (value: string) => void;
+  onEmailChange: (value: string) => void;
   onPasswordChange: (value: string) => void;
   onSubmit: () => void;
 }
@@ -17,9 +20,11 @@ interface ProfileFormProps {
 export const ProfileForm = ({
   fullName,
   email,
+  newEmail,
   newPassword,
   isLoading,
   onFullNameChange,
+  onEmailChange,
   onPasswordChange,
   onSubmit,
 }: ProfileFormProps) => {
@@ -49,11 +54,18 @@ export const ProfileForm = ({
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
-          value={email}
-          disabled
+          type="email"
+          value={newEmail !== undefined ? newEmail : email}
+          onChange={(e) => onEmailChange(e.target.value)}
+          disabled={isLoading}
           aria-label="Email do usuário"
-          readOnly
+          required
         />
+        {newEmail !== undefined && newEmail !== email && (
+          <p className="text-xs text-amber-600">
+            Ao alterar seu email, você precisará verificá-lo novamente.
+          </p>
+        )}
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Nova Senha (opcional)</Label>

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { ProfileForm } from "./ProfileForm";
@@ -20,6 +21,7 @@ export const EditProfileDialog = ({
   initialFullName,
 }: EditProfileDialogProps) => {
   const [fullName, setFullName] = useState(initialFullName);
+  const [newEmail, setNewEmail] = useState<string | undefined>(undefined);
   const [newPassword, setNewPassword] = useState("");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const { isUpdating, updateProfile } = useProfileUpdate();
@@ -30,9 +32,12 @@ export const EditProfileDialog = ({
   }, [initialFullName]);
 
   useEffect(() => {
-    const hasChanges = fullName !== initialFullName || newPassword !== "";
-    setHasUnsavedChanges(hasChanges);
-  }, [fullName, newPassword, initialFullName]);
+    const hasEmailChanged = newEmail !== undefined && newEmail !== user?.email;
+    const hasNameChanged = fullName !== initialFullName;
+    const hasPasswordChanged = newPassword !== "";
+    
+    setHasUnsavedChanges(hasEmailChanged || hasNameChanged || hasPasswordChanged);
+  }, [fullName, newEmail, newPassword, initialFullName, user?.email]);
 
   const handleClose = () => {
     if (hasUnsavedChanges) {
@@ -41,6 +46,7 @@ export const EditProfileDialog = ({
     }
     onOpenChange(false);
     setNewPassword("");
+    setNewEmail(undefined);
     setFullName(initialFullName);
   };
 
@@ -50,27 +56,54 @@ export const EditProfileDialog = ({
     try {
       await updateProfile(user.id, { full_name: fullName });
 
+      const updatePromises = [];
+
+      // Update email if changed
+      if (newEmail && newEmail !== user.email) {
+        const emailPromise = supabase.auth.updateUser({
+          email: newEmail,
+        }).then(({ error }) => {
+          if (error) throw error;
+          
+          toast({
+            title: "Email atualizado",
+            description: "Um link de verificação foi enviado para seu novo email.",
+            className: "bg-blue-500 text-white border-none",
+          });
+        });
+        
+        updatePromises.push(emailPromise);
+      }
+
+      // Update password if changed
       if (newPassword) {
-        const { error: passwordError } = await supabase.auth.updateUser({
+        const passwordPromise = supabase.auth.updateUser({
           password: newPassword,
+        }).then(({ error }) => {
+          if (error) throw error;
+          
+          toast({
+            title: "Senha atualizada",
+            description: "Sua senha foi alterada com sucesso.",
+            className: "bg-green-500 text-white border-none",
+          });
         });
         
-        if (passwordError) throw passwordError;
-        
-        toast({
-          title: "Senha atualizada",
-          description: "Sua senha foi alterada com sucesso.",
-          className: "bg-green-500 text-white border-none",
-        });
+        updatePromises.push(passwordPromise);
+      }
+
+      // Wait for all updates to complete
+      if (updatePromises.length > 0) {
+        await Promise.all(updatePromises);
       }
 
       handleClose();
     } catch (error: any) {
-      console.error("Erro ao atualizar senha:", error);
+      console.error("Erro ao atualizar usuário:", error);
       toast({
         variant: "destructive",
-        title: "Erro ao atualizar senha",
-        description: error.message || "Não foi possível atualizar sua senha.",
+        title: "Erro ao atualizar informações",
+        description: error.message || "Não foi possível atualizar suas informações.",
       });
     }
   };
@@ -87,9 +120,11 @@ export const EditProfileDialog = ({
         <ProfileForm
           fullName={fullName}
           email={user?.email}
+          newEmail={newEmail}
           newPassword={newPassword}
           isLoading={isUpdating}
           onFullNameChange={setFullName}
+          onEmailChange={setNewEmail}
           onPasswordChange={setNewPassword}
           onSubmit={handleSubmit}
         />
