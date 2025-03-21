@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import SearchBar from "@/components/SearchBar";
@@ -81,7 +80,7 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
   const handleUpdateServiceOrder = (index: number, updatedOrder: ServiceOrder) => {
     const order = serviceOrders[index];
     if (order) {
-      updateServiceOrder(order.id, updatedOrder);
+      updateServiceOrder(updatedOrder);
     }
   };
 
