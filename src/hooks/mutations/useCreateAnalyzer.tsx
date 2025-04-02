@@ -2,24 +2,22 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Analyzer } from "@/types/analyzer";
-import { useAuth } from "@/components/AuthProvider";
 import { useToast } from "@/hooks/use-toast";
 
 export const useCreateAnalyzer = () => {
-  const { user } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (analyzerData: Omit<Analyzer, 'user_id' | 'created_at' | 'status'>) => {
-      const { data, error } = await supabase.from("analyzers").insert({
-        ...analyzerData,
-        user_id: user?.id,
-        created_at: new Date().toISOString(),
-      }).select().single();
+    mutationFn: async (data: Omit<Analyzer, "id" | "user_id" | "created_at" | "status">) => {
+      const { error, data: newAnalyzer } = await supabase
+        .from("analyzers")
+        .insert([data])
+        .select()
+        .single();
 
       if (error) throw error;
-      return data;
+      return newAnalyzer;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["analyzers"] });

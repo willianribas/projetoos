@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -12,7 +13,7 @@ import {
 } from "recharts";
 import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
 import { useEquipmentsQuery } from "@/hooks/queries/useEquipments";
-import { useUser } from "@/components/AuthProvider";
+import { useAuth } from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import { useAnalyzersQuery } from "@/hooks/queries/useAnalyzers";
 import { AnalyzerNotification } from "@/components/analyzer/AnalyzerNotification";
@@ -48,7 +49,7 @@ const data = [
 ];
 
 export default function Index() {
-  const { user } = useUser();
+  const { user } = useAuth();
   const {
     data: serviceOrders,
     isLoading: isLoadingServiceOrders,

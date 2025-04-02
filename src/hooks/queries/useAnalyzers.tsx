@@ -1,33 +1,45 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Analyzer, getAnalyzerStatus } from "@/types/analyzer";
-import { useAuth } from "@/components/AuthProvider";
+import { Analyzer } from "@/types/analyzer";
+import { format, parseISO, addDays, isAfter, isBefore } from "date-fns";
 
 export const useAnalyzersQuery = () => {
-  const { user } = useAuth();
-
   return useQuery({
-    queryKey: ["analyzers", user?.id],
+    queryKey: ["analyzers"],
     queryFn: async () => {
       const { data, error } = await supabase
         .from("analyzers")
-        .select("*")
-        .eq('user_id', user?.id)
-        .order("created_at", { ascending: false });
+        .select("*");
 
-      if (error) throw error;
-      
-      // Process the data to calculate status based on due dates
-      return data.map((analyzer: any) => ({
-        ...analyzer,
-        calibration_due_date: new Date(analyzer.calibration_due_date),
-        status: getAnalyzerStatus(analyzer.calibration_due_date, analyzer.in_calibration || false)
-      })) as Analyzer[];
+      if (error) {
+        console.error("Error fetching analyzers:", error);
+        throw error;
+      }
+
+      // Calculate the status for each analyzer
+      const analyzersWithStatus = data.map((analyzer: any) => {
+        const dueDate = parseISO(analyzer.calibration_due_date);
+        const today = new Date();
+        const sixtyDaysFromNow = addDays(today, 60);
+        
+        let status: Analyzer['status'] = 'em_dia';
+        
+        if (analyzer.in_calibration) {
+          status = 'em_calibracao';
+        } else if (isBefore(dueDate, today)) {
+          status = 'vencido';
+        } else if (isBefore(dueDate, sixtyDaysFromNow)) {
+          status = 'vencera';
+        }
+        
+        return {
+          ...analyzer,
+          status
+        };
+      });
+
+      return analyzersWithStatus as Analyzer[];
     },
-    enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutes
-    gcTime: 1000 * 60 * 30, // 30 minutes
-    refetchOnWindowFocus: true,
   });
 };

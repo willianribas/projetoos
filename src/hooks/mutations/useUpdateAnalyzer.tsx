@@ -4,23 +4,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { Analyzer } from "@/types/analyzer";
 import { useToast } from "@/hooks/use-toast";
 
+interface UpdateAnalyzerParams {
+  id: string;
+  data: Partial<Omit<Analyzer, "id" | "user_id" | "created_at" | "status">>;
+}
+
 export const useUpdateAnalyzer = () => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   return useMutation({
-    mutationFn: async (analyzerData: Partial<Analyzer> & { id: string }) => {
-      const { id, ...rest } = analyzerData;
-      
-      const { data, error } = await supabase
+    mutationFn: async ({ id, data }: UpdateAnalyzerParams) => {
+      const { error } = await supabase
         .from("analyzers")
-        .update(rest)
-        .eq("id", id)
-        .select()
-        .single();
+        .update(data)
+        .eq("id", id);
 
       if (error) throw error;
-      return data;
+      return { id, ...data };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["analyzers"] });

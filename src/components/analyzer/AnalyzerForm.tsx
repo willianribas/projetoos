@@ -58,7 +58,7 @@ export function AnalyzerForm({ onSuccess, defaultValues }: AnalyzerFormProps) {
   });
 
   const onSubmit = (data: AnalyzerFormValues) => {
-    createAnalyzer(data as Omit<Analyzer, 'user_id' | 'created_at' | 'status'>, {
+    createAnalyzer(data, {
       onSuccess: () => {
         form.reset();
         if (onSuccess) onSuccess();
