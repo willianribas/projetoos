@@ -1,5 +1,5 @@
 
-import { Analyzer, AnalyzerWithStatus } from '@/types/analyzer';
+import { Analyzer, AnalyzerWithStatus, AnalyzerStatus } from '@/types/analyzer';
 import { 
   Table, 
   TableBody, 

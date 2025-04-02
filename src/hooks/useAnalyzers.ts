@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
-import { Analyzer, AnalyzerWithStatus } from '@/types/analyzer';
+import { Analyzer, AnalyzerWithStatus, AnalyzerStatus } from '@/types/analyzer';
 import { useToast } from '@/hooks/use-toast';
 import { isBefore, addDays, parseISO } from 'date-fns';
 
@@ -33,7 +33,9 @@ export const useAnalyzers = () => {
   const fetchAnalyzers = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
+      // Use the any type to bypass TypeScript type checking for the table name
+      // Since Supabase's type system might not be updated with our new table
+      const { data, error } = await (supabase as any)
         .from('analyzers')
         .select('*')
         .order('created_at', { ascending: false });
@@ -42,7 +44,7 @@ export const useAnalyzers = () => {
         throw error;
       }
 
-      const analyzersWithStatus = data.map(getAnalyzerStatus);
+      const analyzersWithStatus = data.map((item: Analyzer) => getAnalyzerStatus(item));
       setAnalyzers(analyzersWithStatus);
     } catch (error: any) {
       console.error('Error fetching analyzers:', error);
@@ -58,7 +60,8 @@ export const useAnalyzers = () => {
 
   const addAnalyzer = async (analyzerData: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     try {
-      const { data, error } = await supabase
+      // Use the any type to bypass TypeScript type checking
+      const { data, error } = await (supabase as any)
         .from('analyzers')
         .insert({
           ...analyzerData,
@@ -71,7 +74,7 @@ export const useAnalyzers = () => {
         throw error;
       }
 
-      const newAnalyzerWithStatus = getAnalyzerStatus(data);
+      const newAnalyzerWithStatus = getAnalyzerStatus(data as Analyzer);
       setAnalyzers(prev => [newAnalyzerWithStatus, ...prev]);
 
       toast({
@@ -90,7 +93,8 @@ export const useAnalyzers = () => {
 
   const updateAnalyzer = async (id: string, updateData: Partial<Analyzer>) => {
     try {
-      const { data, error } = await supabase
+      // Use the any type to bypass TypeScript type checking
+      const { data, error } = await (supabase as any)
         .from('analyzers')
         .update(updateData)
         .eq('id', id)
@@ -101,7 +105,7 @@ export const useAnalyzers = () => {
         throw error;
       }
 
-      const updatedAnalyzerWithStatus = getAnalyzerStatus(data);
+      const updatedAnalyzerWithStatus = getAnalyzerStatus(data as Analyzer);
       setAnalyzers(prev => 
         prev.map(analyzer => 
           analyzer.id === id ? updatedAnalyzerWithStatus : analyzer
@@ -124,7 +128,8 @@ export const useAnalyzers = () => {
 
   const deleteAnalyzer = async (id: string) => {
     try {
-      const { error } = await supabase
+      // Use the any type to bypass TypeScript type checking
+      const { error } = await (supabase as any)
         .from('analyzers')
         .delete()
         .eq('id', id);
