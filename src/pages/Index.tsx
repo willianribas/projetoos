@@ -20,7 +20,7 @@ import Header from "@/components/Header";
 import ADENotification from "@/components/ADENotification";
 import ADEMonitor from "@/components/ADEMonitor";
 import QuickActions from "@/components/QuickActions";
-import { ServiceOrderTable } from "@/components/ServiceOrderTable";
+import ServiceOrderTable from "@/components/ServiceOrderTable";
 
 interface CardData {
   title: string;
