@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analyzers: {
+        Row: {
+          calibration_due_date: string
+          created_at: string
+          id: string
+          in_calibration: boolean
+          model: string
+          name: string
+          serial_number: string
+          user_id: string
+        }
+        Insert: {
+          calibration_due_date: string
+          created_at?: string
+          id?: string
+          in_calibration?: boolean
+          model: string
+          name: string
+          serial_number: string
+          user_id: string
+        }
+        Update: {
+          calibration_due_date?: string
+          created_at?: string
+          id?: string
+          in_calibration?: boolean
+          model?: string
+          name?: string
+          serial_number?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       comment_notifications: {
         Row: {
           comment_id: number | null
