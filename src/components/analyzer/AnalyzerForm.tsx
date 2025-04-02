@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +25,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { useCreateAnalyzer } from "@/hooks/mutations/useCreateAnalyzer";
+import { Analyzer } from "@/types/analyzer";
 
 const formSchema = z.object({
   serial_number: z.string().min(1, { message: "NS/PT é obrigatório" }),
@@ -56,7 +58,16 @@ export function AnalyzerForm({ onSuccess, defaultValues }: AnalyzerFormProps) {
   });
 
   const onSubmit = (values: AnalyzerFormValues) => {
-    createAnalyzer(values, {
+    // Make sure all required fields are present before passing to the mutation
+    const analyzerData: Omit<Analyzer, "id" | "user_id" | "created_at" | "status"> = {
+      serial_number: values.serial_number,
+      name: values.name,
+      model: values.model,
+      calibration_due_date: values.calibration_due_date,
+      in_calibration: values.in_calibration,
+    };
+    
+    createAnalyzer(analyzerData, {
       onSuccess: () => {
         form.reset();
         if (onSuccess) onSuccess();
