@@ -10,14 +10,27 @@ export const useCreateAnalyzer = () => {
 
   return useMutation({
     mutationFn: async (data: Omit<Analyzer, "id" | "user_id" | "created_at" | "status">) => {
-      const { error, data: newAnalyzer } = await supabase
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      if (!user) throw new Error("User not authenticated");
+      
+      const newAnalyzer = {
+        ...data,
+        user_id: user.id,
+        calibration_due_date: data.calibration_due_date instanceof Date 
+          ? data.calibration_due_date.toISOString() 
+          : data.calibration_due_date
+      };
+
+      const { error, data: createdAnalyzer } = await supabase
         .from("analyzers")
-        .insert([data])
+        .insert([newAnalyzer])
         .select()
         .single();
 
       if (error) throw error;
-      return newAnalyzer;
+      return createdAnalyzer;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["analyzers"] });

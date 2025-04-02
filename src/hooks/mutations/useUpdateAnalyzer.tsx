@@ -15,9 +15,17 @@ export const useUpdateAnalyzer = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: UpdateAnalyzerParams) => {
+      // Format date if it's a Date object
+      const formattedData = {
+        ...data,
+        calibration_due_date: data.calibration_due_date instanceof Date 
+          ? data.calibration_due_date.toISOString() 
+          : data.calibration_due_date
+      };
+
       const { error } = await supabase
         .from("analyzers")
-        .update(data)
+        .update(formattedData)
         .eq("id", id);
 
       if (error) throw error;

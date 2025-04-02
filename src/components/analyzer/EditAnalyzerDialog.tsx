@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -66,18 +65,11 @@ export default function EditAnalyzerDialog({ analyzer }: EditAnalyzerDialogProps
     },
   });
 
-  const onSubmit = (data: FormValues) => {
-    updateAnalyzer(
-      {
-        id: analyzer.id!,
-        ...data,
-      },
-      {
-        onSuccess: () => {
-          setOpen(false);
-        },
-      }
-    );
+  const onSubmit = (values: FormValues) => {
+    updateAnalyzer({
+      id: analyzer.id,
+      data: values
+    });
   };
 
   return (

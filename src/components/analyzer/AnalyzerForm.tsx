@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,7 +23,6 @@ import {
 } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
-import { Analyzer } from "@/types/analyzer";
 import { useCreateAnalyzer } from "@/hooks/mutations/useCreateAnalyzer";
 
 const formSchema = z.object({
@@ -57,8 +55,8 @@ export function AnalyzerForm({ onSuccess, defaultValues }: AnalyzerFormProps) {
     },
   });
 
-  const onSubmit = (data: AnalyzerFormValues) => {
-    createAnalyzer(data, {
+  const onSubmit = (values: AnalyzerFormValues) => {
+    createAnalyzer(values, {
       onSuccess: () => {
         form.reset();
         if (onSuccess) onSuccess();
