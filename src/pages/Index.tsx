@@ -6,9 +6,12 @@ import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrde
 import ADENotification from "@/components/ADENotification";
 import MetricsHighlight from "@/components/charts/MetricsHighlight";
 import Navbar from "@/components/Navbar";
+import { AnalyzerNotification } from "@/components/analyzer/AnalyzerNotification";
+import { useAnalyzersQuery } from "@/hooks/queries/useAnalyzers";
 
 const IndexContent = () => {
   const { serviceOrders } = useServiceOrders();
+  const { data: analyzers = [] } = useAnalyzersQuery();
   
   return (
     <div className="min-h-screen w-full">
@@ -16,6 +19,7 @@ const IndexContent = () => {
       <div className="pt-16">
         <div className="space-y-4 sm:space-y-6 p-4 sm:p-8 animate-fade-in">
           <ADENotification serviceOrders={serviceOrders} />
+          <AnalyzerNotification analyzers={analyzers} />
           <Header />
           <div className="px-2 sm:px-0">
             <MetricsHighlight serviceOrders={serviceOrders} />

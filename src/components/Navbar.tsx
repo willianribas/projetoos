@@ -7,7 +7,8 @@ import {
   Settings, 
   LogOut, 
   Bell,
-  FileText 
+  FileText,
+  Activity
 } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { cn } from "@/lib/utils";
@@ -97,6 +98,11 @@ const Navbar = () => {
       title: "AM/ADE Detalhada",
       icon: Bell,
       path: "/ade-monitor",
+    },
+    {
+      title: "Analisadores",
+      icon: Activity,
+      path: "/analisadores",
     },
     {
       title: "Estatísticas",
