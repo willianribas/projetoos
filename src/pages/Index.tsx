@@ -12,11 +12,15 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
-import { useEquipmentsQuery } from "@/hooks/queries/useEquipments";
 import { useAuth } from "@/components/AuthProvider";
 import Navbar from "@/components/Navbar";
 import { useAnalyzersQuery } from "@/hooks/queries/useAnalyzers";
 import { AnalyzerNotification } from "@/components/analyzer/AnalyzerNotification";
+import Header from "@/components/Header";
+import ADENotification from "@/components/ADENotification";
+import ADEMonitor from "@/components/ADEMonitor";
+import QuickActions from "@/components/QuickActions";
+import { ServiceOrderTable } from "@/components/ServiceOrderTable";
 
 interface CardData {
   title: string;
@@ -50,79 +54,53 @@ const data = [
 
 export default function Index() {
   const { user } = useAuth();
+  const [showTable, setShowTable] = useState(false);
+  const [showStats, setShowStats] = useState(false);
+  
   const {
     data: serviceOrders,
     isLoading: isLoadingServiceOrders,
     refetch: refetchServiceOrders,
   } = useServiceOrdersQuery();
-  const {
-    data: equipments,
-    isLoading: isLoadingEquipments,
-    refetch: refetchEquipments,
-  } = useEquipmentsQuery();
+  
   const { data: analyzers } = useAnalyzersQuery();
 
   useEffect(() => {
     refetchServiceOrders();
-    refetchEquipments();
-  }, [user, refetchServiceOrders, refetchEquipments]);
+  }, [user, refetchServiceOrders]);
 
   return (
     <div className="min-h-screen w-full">
       <Navbar />
       <div className="pt-16">
         <div className="space-y-4 sm:space-y-6 p-4 sm:p-8 animate-fade-in">
-          {/* Add the analyzer notification component */}
+          <Header />
+          
+          {/* Analyzer Notification - Mantém o componente de notificação de analisadores */}
           {analyzers && <AnalyzerNotification analyzers={analyzers} />}
           
-          <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-            <CardComponent
+          {/* ADE Notifications */}
+          {serviceOrders && <ADENotification serviceOrders={serviceOrders} />}
+          
+          {/* ADE Monitor */}
+          {serviceOrders && <ADEMonitor serviceOrders={serviceOrders} />}
+          
+          {/* Quick Actions */}
+          <QuickActions 
+            setShowTable={setShowTable} 
+            showTable={showTable} 
+            setShowStats={setShowStats} 
+            showStats={showStats}
+            serviceOrders={serviceOrders || []}
+          />
+          
+          {/* Service Order Table */}
+          {showTable && serviceOrders && (
+            <ServiceOrderTable 
+              serviceOrders={serviceOrders} 
               title="Ordens de Serviço"
-              value={serviceOrders?.length ?? 0}
-              isLoading={isLoadingServiceOrders}
             />
-            <CardComponent
-              title="Equipamentos"
-              value={equipments?.length ?? 0}
-              isLoading={isLoadingEquipments}
-            />
-            <CardComponent
-              title="Usuário"
-              value={user?.email ?? "N/A"}
-              isLoading={!user}
-            />
-            <CardComponent title="Role" value="N/A" isLoading={true} />
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Overview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ResponsiveContainer width="100%" height={250}>
-                <AreaChart
-                  data={data}
-                  margin={{
-                    top: 10,
-                    right: 30,
-                    left: 0,
-                    bottom: 0,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Area
-                    type="monotone"
-                    dataKey="total"
-                    stroke="#8884d8"
-                    fill="#8884d8"
-                  />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+          )}
         </div>
       </div>
     </div>

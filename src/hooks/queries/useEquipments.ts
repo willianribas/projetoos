@@ -2,17 +2,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-export interface Equipment {
-  id: number;
-  created_at: string;
-  user_id: string;
-  modelo: string;
-  marca: string;
-  tipo_equipamento: string;
-  identificador: string;
-  numero_serie: string;
-}
-
 export const useEquipmentsQuery = () => {
   return useQuery({
     queryKey: ["equipments"],
@@ -26,7 +15,7 @@ export const useEquipmentsQuery = () => {
         throw error;
       }
 
-      return data as Equipment[];
+      return data;
     },
   });
 };
