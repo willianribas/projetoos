@@ -21,6 +21,8 @@ import ADENotification from "@/components/ADENotification";
 import ADEMonitor from "@/components/ADEMonitor";
 import QuickActions from "@/components/QuickActions";
 import ServiceOrderTable from "@/components/ServiceOrderTable";
+import { ActivitySquare, Building2, GripHorizontal, Hash, MessageSquare, Settings2, StickyNote, Filter } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface CardData {
   title: string;
@@ -56,6 +58,7 @@ export default function Index() {
   const { user } = useAuth();
   const [showTable, setShowTable] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   
   const {
     data: serviceOrders,
@@ -69,6 +72,40 @@ export default function Index() {
     refetchServiceOrders();
   }, [user, refetchServiceOrders]);
 
+  // Define status options and color getter for ServiceOrderTable
+  const statusOptions = [
+    { value: "Aguardando Peça", label: "Aguardando Peça", color: "bg-orange-500", icon: Settings2 },
+    { value: "Em Andamento", label: "Em Andamento", color: "bg-blue-500", icon: ActivitySquare },
+    { value: "Concluído", label: "Concluído", color: "bg-green-500", icon: MessageSquare },
+  ];
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "Aguardando Peça":
+        return "bg-orange-100 text-orange-800 hover:bg-orange-200 dark:bg-orange-900/20 dark:text-orange-400";
+      case "Em Andamento":
+        return "bg-blue-100 text-blue-800 hover:bg-blue-200 dark:bg-blue-900/20 dark:text-blue-400";
+      case "Concluído":
+        return "bg-green-100 text-green-800 hover:bg-green-200 dark:bg-green-900/20 dark:text-green-400";
+      default:
+        return "bg-gray-100 text-gray-800 hover:bg-gray-200 dark:bg-gray-900/20 dark:text-gray-400";
+    }
+  };
+
+  const handleStatusChange = (status: string | null) => {
+    setSelectedStatus(status);
+  };
+
+  const handleUpdateServiceOrder = (index: number, updatedOrder: any) => {
+    console.log("Updating service order:", index, updatedOrder);
+    // Implementation would use a mutation to update the service order
+  };
+
+  const handleDeleteServiceOrder = (id: number) => {
+    console.log("Deleting service order:", id);
+    // Implementation would use a mutation to delete the service order
+  };
+
   return (
     <div className="min-h-screen w-full">
       <Navbar />
@@ -76,7 +113,7 @@ export default function Index() {
         <div className="space-y-4 sm:space-y-6 p-4 sm:p-8 animate-fade-in">
           <Header />
           
-          {/* Analyzer Notification - Mantém o componente de notificação de analisadores */}
+          {/* Analyzer Notification */}
           {analyzers && <AnalyzerNotification analyzers={analyzers} />}
           
           {/* ADE Notifications */}
@@ -97,8 +134,13 @@ export default function Index() {
           {/* Service Order Table */}
           {showTable && serviceOrders && (
             <ServiceOrderTable 
-              serviceOrders={serviceOrders} 
-              title="Ordens de Serviço"
+              serviceOrders={serviceOrders}
+              getStatusColor={getStatusColor}
+              statusOptions={statusOptions}
+              onUpdateServiceOrder={handleUpdateServiceOrder}
+              onDeleteServiceOrder={handleDeleteServiceOrder}
+              selectedStatus={selectedStatus}
+              onStatusChange={handleStatusChange}
             />
           )}
         </div>
