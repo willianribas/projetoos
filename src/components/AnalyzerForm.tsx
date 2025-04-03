@@ -11,38 +11,63 @@ import { ptBR } from 'date-fns/locale';
 import { Analyzer } from '@/types/analyzer';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 
 interface AnalyzerFormProps {
   onSubmit: (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => void;
+  initialData?: Partial<Analyzer>;
+  dialogOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  isEditing?: boolean;
 }
 
-const AnalyzerForm = ({ onSubmit }: AnalyzerFormProps) => {
+const AnalyzerForm = ({ 
+  onSubmit, 
+  initialData, 
+  dialogOpen, 
+  onOpenChange,
+  isEditing = false 
+}: AnalyzerFormProps) => {
   const {
     register,
     handleSubmit,
     reset,
     setValue,
     formState: { errors },
-  } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>();
+  } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>({
+    defaultValues: initialData,
+  });
   
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  const [date, setDate] = useState<Date | undefined>(
+    initialData?.calibration_due_date 
+      ? new Date(initialData.calibration_due_date) 
+      : undefined
+  );
+  const [open, setOpen] = useState(false);
 
   const handleFormSubmit = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     onSubmit(data);
     reset();
     setDate(undefined);
+    if (onOpenChange) {
+      onOpenChange(false);
+    }
   };
 
-  return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-4 bg-card rounded-lg border">
-      <h2 className="text-xl font-bold">Adicionar Analisador</h2>
-      
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+  const formContent = (
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="serial_number">N° de Série / Patrimônio</Label>
+          <Label htmlFor="serial_number">NS/PT</Label>
           <Input
             id="serial_number"
-            {...register('serial_number', { required: 'N° de Série / Patrimônio é obrigatório' })}
+            {...register('serial_number')}
             placeholder="Digite o N° de Série ou Patrimônio"
           />
           {errors.serial_number && (
@@ -54,24 +79,35 @@ const AnalyzerForm = ({ onSubmit }: AnalyzerFormProps) => {
           <Label htmlFor="name">Nome</Label>
           <Input
             id="name"
-            {...register('name', { required: 'Nome é obrigatório' })}
+            {...register('name')}
             placeholder="Digite o nome do analisador"
           />
           {errors.name && (
             <p className="text-sm text-destructive">{errors.name.message}</p>
           )}
         </div>
+      </div>
 
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="model">Modelo</Label>
           <Input
             id="model"
-            {...register('model', { required: 'Modelo é obrigatório' })}
+            {...register('model')}
             placeholder="Digite o modelo do analisador"
           />
           {errors.model && (
             <p className="text-sm text-destructive">{errors.model.message}</p>
           )}
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="brand">Marca</Label>
+          <Input
+            id="brand"
+            {...register('brand')}
+            placeholder="Digite a marca do analisador"
+          />
         </div>
       </div>
 
@@ -114,14 +150,37 @@ const AnalyzerForm = ({ onSubmit }: AnalyzerFormProps) => {
           <input 
             type="hidden" 
             {...register('in_calibration')} 
-            value="false" 
+            value={initialData?.in_calibration ? "true" : "false"} 
           />
-          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-            + Analisador
+          <Button 
+            type="submit" 
+            className="w-full bg-blue-600 hover:bg-blue-700"
+          >
+            {isEditing ? 'Atualizar' : '+ Analisador'}
           </Button>
         </div>
       </div>
     </form>
+  );
+
+  if (dialogOpen !== undefined && onOpenChange) {
+    return (
+      <Dialog open={dialogOpen} onOpenChange={onOpenChange}>
+        <DialogContent className="sm:max-w-[500px]">
+          <DialogHeader>
+            <DialogTitle>{isEditing ? 'Editar Analisador' : 'Adicionar Analisador'}</DialogTitle>
+          </DialogHeader>
+          {formContent}
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <div className="space-y-4 p-4 bg-card rounded-lg border">
+      <h2 className="text-xl font-bold">{isEditing ? 'Editar Analisador' : 'Adicionar Analisador'}</h2>
+      {formContent}
+    </div>
   );
 };
 
