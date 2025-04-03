@@ -34,7 +34,7 @@ const DetailedServiceOrder = () => {
   });
 
   const statusOptionsList = [
-    { value: "", label: "Todos os Status" },
+    { value: "all", label: "Todos os Status" }, // Changed from empty string to "all"
     { value: "em_andamento", label: "Em Andamento" },
     { value: "pendente", label: "Pendente" },
     { value: "concluido", label: "Concluído" },
@@ -74,7 +74,8 @@ const DetailedServiceOrder = () => {
   };
   
   const handleStatusChange = (status: string | null) => {
-    setStatusFilter(status || "");
+    // Convert "all" to empty string for filtering
+    setStatusFilter(status && status !== "all" ? status : "");
   };
 
   return (
@@ -96,7 +97,10 @@ const DetailedServiceOrder = () => {
               </div>
               <div className="w-full md:w-48 space-y-2">
                 <Label htmlFor="status-filter">Filtrar por Status</Label>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <Select 
+                  value={statusFilter === "" ? "all" : statusFilter} 
+                  onValueChange={(val) => setStatusFilter(val === "all" ? "" : val)}
+                >
                   <SelectTrigger id="status-filter">
                     <SelectValue placeholder="Todos os Status" />
                   </SelectTrigger>
@@ -132,7 +136,7 @@ const DetailedServiceOrder = () => {
               statusOptions={statusOptions}
               onUpdateServiceOrder={handleUpdateServiceOrder}
               onDeleteServiceOrder={handleDeleteServiceOrder}
-              selectedStatus={statusFilter || null}
+              selectedStatus={statusFilter === "" ? null : statusFilter}
               onStatusChange={handleStatusChange}
               itemsPerPage={parseInt(itemsPerPage)}
             />

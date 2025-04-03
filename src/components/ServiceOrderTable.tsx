@@ -89,6 +89,9 @@ const ServiceOrderTable = ({
     }
   };
 
+  // Make sure statusOptions is always an array even if passed as undefined
+  const safeStatusOptions = Array.isArray(statusOptions) ? statusOptions : [];
+
   return (
     <>
       <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg animate-fade-in">
@@ -107,7 +110,7 @@ const ServiceOrderTable = ({
                 <Filter className="h-3 w-3" />
                 Todos
               </Badge>
-              {statusOptions && statusOptions.map((status) => {
+              {safeStatusOptions.map((status) => {
                 const Icon = status.icon;
                 return (
                   <Badge
@@ -196,7 +199,7 @@ const ServiceOrderTable = ({
         setIsOpen={setIsDialogOpen}
         editedOrder={editedOrder}
         setEditedOrder={setEditedOrder}
-        statusOptions={statusOptions || []} // Ensure we pass a fallback empty array
+        statusOptions={safeStatusOptions} 
         onSave={handleSaveEdit}
       />
 
