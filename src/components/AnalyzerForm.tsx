@@ -11,6 +11,7 @@ import { ptBR } from 'date-fns/locale';
 import { Analyzer } from '@/types/analyzer';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,7 @@ interface AnalyzerFormProps {
   dialogOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   isEditing?: boolean;
+  showCalibrationToggle?: boolean;
 }
 
 const AnalyzerForm = ({ 
@@ -32,13 +34,15 @@ const AnalyzerForm = ({
   initialData, 
   dialogOpen, 
   onOpenChange,
-  isEditing = false 
+  isEditing = false,
+  showCalibrationToggle = false
 }: AnalyzerFormProps) => {
   const {
     register,
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>({
     defaultValues: initialData,
@@ -50,14 +54,22 @@ const AnalyzerForm = ({
       : undefined
   );
   const [open, setOpen] = useState(false);
+  
+  const inCalibration = watch('in_calibration');
 
   const handleFormSubmit = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     onSubmit(data);
-    reset();
-    setDate(undefined);
+    if (!isEditing) {
+      reset();
+      setDate(undefined);
+    }
     if (onOpenChange) {
       onOpenChange(false);
     }
+  };
+
+  const toggleCalibration = () => {
+    setValue('in_calibration', !inCalibration);
   };
 
   const formContent = (
@@ -146,12 +158,22 @@ const AnalyzerForm = ({
           )}
         </div>
 
-        <div className="flex items-end">
-          <input 
-            type="hidden" 
-            {...register('in_calibration')} 
-            value={initialData?.in_calibration ? "true" : "false"} 
-          />
+        <div className="flex flex-col justify-end space-y-2">
+          {showCalibrationToggle && (
+            <div className="flex items-center justify-between mb-4">
+              <Label htmlFor="calibration-status">Em Calibração</Label>
+              <Switch
+                id="calibration-status"
+                checked={inCalibration || false}
+                onCheckedChange={toggleCalibration}
+              />
+              <input 
+                type="hidden" 
+                {...register('in_calibration')} 
+              />
+            </div>
+          )}
+          
           <Button 
             type="submit" 
             className="w-full bg-blue-600 hover:bg-blue-700"
