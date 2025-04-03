@@ -69,6 +69,7 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
             Nova Ordem de Serviço
           </DialogTitle>
         </DialogHeader>
+        
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6">

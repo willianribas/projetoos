@@ -5,10 +5,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DatabaseBackup } from "@/components/quick-actions/settings/DatabaseBackup";
 import { ExportPDF } from "@/components/quick-actions/settings/ExportPDF";
 import { ExportExcel } from "@/components/quick-actions/settings/ExportExcel";
+import { StatusManager } from "@/components/quick-actions/settings/StatusManager";
 import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
 import { UserManagementContainer } from "@/components/quick-actions/settings/UserManagementContainer";
 import { RecycleBin } from "@/components/quick-actions/settings/RecycleBin";
-import { StatusManager } from "@/components/quick-actions/settings/StatusManager";
 import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import { useAuth } from "@/components/AuthProvider";
@@ -20,7 +20,7 @@ const Settings = () => {
   const [showUserManagement, setShowUserManagement] = useState(false);
   const { data: serviceOrders = [] } = useServiceOrdersQuery();
   const { user } = useAuth();
-  
+
   return (
     <div className="min-h-screen w-full">
       <Navbar />

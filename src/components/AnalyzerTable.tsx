@@ -9,7 +9,7 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit2, BarChart2 } from 'lucide-react';
+import { Trash2, Edit2, Beaker, Calendar, BarChart2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
@@ -66,15 +66,21 @@ const AnalyzerTable = ({
   const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingAnalyzer, setEditingAnalyzer] = useState<AnalyzerWithStatus | null>(null);
 
+  const handleUpdateAnalyzer = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
+    if (editingAnalyzer) {
+      onUpdateAnalyzer(editingAnalyzer.id, data);
+    }
+  };
+
   const handleRowClick = (analyzer: AnalyzerWithStatus) => {
     setEditingAnalyzer(analyzer);
     setEditDialogOpen(true);
   };
 
-  const handleUpdateAnalyzer = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
-    if (editingAnalyzer) {
-      onUpdateAnalyzer(editingAnalyzer.id, data);
-    }
+  const handleToggleCalibration = (analyzer: AnalyzerWithStatus) => {
+    onUpdateAnalyzer(analyzer.id, {
+      in_calibration: !analyzer.in_calibration
+    });
   };
 
   // Count analyzers by status
@@ -157,12 +163,9 @@ const AnalyzerTable = ({
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => {
-                            setEditingAnalyzer(analyzer);
-                            setEditDialogOpen(true);
-                          }}
+                          onClick={() => handleToggleCalibration(analyzer)}
                         >
-                          <Edit2 className="h-4 w-4" />
+                          <Beaker className={`h-4 w-4 ${analyzer.in_calibration ? 'text-blue-500' : ''}`} />
                         </Button>
                         <Button
                           variant="ghost"
@@ -188,42 +191,16 @@ const AnalyzerTable = ({
       </div>
 
       {/* Edit Dialog with Calibration Toggle */}
-      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>Editar Analisador</DialogTitle>
-          </DialogHeader>
-          
-          {editingAnalyzer && (
-            <>
-              <div className="py-4 border-b">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="calibration-status">Em Calibração</Label>
-                  <Switch
-                    id="calibration-status"
-                    checked={editingAnalyzer.in_calibration}
-                    onCheckedChange={(checked) => {
-                      if (editingAnalyzer) {
-                        onUpdateAnalyzer(editingAnalyzer.id, { in_calibration: checked });
-                        setEditingAnalyzer({...editingAnalyzer, in_calibration: checked});
-                      }
-                    }}
-                  />
-                </div>
-                <p className="text-sm text-muted-foreground mt-2">
-                  Alterar o status para "Em Calibração" irá sobrepor temporariamente o status baseado na data de vencimento.
-                </p>
-              </div>
-              
-              <AnalyzerForm
-                onSubmit={handleUpdateAnalyzer}
-                initialData={editingAnalyzer}
-                isEditing={true}
-              />
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <AnalyzerForm
+        onSubmit={handleUpdateAnalyzer}
+        initialData={editingAnalyzer || undefined}
+        dialogOpen={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        isEditing={true}
+        showCalibrationToggle={true}
+        onToggleCalibration={editingAnalyzer ? () => handleToggleCalibration(editingAnalyzer) : undefined}
+        calibrationStatus={editingAnalyzer?.in_calibration || false}
+      />
     </div>
   );
 };
