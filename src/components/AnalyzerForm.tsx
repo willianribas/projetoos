@@ -9,9 +9,8 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Analyzer } from '@/types/analyzer';
-import { CalendarIcon, Beaker } from 'lucide-react';
+import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
   DialogContent,
@@ -26,9 +25,6 @@ interface AnalyzerFormProps {
   dialogOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
   isEditing?: boolean;
-  showCalibrationToggle?: boolean;
-  onToggleCalibration?: () => void;
-  calibrationStatus?: boolean;
 }
 
 const AnalyzerForm = ({ 
@@ -36,10 +32,7 @@ const AnalyzerForm = ({
   initialData, 
   dialogOpen, 
   onOpenChange,
-  isEditing = false,
-  showCalibrationToggle = false,
-  onToggleCalibration,
-  calibrationStatus = false
+  isEditing = false 
 }: AnalyzerFormProps) => {
   const {
     register,
@@ -69,20 +62,6 @@ const AnalyzerForm = ({
 
   const formContent = (
     <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-      {showCalibrationToggle && onToggleCalibration && (
-        <div className="flex items-center justify-between p-2 bg-muted/30 rounded-lg mb-4">
-          <div className="flex items-center gap-2">
-            <Beaker className={`h-5 w-5 ${calibrationStatus ? 'text-blue-500' : 'text-muted-foreground'}`} />
-            <Label htmlFor="calibration-status" className="font-medium">Em Calibração</Label>
-          </div>
-          <Switch
-            id="calibration-status"
-            checked={calibrationStatus}
-            onCheckedChange={onToggleCalibration}
-          />
-        </div>
-      )}
-
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="serial_number">NS/PT</Label>
@@ -171,7 +150,7 @@ const AnalyzerForm = ({
           <input 
             type="hidden" 
             {...register('in_calibration')} 
-            value={calibrationStatus ? "true" : "false"} 
+            value={initialData?.in_calibration ? "true" : "false"} 
           />
           <Button 
             type="submit" 
