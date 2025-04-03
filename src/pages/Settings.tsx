@@ -5,10 +5,10 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { DatabaseBackup } from "@/components/quick-actions/settings/DatabaseBackup";
 import { ExportPDF } from "@/components/quick-actions/settings/ExportPDF";
 import { ExportExcel } from "@/components/quick-actions/settings/ExportExcel";
-import { HistoryToggle } from "@/components/quick-actions/settings/HistoryToggle";
 import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
 import { UserManagementContainer } from "@/components/quick-actions/settings/UserManagementContainer";
 import { RecycleBin } from "@/components/quick-actions/settings/RecycleBin";
+import { StatusManager } from "@/components/quick-actions/settings/StatusManager";
 import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import { useAuth } from "@/components/AuthProvider";
@@ -17,13 +17,10 @@ import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";
 
 const Settings = () => {
-  const [showHistory, setShowHistory] = useState(false);
   const [showUserManagement, setShowUserManagement] = useState(false);
   const { data: serviceOrders = [] } = useServiceOrdersQuery();
   const { user } = useAuth();
   
-  const serviceOrderId = -1;
-
   return (
     <div className="min-h-screen w-full">
       <Navbar />
@@ -35,11 +32,7 @@ const Settings = () => {
             <ScrollArea className="h-[calc(100vh-12rem)]">
               <div className="space-y-6">
                 <ThemeToggle />
-                <HistoryToggle 
-                  showHistory={showHistory} 
-                  setShowHistory={setShowHistory}
-                  serviceOrderId={serviceOrderId}
-                />
+                <StatusManager />
                 <DatabaseBackup />
                 <ExportPDF 
                   serviceOrders={serviceOrders}
