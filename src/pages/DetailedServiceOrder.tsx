@@ -14,6 +14,7 @@ import {
   SelectTrigger, 
   SelectValue 
 } from "@/components/ui/select";
+import { statusOptions } from "@/components/ServiceOrderContent";
 
 const DetailedServiceOrder = () => {
   const { serviceOrders } = useServiceOrders();
@@ -25,14 +26,14 @@ const DetailedServiceOrder = () => {
     const matchesSearch = searchTerm === "" || 
       order.numeroos.toLowerCase().includes(searchTerm.toLowerCase()) || 
       order.equipamento.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.observacao.toLowerCase().includes(searchTerm.toLowerCase());
+      (order.observacao && order.observacao.toLowerCase().includes(searchTerm.toLowerCase()));
     
     const matchesStatus = statusFilter === "" || order.status === statusFilter;
     
     return matchesSearch && matchesStatus;
   });
 
-  const statusOptions = [
+  const statusOptionsList = [
     { value: "", label: "Todos os Status" },
     { value: "em_andamento", label: "Em Andamento" },
     { value: "pendente", label: "Pendente" },
@@ -46,6 +47,35 @@ const DetailedServiceOrder = () => {
     { value: "50", label: "50 por página" },
     { value: "100", label: "100 por página" }
   ];
+
+  // Function to determine status color based on status value
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case "em_andamento":
+        return "border-blue-500 text-blue-500 hover:bg-blue-500/10";
+      case "pendente":
+        return "border-yellow-500 text-yellow-500 hover:bg-yellow-500/10";
+      case "concluido":
+        return "border-green-500 text-green-500 hover:bg-green-500/10";
+      case "cancelado":
+        return "border-red-500 text-red-500 hover:bg-red-500/10";
+      default:
+        return "border-gray-500 text-gray-500 hover:bg-gray-500/10";
+    }
+  };
+  
+  // Mocked handlers for ServiceOrderTable props
+  const handleUpdateServiceOrder = (index: number, updatedOrder: any) => {
+    console.log("Update service order", index, updatedOrder);
+  };
+  
+  const handleDeleteServiceOrder = (id: number) => {
+    console.log("Delete service order", id);
+  };
+  
+  const handleStatusChange = (status: string | null) => {
+    setStatusFilter(status || "");
+  };
 
   return (
     <div className="min-h-screen w-full">
@@ -71,7 +101,7 @@ const DetailedServiceOrder = () => {
                     <SelectValue placeholder="Todos os Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    {statusOptions.map(option => (
+                    {statusOptionsList.map(option => (
                       <SelectItem key={option.value} value={option.value}>
                         {option.label}
                       </SelectItem>
@@ -98,7 +128,12 @@ const DetailedServiceOrder = () => {
             
             <ServiceOrderTable 
               serviceOrders={filteredOrders} 
-              showDetailed={true}
+              getStatusColor={getStatusColor}
+              statusOptions={statusOptions}
+              onUpdateServiceOrder={handleUpdateServiceOrder}
+              onDeleteServiceOrder={handleDeleteServiceOrder}
+              selectedStatus={statusFilter || null}
+              onStatusChange={handleStatusChange}
               itemsPerPage={parseInt(itemsPerPage)}
             />
           </Card>
