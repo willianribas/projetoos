@@ -38,18 +38,16 @@ interface ServiceOrderTableProps {
   onDeleteServiceOrder: (id: number) => void;
   selectedStatus: string | null;
   onStatusChange: (status: string | null) => void;
-  itemsPerPage?: number;
 }
 
 const ServiceOrderTable = ({
   serviceOrders,
   getStatusColor,
-  statusOptions = [], // Provide default empty array
+  statusOptions,
   onUpdateServiceOrder,
   onDeleteServiceOrder,
   selectedStatus,
   onStatusChange,
-  itemsPerPage = 20, // Default to 20 if not provided
 }: ServiceOrderTableProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -89,9 +87,6 @@ const ServiceOrderTable = ({
     }
   };
 
-  // Make sure statusOptions is always an array even if passed as undefined
-  const safeStatusOptions = Array.isArray(statusOptions) ? statusOptions : [];
-
   return (
     <>
       <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg animate-fade-in">
@@ -110,7 +105,7 @@ const ServiceOrderTable = ({
                 <Filter className="h-3 w-3" />
                 Todos
               </Badge>
-              {safeStatusOptions.map((status) => {
+              {statusOptions.map((status) => {
                 const Icon = status.icon;
                 return (
                   <Badge
@@ -122,7 +117,7 @@ const ServiceOrderTable = ({
                     onClick={() => onStatusChange(status.value)}
                   >
                     <Icon className="h-3 w-3" />
-                    {status.label}
+                    {status.value}
                   </Badge>
                 );
               })}
@@ -199,7 +194,7 @@ const ServiceOrderTable = ({
         setIsOpen={setIsDialogOpen}
         editedOrder={editedOrder}
         setEditedOrder={setEditedOrder}
-        statusOptions={safeStatusOptions} 
+        statusOptions={statusOptions}
         onSave={handleSaveEdit}
       />
 
