@@ -88,10 +88,10 @@ const AnalyzerForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="name">Nome</Label>
+          <Label htmlFor="name">Nome *</Label>
           <Input
             id="name"
-            {...register('name')}
+            {...register('name', { required: "Nome é obrigatório" })}
             placeholder="Digite o nome do analisador"
           />
           {errors.name && (
