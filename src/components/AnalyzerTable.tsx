@@ -9,7 +9,7 @@ import {
   TableRow 
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Trash2, Edit2, Calendar, BarChart2 } from 'lucide-react';
+import { Trash2, Edit2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { useState } from 'react';
@@ -19,11 +19,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
   DialogClose
 } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import AnalyzerForm from './AnalyzerForm';
 
 interface AnalyzerTableProps {
   analyzers: AnalyzerWithStatus[];
@@ -63,18 +63,15 @@ const AnalyzerTable = ({
   selectedStatus,
   onStatusChange
 }: AnalyzerTableProps) => {
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const [editingAnalyzer, setEditingAnalyzer] = useState<AnalyzerWithStatus | null>(null);
 
-  const handleUpdateAnalyzer = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
+  const handleToggleCalibration = () => {
     if (editingAnalyzer) {
-      onUpdateAnalyzer(editingAnalyzer.id, data);
+      onUpdateAnalyzer(editingAnalyzer.id, {
+        in_calibration: !editingAnalyzer.in_calibration
+      });
+      setEditingAnalyzer(null);
     }
-  };
-
-  const handleRowClick = (analyzer: AnalyzerWithStatus) => {
-    setEditingAnalyzer(analyzer);
-    setEditDialogOpen(true);
   };
 
   // Count analyzers by status
@@ -123,7 +120,6 @@ const AnalyzerTable = ({
               <TableHead>NS/PT</TableHead>
               <TableHead>Nome</TableHead>
               <TableHead>Modelo</TableHead>
-              <TableHead>Marca</TableHead>
               <TableHead>Vencimento</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Ações</TableHead>
@@ -134,15 +130,10 @@ const AnalyzerTable = ({
               filteredAnalyzers.map((analyzer) => {
                 const status = getStatusDisplay(analyzer.status);
                 return (
-                  <TableRow 
-                    key={analyzer.id} 
-                    className="cursor-pointer hover:bg-muted/50"
-                    onClick={() => handleRowClick(analyzer)}
-                  >
+                  <TableRow key={analyzer.id}>
                     <TableCell>{analyzer.serial_number}</TableCell>
                     <TableCell>{analyzer.name}</TableCell>
                     <TableCell>{analyzer.model}</TableCell>
-                    <TableCell>{analyzer.brand || '-'}</TableCell>
                     <TableCell>
                       {format(new Date(analyzer.calibration_due_date), 'dd/MM/yyyy', { locale: ptBR })}
                     </TableCell>
@@ -150,20 +141,39 @@ const AnalyzerTable = ({
                       <Badge className={status.color}>{status.label}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      <div 
-                        className="flex justify-end gap-2"
-                        onClick={(e) => e.stopPropagation()} // Prevent row click event
-                      >
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => {
-                            setEditingAnalyzer(analyzer);
-                            setEditDialogOpen(true);
-                          }}
-                        >
-                          <Edit2 className="h-4 w-4" />
-                        </Button>
+                      <div className="flex justify-end gap-2">
+                        <Dialog>
+                          <DialogTrigger asChild>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setEditingAnalyzer(analyzer)}
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Editar Status do Analisador</DialogTitle>
+                            </DialogHeader>
+                            <div className="py-4">
+                              <div className="flex items-center justify-between">
+                                <Label htmlFor="calibration-status">Em Calibração</Label>
+                                <Switch
+                                  id="calibration-status"
+                                  checked={editingAnalyzer?.in_calibration || false}
+                                  onCheckedChange={() => handleToggleCalibration()}
+                                />
+                              </div>
+                              <p className="text-sm text-muted-foreground mt-2">
+                                Alterar o status para "Em Calibração" irá sobrepor temporariamente o status baseado na data de vencimento.
+                              </p>
+                            </div>
+                            <DialogClose asChild>
+                              <Button variant="outline">Fechar</Button>
+                            </DialogClose>
+                          </DialogContent>
+                        </Dialog>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -178,7 +188,7 @@ const AnalyzerTable = ({
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   Nenhum analisador encontrado com esses critérios.
                 </TableCell>
               </TableRow>
@@ -186,21 +196,6 @@ const AnalyzerTable = ({
           </TableBody>
         </Table>
       </div>
-
-      {/* Edit Dialog */}
-      {editingAnalyzer && (
-        <AnalyzerForm
-          onSubmit={handleUpdateAnalyzer}
-          initialData={{
-            ...editingAnalyzer,
-            calibration_due_date: editingAnalyzer.calibration_due_date
-          }}
-          dialogOpen={editDialogOpen}
-          onOpenChange={setEditDialogOpen}
-          isEditing={true}
-          showCalibrationToggle={true}
-        />
-      )}
     </div>
   );
 };

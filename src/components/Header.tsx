@@ -25,7 +25,7 @@ const Header = () => {
                   delay: index * 0.03,
                   ease: [0.43, 0.13, 0.23, 0.96]
                 }}
-                className="text-white text-[9px] sm:text-[10px] h-[1px] flex items-center"
+                className="text-primary text-[9px] sm:text-[10px] h-[1px] flex items-center"
               >
                 {char === " " ? "\u00A0" : char}
               </motion.span>

@@ -11,75 +11,38 @@ import { ptBR } from 'date-fns/locale';
 import { Analyzer } from '@/types/analyzer';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Switch } from '@/components/ui/switch';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
 
 interface AnalyzerFormProps {
   onSubmit: (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => void;
-  initialData?: Partial<Analyzer>;
-  dialogOpen?: boolean;
-  onOpenChange?: (open: boolean) => void;
-  isEditing?: boolean;
-  showCalibrationToggle?: boolean;
 }
 
-const AnalyzerForm = ({ 
-  onSubmit, 
-  initialData, 
-  dialogOpen, 
-  onOpenChange,
-  isEditing = false,
-  showCalibrationToggle = false
-}: AnalyzerFormProps) => {
+const AnalyzerForm = ({ onSubmit }: AnalyzerFormProps) => {
   const {
     register,
     handleSubmit,
     reset,
     setValue,
-    watch,
     formState: { errors },
-  } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>({
-    defaultValues: initialData,
-  });
+  } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>();
   
-  const [date, setDate] = useState<Date | undefined>(
-    initialData?.calibration_due_date 
-      ? new Date(initialData.calibration_due_date) 
-      : undefined
-  );
-  const [open, setOpen] = useState(false);
-  
-  const inCalibration = watch('in_calibration');
+  const [date, setDate] = useState<Date | undefined>(undefined);
 
   const handleFormSubmit = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     onSubmit(data);
-    if (!isEditing) {
-      reset();
-      setDate(undefined);
-    }
-    if (onOpenChange) {
-      onOpenChange(false);
-    }
+    reset();
+    setDate(undefined);
   };
 
-  const toggleCalibration = () => {
-    setValue('in_calibration', !inCalibration);
-  };
-
-  const formContent = (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+  return (
+    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-4 bg-card rounded-lg border">
+      <h2 className="text-xl font-bold">Adicionar Analisador</h2>
+      
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
-          <Label htmlFor="serial_number">NS/PT</Label>
+          <Label htmlFor="serial_number">N° de Série / Patrimônio</Label>
           <Input
             id="serial_number"
-            {...register('serial_number')}
+            {...register('serial_number', { required: 'N° de Série / Patrimônio é obrigatório' })}
             placeholder="Digite o N° de Série ou Patrimônio"
           />
           {errors.serial_number && (
@@ -88,38 +51,27 @@ const AnalyzerForm = ({
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="name">Nome *</Label>
+          <Label htmlFor="name">Nome</Label>
           <Input
             id="name"
-            {...register('name', { required: "Nome é obrigatório" })}
+            {...register('name', { required: 'Nome é obrigatório' })}
             placeholder="Digite o nome do analisador"
           />
           {errors.name && (
             <p className="text-sm text-destructive">{errors.name.message}</p>
           )}
         </div>
-      </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="model">Modelo</Label>
           <Input
             id="model"
-            {...register('model')}
+            {...register('model', { required: 'Modelo é obrigatório' })}
             placeholder="Digite o modelo do analisador"
           />
           {errors.model && (
             <p className="text-sm text-destructive">{errors.model.message}</p>
           )}
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="brand">Marca</Label>
-          <Input
-            id="brand"
-            {...register('brand')}
-            placeholder="Digite a marca do analisador"
-          />
         </div>
       </div>
 
@@ -158,51 +110,18 @@ const AnalyzerForm = ({
           )}
         </div>
 
-        <div className="flex flex-col justify-end space-y-2">
-          {showCalibrationToggle && (
-            <div className="flex items-center justify-between mb-4">
-              <Label htmlFor="calibration-status">Em Calibração</Label>
-              <Switch
-                id="calibration-status"
-                checked={inCalibration || false}
-                onCheckedChange={toggleCalibration}
-              />
-              <input 
-                type="hidden" 
-                {...register('in_calibration')} 
-              />
-            </div>
-          )}
-          
-          <Button 
-            type="submit" 
-            className="w-full bg-blue-600 hover:bg-blue-700"
-          >
-            {isEditing ? 'Atualizar' : '+ Analisador'}
+        <div className="flex items-end">
+          <input 
+            type="hidden" 
+            {...register('in_calibration')} 
+            value="false" 
+          />
+          <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
+            + Analisador
           </Button>
         </div>
       </div>
     </form>
-  );
-
-  if (dialogOpen !== undefined && onOpenChange) {
-    return (
-      <Dialog open={dialogOpen} onOpenChange={onOpenChange}>
-        <DialogContent className="sm:max-w-[500px]">
-          <DialogHeader>
-            <DialogTitle>{isEditing ? 'Editar Analisador' : 'Adicionar Analisador'}</DialogTitle>
-          </DialogHeader>
-          {formContent}
-        </DialogContent>
-      </Dialog>
-    );
-  }
-
-  return (
-    <div className="space-y-4 p-4 bg-card rounded-lg border">
-      <h2 className="text-xl font-bold">{isEditing ? 'Editar Analisador' : 'Adicionar Analisador'}</h2>
-      {formContent}
-    </div>
   );
 };
 

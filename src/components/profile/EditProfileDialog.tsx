@@ -60,18 +60,17 @@ export const EditProfileDialog = ({
 
       const updatePromises = [];
 
-      // Update email if changed - No email verification
+      // Update email if changed
       if (newEmail && newEmail !== user.email) {
         const emailPromise = supabase.auth.updateUser({
           email: newEmail,
-          email_confirm: true  // Skip email verification
         }).then(({ error }) => {
           if (error) throw error;
           
           toast({
             title: "Email atualizado",
-            description: "Seu email foi atualizado com sucesso.",
-            className: "bg-green-500 text-white border-none",
+            description: "Um link de verificação foi enviado para seu novo email.",
+            className: "bg-blue-500 text-white border-none",
           });
           
           // Invalidate users query to refresh user management data

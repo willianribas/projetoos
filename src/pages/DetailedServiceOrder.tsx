@@ -1,4 +1,3 @@
-
 import React from "react";
 import { format } from "date-fns";
 import { useServiceOrders } from "@/components/ServiceOrderProvider";
@@ -10,15 +9,13 @@ import { ServiceOrderHistory } from "@/components/quick-actions/ServiceOrderHist
 import { useState } from "react";
 import ServiceOrderPagination from "@/components/pagination/ServiceOrderPagination";
 import { filterServiceOrders, getStatusColor } from "@/components/filters/ServiceOrderFilters";
-import { Clock, History, FileSpreadsheet } from "lucide-react";
+import { Clock, History } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 
 const DetailedServiceOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -27,7 +24,7 @@ const DetailedServiceOrder = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const [itemsPerPage, setItemsPerPage] = useState(20); // Default to 20 items per page
+  const itemsPerPage = 10;
 
   const { serviceOrders } = useServiceOrders();
 
@@ -42,11 +39,6 @@ const DetailedServiceOrder = () => {
   const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
-
-  const handleItemsPerPageChange = (value: string) => {
-    setItemsPerPage(Number(value));
-    setCurrentPage(1); // Reset to first page when changing items per page
-  };
 
   return (
     <div className="min-h-screen w-full">
@@ -66,26 +58,7 @@ const DetailedServiceOrder = () => {
 
             <Card className="mt-6">
               <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <CardTitle>Ordens de Serviço</CardTitle>
-                  <div className="flex items-center gap-2">
-                    <Label htmlFor="items-per-page" className="text-sm">Mostrar:</Label>
-                    <Select
-                      value={itemsPerPage.toString()}
-                      onValueChange={handleItemsPerPageChange}
-                    >
-                      <SelectTrigger id="items-per-page" className="w-[80px]">
-                        <SelectValue placeholder="20" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="10">10</SelectItem>
-                        <SelectItem value="20">20</SelectItem>
-                        <SelectItem value="50">50</SelectItem>
-                        <SelectItem value="100">100</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
+                <CardTitle>Ordens de Serviço</CardTitle>
                 <ScrollArea className="w-full whitespace-nowrap">
                   <div className="flex space-x-2 pb-4">
                     <Badge
@@ -164,7 +137,7 @@ const DetailedServiceOrder = () => {
                               }}
                               className="text-primary hover:text-primary/80"
                             >
-                              <FileSpreadsheet className="h-4 w-4" />
+                              <History className="h-4 w-4" />
                             </button>
                           </TableCell>
                         </TableRow>
@@ -173,18 +146,15 @@ const DetailedServiceOrder = () => {
                   </Table>
                 </ScrollArea>
 
-                <div className="mt-4 flex items-center justify-between">
-                  {totalPages > 1 && (
+                {totalPages > 1 && (
+                  <div className="mt-4">
                     <ServiceOrderPagination
                       currentPage={currentPage}
                       totalPages={totalPages}
                       onPageChange={setCurrentPage}
                     />
-                  )}
-                  <div className="text-sm text-muted-foreground">
-                    Mostrando {Math.min(startIndex + 1, filteredOrders.length)} a {Math.min(startIndex + itemsPerPage, filteredOrders.length)} de {filteredOrders.length} ordens
                   </div>
-                </div>
+                )}
               </CardContent>
             </Card>
 
