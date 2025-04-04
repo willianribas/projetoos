@@ -119,33 +119,3 @@
     }
   }
 }
-
-/* Status colors that should remain consistent in both themes */
-.bg-in-day, .dark .bg-in-day {
-  @apply bg-green-500 hover:bg-green-600 text-white;
-}
-
-.bg-expiring-soon, .dark .bg-expiring-soon {
-  @apply bg-orange-500 hover:bg-orange-600 text-white;
-}
-
-.bg-expired, .dark .bg-expired {
-  @apply bg-red-500 hover:bg-red-600 text-white;
-}
-
-.bg-in-calibration, .dark .bg-in-calibration {
-  @apply bg-blue-500 hover:bg-blue-700 text-white;
-}
-
-/* Service Order status colors */
-.bg-ade, .dark .bg-ade {
-  @apply bg-blue-500 hover:bg-blue-600 text-white;
-}
-
-.bg-ave, .dark .bg-ave {
-  @apply bg-amber-500 hover:bg-amber-600 text-white;
-}
-
-.bg-ext, .dark .bg-ext {
-  @apply bg-purple-500 hover:bg-purple-600 text-white;
-}

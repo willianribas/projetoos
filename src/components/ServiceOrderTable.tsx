@@ -1,259 +1,212 @@
-import React, { useState } from 'react';
-import { ServiceOrder } from '@/types';
-import ServiceOrderTableRow from './ServiceOrderTableRow';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
+
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Input } from '@/components/ui/input';
-import { Search } from 'lucide-react';
-import ServiceOrderPagination from './pagination/ServiceOrderPagination';
-import EditServiceOrderDialog from './EditServiceOrderDialog';
-import DeleteServiceOrderDialog from './DeleteServiceOrderDialog';
+} from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { ServiceOrder } from "@/types";
+import ServiceOrderTableRow from "./ServiceOrderTableRow";
+import EditServiceOrderDialog from "./EditServiceOrderDialog";
+import DeleteServiceOrderDialog from "./DeleteServiceOrderDialog";
+import { 
+  Hash, 
+  Building2, 
+  Settings2, 
+  ActivitySquare, 
+  MessageSquare, 
+  GripHorizontal,
+  Filter,
+  StickyNote,
+} from "lucide-react";
 
 interface ServiceOrderTableProps {
   serviceOrders: ServiceOrder[];
-  onUpdateServiceOrder: (id: string, data: Partial<ServiceOrder>) => void;
-  onDeleteServiceOrder: (id: string) => void;
+  getStatusColor: (status: string) => string;
+  statusOptions: Array<{
+    value: string;
+    label: string;
+    color: string;
+    icon: any;
+  }>;
+  onUpdateServiceOrder: (index: number, updatedOrder: ServiceOrder) => void;
+  onDeleteServiceOrder: (id: number) => void;
+  selectedStatus: string | null;
+  onStatusChange: (status: string | null) => void;
 }
-
-const statusOptions = [
-  { value: 'all', label: 'Todos', color: 'bg-gray-500' },
-  { value: 'pending', label: 'Pendente', color: 'bg-amber-500' },
-  { value: 'progress', label: 'Em andamento', color: 'bg-blue-500' },
-  { value: 'completed', label: 'Concluído', color: 'bg-green-500' },
-  { value: 'canceled', label: 'Cancelado', color: 'bg-red-500' },
-];
-
-const getStatusColor = (status: string) => {
-  switch (status) {
-    case 'ade':
-      return 'bg-ade';
-    case 'ave':
-      return 'bg-ave';
-    case 'ext':
-      return 'bg-ext';
-    case 'pending':
-      return 'bg-amber-500 hover:bg-amber-600 text-white';
-    case 'progress':
-      return 'bg-blue-500 hover:bg-blue-600 text-white';
-    case 'completed':
-      return 'bg-green-500 hover:bg-green-600 text-white';
-    case 'canceled':
-      return 'bg-red-500 hover:bg-red-600 text-white';
-    case 'all':
-      return 'bg-gray-500 hover:bg-gray-600 text-white';
-    default:
-      return '';
-  }
-};
 
 const ServiceOrderTable = ({
   serviceOrders,
+  getStatusColor,
+  statusOptions,
   onUpdateServiceOrder,
   onDeleteServiceOrder,
+  selectedStatus,
+  onStatusChange,
 }: ServiceOrderTableProps) => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedStatus, setSelectedStatus] = useState('all');
-  const [selectedType, setSelectedType] = useState('all');
-  const [editingOrder, setEditingOrder] = useState<ServiceOrder | null>(null);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [orderToDelete, setOrderToDelete] = useState<ServiceOrder | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [selectedOrder, setSelectedOrder] = useState<{
+    order: ServiceOrder;
+    index: number;
+  } | null>(null);
+  const [editedOrder, setEditedOrder] = useState<ServiceOrder | null>(null);
+  const [deleteOrderId, setDeleteOrderId] = useState<number | null>(null);
 
-  const itemsPerPage = 10;
-
-  // Filter by search term, status and type
-  const filteredOrders = serviceOrders.filter((order) => {
-    const matchesSearch =
-      searchTerm === '' ||
-      order.equipment.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.client_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.protocol.toLowerCase().includes(searchTerm.toLowerCase());
-
-    const matchesStatus = selectedStatus === 'all' || order.status === selectedStatus;
-    const matchesType = selectedType === 'all' || order.type === selectedType;
-
-    return matchesSearch && matchesStatus && matchesType;
-  });
-
-  // Pagination
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredOrders.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredOrders.length / itemsPerPage);
-
-  const handleEditOrder = (order: ServiceOrder) => {
-    setEditingOrder(order);
-    setIsEditDialogOpen(true);
+  const handleRowClick = (order: ServiceOrder, index: number) => {
+    setSelectedOrder({ order, index });
+    setEditedOrder({ ...order });
+    setIsDialogOpen(true);
   };
 
-  const handleDeleteOrder = (order: ServiceOrder) => {
-    setOrderToDelete(order);
-    setDeleteDialogOpen(true);
+  const handleSaveEdit = () => {
+    if (selectedOrder && editedOrder) {
+      onUpdateServiceOrder(selectedOrder.index, editedOrder);
+      setIsDialogOpen(false);
+    }
   };
 
-  const onStatusChange = (status: string) => {
-    setSelectedStatus(status);
-    setCurrentPage(1);
+  const handleDelete = (e: React.MouseEvent, order: ServiceOrder) => {
+    e.stopPropagation();
+    console.log("Delete clicked for service order ID:", order.id, "Number:", order.numeroos);
+    setDeleteOrderId(order.id);
+    setIsDeleteDialogOpen(true);
   };
 
-  const onTypeChange = (type: string) => {
-    setSelectedType(type);
-    setCurrentPage(1);
+  const confirmDelete = () => {
+    if (deleteOrderId !== null) {
+      console.log("Confirming delete for service order ID:", deleteOrderId);
+      onDeleteServiceOrder(deleteOrderId);
+      setIsDeleteDialogOpen(false);
+      setDeleteOrderId(null);
+    }
   };
 
   return (
-    <div className="space-y-4 animate-fade-in">
-      <div className="flex flex-col sm:flex-row justify-between gap-4">
-        <div className="relative w-full sm:w-auto">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Buscar por equipamento, cliente ou protocolo..."
-            className="w-full sm:w-[300px] pl-8"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          <div className="flex flex-wrap gap-2 mr-2">
-            {statusOptions.map((status) => (
+    <>
+      <Card className="mt-8 border-muted bg-card/50 backdrop-blur-sm transition-all duration-300 hover:shadow-lg animate-fade-in">
+        <CardHeader className="space-y-4">
+          <CardTitle className="text-foreground font-bold flex items-center gap-2">
+            <ActivitySquare className="h-5 w-5 text-primary" />
+            Ordens de Serviço em Monitoramento
+          </CardTitle>
+          <ScrollArea className="w-full whitespace-nowrap">
+            <div className="flex space-x-2 pb-4">
               <Badge
-                key={status.value}
-                variant={selectedStatus === status.value ? "default" : "outline"}
-                className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
-                  selectedStatus === status.value 
-                    ? getStatusColor(status.value) 
-                    : "hover:bg-primary/90"
-                }`}
-                onClick={() => onStatusChange(status.value)}
+                variant={selectedStatus === null ? "default" : "outline"}
+                className="cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 hover:bg-primary/90"
+                onClick={() => onStatusChange(null)}
               >
-                {status.label}
+                <Filter className="h-3 w-3" />
+                Todos
               </Badge>
-            ))}
+              {statusOptions.map((status) => {
+                const Icon = status.icon;
+                return (
+                  <Badge
+                    key={status.value}
+                    variant={selectedStatus === status.value ? "default" : "outline"}
+                    className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
+                      selectedStatus === status.value 
+                        ? getStatusColor(status.value) 
+                        : "hover:bg-primary/90"
+                    }`}
+                    onClick={() => onStatusChange(status.value)}
+                  >
+                    <Icon className="h-3 w-3" />
+                    {status.value}
+                  </Badge>
+                );
+              })}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </CardHeader>
+        <CardContent>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[90px] text-center text-foreground/90 font-semibold whitespace-nowrap">
+                    <div className="flex items-center justify-center gap-2">
+                      <Hash className="h-4 w-4" />
+                      <span className="hidden sm:inline">Número OS</span>
+                      <span className="sm:hidden">Nº</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
+                    <div className="flex items-center justify-center gap-2">
+                      <Building2 className="h-4 w-4" />
+                      <span className="hidden sm:inline">Patrimônio</span>
+                      <span className="sm:hidden">Pat.</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="w-[300px] text-center text-foreground/90 font-semibold">
+                    <div className="flex items-center justify-center gap-2">
+                      <Settings2 className="h-4 w-4" />
+                      <span className="hidden sm:inline">Equipamento</span>
+                      <span className="sm:hidden">Equip.</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="text-center text-foreground/90 font-semibold">
+                    <div className="flex items-center justify-center gap-2">
+                      <StickyNote className="h-4 w-4" />
+                      <span className="hidden sm:inline">Observação</span>
+                      <span className="sm:hidden">Obs.</span>
+                    </div>
+                  </TableHead>
+                  <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
+                    <div className="flex items-center justify-center gap-2">
+                      <ActivitySquare className="h-4 w-4" />
+                      Status
+                    </div>
+                  </TableHead>
+                  <TableHead className="w-[70px] text-center text-foreground/90 font-semibold">
+                    <div className="flex items-center justify-center gap-2">
+                      <GripHorizontal className="h-4 w-4" />
+                      <span className="hidden sm:inline">Ações</span>
+                    </div>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {serviceOrders.map((order, index) => (
+                  <ServiceOrderTableRow
+                    key={order.id}
+                    order={order}
+                    index={index}
+                    getStatusColor={getStatusColor}
+                    onRowClick={handleRowClick}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </TableBody>
+            </Table>
           </div>
+        </CardContent>
+      </Card>
 
-          <div className="flex flex-wrap gap-2">
-            <Badge
-              variant={selectedType === 'all' ? "default" : "outline"}
-              className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
-                selectedType === 'all' 
-                  ? "bg-gray-500 hover:bg-gray-600 text-white" 
-                  : "hover:bg-primary/90"
-              }`}
-              onClick={() => onTypeChange('all')}
-            >
-              Todos
-            </Badge>
-            <Badge
-              variant={selectedType === 'ade' ? "default" : "outline"}
-              className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
-                selectedType === 'ade' 
-                  ? "bg-ade" 
-                  : "hover:bg-primary/90"
-              }`}
-              onClick={() => onTypeChange('ade')}
-            >
-              ADE
-            </Badge>
-            <Badge
-              variant={selectedType === 'ave' ? "default" : "outline"}
-              className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
-                selectedType === 'ave' 
-                  ? "bg-ave" 
-                  : "hover:bg-primary/90"
-              }`}
-              onClick={() => onTypeChange('ave')}
-            >
-              AVE
-            </Badge>
-            <Badge
-              variant={selectedType === 'ext' ? "default" : "outline"}
-              className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
-                selectedType === 'ext' 
-                  ? "bg-ext" 
-                  : "hover:bg-primary/90"
-              }`}
-              onClick={() => onTypeChange('ext')}
-            >
-              EXT
-            </Badge>
-          </div>
-        </div>
-      </div>
+      <EditServiceOrderDialog
+        isOpen={isDialogOpen}
+        setIsOpen={setIsDialogOpen}
+        editedOrder={editedOrder}
+        setEditedOrder={setEditedOrder}
+        statusOptions={statusOptions}
+        onSave={handleSaveEdit}
+      />
 
-      <div className="rounded-md border overflow-hidden">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Protocolo</TableHead>
-              <TableHead>Equipamento</TableHead>
-              <TableHead className="hidden md:table-cell">Cliente</TableHead>
-              <TableHead className="hidden lg:table-cell">Data</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {currentItems.length > 0 ? (
-              currentItems.map((serviceOrder) => (
-                <ServiceOrderTableRow
-                  key={serviceOrder.id}
-                  serviceOrder={serviceOrder}
-                  onEdit={handleEditOrder}
-                  onDelete={handleDeleteOrder}
-                />
-              ))
-            ) : (
-              <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
-                  Nenhuma ordem de serviço encontrada.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
-
-      {filteredOrders.length > itemsPerPage && (
-        <ServiceOrderPagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={setCurrentPage}
-        />
-      )}
-
-      {editingOrder && (
-        <EditServiceOrderDialog
-          serviceOrder={editingOrder}
-          open={isEditDialogOpen}
-          onClose={() => setIsEditDialogOpen(false)}
-          onUpdateServiceOrder={onUpdateServiceOrder}
-        />
-      )}
-
-      {orderToDelete && (
-        <DeleteServiceOrderDialog
-          serviceOrder={orderToDelete}
-          open={deleteDialogOpen}
-          onClose={() => setDeleteDialogOpen(false)}
-          onDeleteServiceOrder={onDeleteServiceOrder}
-        />
-      )}
-    </div>
+      <DeleteServiceOrderDialog
+        isOpen={isDeleteDialogOpen}
+        setIsOpen={setIsDeleteDialogOpen}
+        onConfirm={confirmDelete}
+        serviceOrderId={deleteOrderId ?? undefined}
+      />
+    </>
   );
 };
 

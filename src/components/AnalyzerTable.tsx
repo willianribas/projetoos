@@ -34,13 +34,13 @@ interface AnalyzerTableProps {
 const getStatusDisplay = (status: AnalyzerStatus) => {
   switch (status) {
     case 'in-day':
-      return { label: 'Em Dia', color: 'bg-in-day' };
+      return { label: 'Em Dia', color: 'bg-green-500 hover:bg-green-600' };
     case 'expiring-soon':
-      return { label: 'Vencerá', color: 'bg-expiring-soon' };
+      return { label: 'Vencerá', color: 'bg-orange-500 hover:bg-orange-600' };
     case 'expired':
-      return { label: 'Vencido', color: 'bg-expired' };
+      return { label: 'Vencido', color: 'bg-red-500 hover:bg-red-600' };
     case 'in-calibration':
-      return { label: 'Em Calibração', color: 'bg-in-calibration' };
+      return { label: 'Em Calibração', color: 'bg-blue-500 hover:bg-blue-600' };
     default:
       return { label: 'Desconhecido', color: 'bg-gray-500 hover:bg-gray-600' };
   }
@@ -48,10 +48,10 @@ const getStatusDisplay = (status: AnalyzerStatus) => {
 
 const statusFilters = [
   { value: null, label: 'Todos', count: 0, color: 'bg-slate-700 hover:bg-slate-800' },
-  { value: 'in-day', label: 'Em Dia', count: 0, color: 'bg-in-day' },
-  { value: 'expiring-soon', label: 'Vencerá', count: 0, color: 'bg-expiring-soon' },
-  { value: 'expired', label: 'Vencido', count: 0, color: 'bg-expired' },
-  { value: 'in-calibration', label: 'Em Calibração', count: 0, color: 'bg-in-calibration' }
+  { value: 'in-day', label: 'Em Dia', count: 0, color: 'bg-green-500 hover:bg-green-600' },
+  { value: 'expiring-soon', label: 'Vencerá', count: 0, color: 'bg-orange-500 hover:bg-orange-600' },
+  { value: 'expired', label: 'Vencido', count: 0, color: 'bg-red-500 hover:bg-red-600' },
+  { value: 'in-calibration', label: 'Em Calibração', count: 0, color: 'bg-blue-500 hover:bg-blue-600' }
 ];
 
 const AnalyzerTable = ({ 
@@ -105,7 +105,7 @@ const AnalyzerTable = ({
             variant="outline"
             className={`${
               selectedStatus === filter.value 
-                ? filter.color 
+                ? filter.color + ' text-white' 
                 : 'bg-transparent hover:bg-muted'
             }`}
             onClick={() => onStatusChange(filter.value)}
