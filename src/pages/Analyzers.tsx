@@ -52,8 +52,7 @@ const AnalyzersPage = () => {
             <div className="flex gap-2">
               <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
                 <Button 
-                  variant="outline"
-                  className="border-blue-600 text-blue-600 hover:bg-blue-50"
+                  className="bg-blue-600 hover:bg-blue-700"
                   onClick={() => setIsReportDialogOpen(true)}
                 >
                   <FileText className="mr-2 h-4 w-4" /> Gerar Relatório

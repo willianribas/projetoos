@@ -111,8 +111,10 @@ const ServiceOrderTable = ({
                   <Badge
                     key={status.value}
                     variant={selectedStatus === status.value ? "default" : "outline"}
-                    className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 hover:bg-primary/90 ${
-                      selectedStatus === status.value ? "bg-primary text-primary-foreground" : ""
+                    className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
+                      selectedStatus === status.value 
+                        ? getStatusColor(status.value) 
+                        : "hover:bg-primary/90"
                     }`}
                     onClick={() => onStatusChange(status.value)}
                   >

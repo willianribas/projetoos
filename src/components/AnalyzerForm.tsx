@@ -146,6 +146,7 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
           </Popover>
         </div>
 
+        {/* Only show "Em Calibração" when editing, not when adding new */}
         {initialData && (
           <div className="space-y-2 flex items-end">
             <input 
