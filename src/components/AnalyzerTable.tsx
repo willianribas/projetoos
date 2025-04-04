@@ -21,9 +21,7 @@ import {
   DialogTitle,
   DialogClose
 } from '@/components/ui/dialog';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
+import AnalyzerForm from './AnalyzerForm';
 
 interface AnalyzerTableProps {
   analyzers: AnalyzerWithStatus[];
@@ -65,28 +63,15 @@ const AnalyzerTable = ({
 }: AnalyzerTableProps) => {
   const [editingAnalyzer, setEditingAnalyzer] = useState<AnalyzerWithStatus | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [nameEdit, setNameEdit] = useState('');
-  const [modelEdit, setModelEdit] = useState('');
-  const [serialNumberEdit, setSerialNumberEdit] = useState('');
-  const [inCalibration, setInCalibration] = useState(false);
 
   const handleEditClick = (analyzer: AnalyzerWithStatus) => {
     setEditingAnalyzer(analyzer);
-    setNameEdit(analyzer.name);
-    setModelEdit(analyzer.model);
-    setSerialNumberEdit(analyzer.serial_number);
-    setInCalibration(analyzer.in_calibration);
     setEditDialogOpen(true);
   };
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     if (editingAnalyzer) {
-      onUpdateAnalyzer(editingAnalyzer.id, {
-        name: nameEdit,
-        model: modelEdit,
-        serial_number: serialNumberEdit,
-        in_calibration: inCalibration
-      });
+      onUpdateAnalyzer(editingAnalyzer.id, data);
       setEditDialogOpen(false);
     }
   };
@@ -136,6 +121,7 @@ const AnalyzerTable = ({
             <TableRow>
               <TableHead>NS/PT</TableHead>
               <TableHead>Nome</TableHead>
+              <TableHead>Marca</TableHead>
               <TableHead>Modelo</TableHead>
               <TableHead>Vencimento</TableHead>
               <TableHead>Status</TableHead>
@@ -150,6 +136,7 @@ const AnalyzerTable = ({
                   <TableRow key={analyzer.id}>
                     <TableCell>{analyzer.serial_number}</TableCell>
                     <TableCell>{analyzer.name}</TableCell>
+                    <TableCell>{analyzer.brand}</TableCell>
                     <TableCell>{analyzer.model}</TableCell>
                     <TableCell>
                       {format(new Date(analyzer.calibration_due_date), 'MMM yyyy', { locale: ptBR })}
@@ -180,7 +167,7 @@ const AnalyzerTable = ({
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   Nenhum analisador encontrado com esses critérios.
                 </TableCell>
               </TableRow>
@@ -195,58 +182,13 @@ const AnalyzerTable = ({
             <DialogTitle>Editar Analisador</DialogTitle>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="name-edit">Nome</Label>
-              <Input
-                id="name-edit"
-                value={nameEdit}
-                onChange={(e) => setNameEdit(e.target.value)}
-                placeholder="Nome do analisador"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="model-edit">Modelo</Label>
-              <Input
-                id="model-edit"
-                value={modelEdit}
-                onChange={(e) => setModelEdit(e.target.value)}
-                placeholder="Modelo do analisador"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="serial-edit">N° de Série / Patrimônio</Label>
-              <Input
-                id="serial-edit"
-                value={serialNumberEdit}
-                onChange={(e) => setSerialNumberEdit(e.target.value)}
-                placeholder="N° de Série ou Patrimônio"
-              />
-            </div>
-            
-            <div className="flex items-center justify-between pt-2">
-              <Label htmlFor="calibration-status">Em Calibração</Label>
-              <Switch
-                id="calibration-status"
-                checked={inCalibration}
-                onCheckedChange={setInCalibration}
-              />
-            </div>
-            <p className="text-sm text-muted-foreground mt-2">
-              Alterar o status para "Em Calibração" irá sobrepor temporariamente o status baseado na data de vencimento.
-            </p>
-          </div>
-          
-          <div className="flex justify-end gap-2">
-            <DialogClose asChild>
-              <Button variant="outline">Cancelar</Button>
-            </DialogClose>
-            <Button onClick={handleSaveChanges} className="bg-blue-600 hover:bg-blue-700">
-              Salvar Alterações
-            </Button>
-          </div>
+          {editingAnalyzer && (
+            <AnalyzerForm 
+              onSubmit={handleSaveChanges} 
+              inDialog={true} 
+              initialData={editingAnalyzer}
+            />
+          )}
         </DialogContent>
       </Dialog>
     </div>

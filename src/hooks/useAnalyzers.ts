@@ -19,11 +19,11 @@ export const useAnalyzers = () => {
 
     const today = new Date();
     const dueDate = parseISO(analyzer.calibration_due_date);
-    const sixtyDaysFromNow = addDays(today, 60);
+    const thirtyDaysFromNow = addDays(today, 30); // Changed from 60 to 30 days
 
     if (isBefore(dueDate, today)) {
       return { ...analyzer, status: 'expired' };
-    } else if (isBefore(dueDate, sixtyDaysFromNow)) {
+    } else if (isBefore(dueDate, thirtyDaysFromNow)) {
       return { ...analyzer, status: 'expiring-soon' };
     } else {
       return { ...analyzer, status: 'in-day' };
@@ -105,6 +105,12 @@ export const useAnalyzers = () => {
 
   const updateAnalyzer = async (id: string, updateData: Partial<Analyzer>) => {
     try {
+      // Format date if it's being updated
+      if (updateData.calibration_due_date) {
+        const dateObj = parseISO(updateData.calibration_due_date);
+        updateData.calibration_due_date = format(dateObj, 'yyyy-MM-01');
+      }
+
       // Use the any type to bypass TypeScript type checking
       const { data, error } = await (supabase as any)
         .from('analyzers')

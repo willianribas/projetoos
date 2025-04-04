@@ -4,6 +4,7 @@ export interface Analyzer {
   serial_number: string;
   name: string;
   model: string;
+  brand: string;
   calibration_due_date: string;
   in_calibration: boolean;
   created_at: string;
