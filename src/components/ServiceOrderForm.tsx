@@ -56,7 +56,7 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
         <Button 
-          className="h-9 px-4 bg-gradient-to-r from-white via-pink-100 to-pink-300 text-pink-700 hover:from-white hover:to-pink-400 border border-pink-200"
+          className="h-9 px-4 bg-blue-600 hover:bg-blue-700 text-white"
         >
           <Plus className="h-4 w-4" />
           Adicionar OS
