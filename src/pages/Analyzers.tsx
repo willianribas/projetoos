@@ -7,10 +7,12 @@ import { useAnalyzers } from '@/hooks/useAnalyzers';
 import { Analyzer } from '@/types/analyzer';
 import { Button } from '@/components/ui/button';
 import { ActivitySquare } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 const AnalyzersPage = () => {
   const { analyzers, loading, addAnalyzer, updateAnalyzer, deleteAnalyzer } = useAnalyzers();
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const handleStatusChange = (status: string | null) => {
     setSelectedStatus(status);
@@ -18,6 +20,7 @@ const AnalyzersPage = () => {
 
   const handleSubmit = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     addAnalyzer(data);
+    setIsDialogOpen(false);
   };
 
   return (
@@ -27,12 +30,23 @@ const AnalyzersPage = () => {
         <div className="space-y-4 sm:space-y-6 p-4 sm:p-8 animate-fade-in">
           <div className="flex justify-between items-center">
             <h1 className="text-3xl font-bold">Analisadores</h1>
-            <Button className="bg-blue-600 hover:bg-blue-700">
-              <ActivitySquare className="mr-2 h-4 w-4" /> Analisador
-            </Button>
+            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+              <Button 
+                className="bg-blue-600 hover:bg-blue-700" 
+                onClick={() => setIsDialogOpen(true)}
+              >
+                <ActivitySquare className="mr-2 h-4 w-4" /> Analisador
+              </Button>
+              <DialogContent className="sm:max-w-[800px] w-[95%] max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-semibold">
+                    Adicionar Analisador
+                  </DialogTitle>
+                </DialogHeader>
+                <AnalyzerForm onSubmit={handleSubmit} inDialog={true} />
+              </DialogContent>
+            </Dialog>
           </div>
-
-          <AnalyzerForm onSubmit={handleSubmit} />
           
           {loading ? (
             <div className="flex justify-center p-8">

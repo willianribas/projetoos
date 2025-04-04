@@ -4,7 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/components/AuthProvider';
 import { Analyzer, AnalyzerWithStatus, AnalyzerStatus } from '@/types/analyzer';
 import { useToast } from '@/hooks/use-toast';
-import { isBefore, addDays, parseISO } from 'date-fns';
+import { isBefore, addDays, parseISO, format } from 'date-fns';
 
 export const useAnalyzers = () => {
   const [analyzers, setAnalyzers] = useState<AnalyzerWithStatus[]>([]);
@@ -60,11 +60,23 @@ export const useAnalyzers = () => {
 
   const addAnalyzer = async (analyzerData: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     try {
+      // Ensure calibration_due_date is in the format 'YYYY-MM-01'
+      let formattedDate = analyzerData.calibration_due_date;
+      if (formattedDate) {
+        // Parse the date and set day to 1
+        const dateObj = parseISO(formattedDate);
+        formattedDate = format(dateObj, 'yyyy-MM-01');
+      } else {
+        // Use current date with day set to 1 if no date provided
+        formattedDate = format(new Date(), 'yyyy-MM-01');
+      }
+
       // Use the any type to bypass TypeScript type checking
       const { data, error } = await (supabase as any)
         .from('analyzers')
         .insert({
           ...analyzerData,
+          calibration_due_date: formattedDate,
           user_id: user?.id,
         })
         .select()

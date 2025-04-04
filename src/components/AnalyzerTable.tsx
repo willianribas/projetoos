@@ -19,11 +19,11 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogClose
 } from '@/components/ui/dialog';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
 
 interface AnalyzerTableProps {
   analyzers: AnalyzerWithStatus[];
@@ -64,13 +64,30 @@ const AnalyzerTable = ({
   onStatusChange
 }: AnalyzerTableProps) => {
   const [editingAnalyzer, setEditingAnalyzer] = useState<AnalyzerWithStatus | null>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [nameEdit, setNameEdit] = useState('');
+  const [modelEdit, setModelEdit] = useState('');
+  const [serialNumberEdit, setSerialNumberEdit] = useState('');
+  const [inCalibration, setInCalibration] = useState(false);
 
-  const handleToggleCalibration = () => {
+  const handleEditClick = (analyzer: AnalyzerWithStatus) => {
+    setEditingAnalyzer(analyzer);
+    setNameEdit(analyzer.name);
+    setModelEdit(analyzer.model);
+    setSerialNumberEdit(analyzer.serial_number);
+    setInCalibration(analyzer.in_calibration);
+    setEditDialogOpen(true);
+  };
+
+  const handleSaveChanges = () => {
     if (editingAnalyzer) {
       onUpdateAnalyzer(editingAnalyzer.id, {
-        in_calibration: !editingAnalyzer.in_calibration
+        name: nameEdit,
+        model: modelEdit,
+        serial_number: serialNumberEdit,
+        in_calibration: inCalibration
       });
-      setEditingAnalyzer(null);
+      setEditDialogOpen(false);
     }
   };
 
@@ -135,45 +152,20 @@ const AnalyzerTable = ({
                     <TableCell>{analyzer.name}</TableCell>
                     <TableCell>{analyzer.model}</TableCell>
                     <TableCell>
-                      {format(new Date(analyzer.calibration_due_date), 'dd/MM/yyyy', { locale: ptBR })}
+                      {format(new Date(analyzer.calibration_due_date), 'MMM yyyy', { locale: ptBR })}
                     </TableCell>
                     <TableCell>
                       <Badge className={status.color}>{status.label}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setEditingAnalyzer(analyzer)}
-                            >
-                              <Edit2 className="h-4 w-4" />
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Editar Status do Analisador</DialogTitle>
-                            </DialogHeader>
-                            <div className="py-4">
-                              <div className="flex items-center justify-between">
-                                <Label htmlFor="calibration-status">Em Calibração</Label>
-                                <Switch
-                                  id="calibration-status"
-                                  checked={editingAnalyzer?.in_calibration || false}
-                                  onCheckedChange={() => handleToggleCalibration()}
-                                />
-                              </div>
-                              <p className="text-sm text-muted-foreground mt-2">
-                                Alterar o status para "Em Calibração" irá sobrepor temporariamente o status baseado na data de vencimento.
-                              </p>
-                            </div>
-                            <DialogClose asChild>
-                              <Button variant="outline">Fechar</Button>
-                            </DialogClose>
-                          </DialogContent>
-                        </Dialog>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleEditClick(analyzer)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
                         <Button
                           variant="ghost"
                           size="icon"
@@ -196,6 +188,67 @@ const AnalyzerTable = ({
           </TableBody>
         </Table>
       </div>
+
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Editar Analisador</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name-edit">Nome</Label>
+              <Input
+                id="name-edit"
+                value={nameEdit}
+                onChange={(e) => setNameEdit(e.target.value)}
+                placeholder="Nome do analisador"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="model-edit">Modelo</Label>
+              <Input
+                id="model-edit"
+                value={modelEdit}
+                onChange={(e) => setModelEdit(e.target.value)}
+                placeholder="Modelo do analisador"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="serial-edit">N° de Série / Patrimônio</Label>
+              <Input
+                id="serial-edit"
+                value={serialNumberEdit}
+                onChange={(e) => setSerialNumberEdit(e.target.value)}
+                placeholder="N° de Série ou Patrimônio"
+              />
+            </div>
+            
+            <div className="flex items-center justify-between pt-2">
+              <Label htmlFor="calibration-status">Em Calibração</Label>
+              <Switch
+                id="calibration-status"
+                checked={inCalibration}
+                onCheckedChange={setInCalibration}
+              />
+            </div>
+            <p className="text-sm text-muted-foreground mt-2">
+              Alterar o status para "Em Calibração" irá sobrepor temporariamente o status baseado na data de vencimento.
+            </p>
+          </div>
+          
+          <div className="flex justify-end gap-2">
+            <DialogClose asChild>
+              <Button variant="outline">Cancelar</Button>
+            </DialogClose>
+            <Button onClick={handleSaveChanges} className="bg-blue-600 hover:bg-blue-700">
+              Salvar Alterações
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

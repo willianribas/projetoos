@@ -14,35 +14,55 @@ import { cn } from '@/lib/utils';
 
 interface AnalyzerFormProps {
   onSubmit: (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => void;
+  inDialog?: boolean;
 }
 
-const AnalyzerForm = ({ onSubmit }: AnalyzerFormProps) => {
+const AnalyzerForm = ({ onSubmit, inDialog = false }: AnalyzerFormProps) => {
   const {
     register,
     handleSubmit,
     reset,
     setValue,
     formState: { errors },
-  } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>();
+  } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>({
+    defaultValues: {
+      serial_number: '',
+      name: '',
+      model: '',
+      calibration_due_date: '',
+      in_calibration: false,
+    }
+  });
   
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [showYearMonth, setShowYearMonth] = useState(true);
 
   const handleFormSubmit = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
-    onSubmit(data);
+    // If some fields are empty, set them to default values
+    const submittedData = {
+      ...data,
+      serial_number: data.serial_number || 'N/A',
+      model: data.model || 'N/A',
+      calibration_due_date: data.calibration_due_date || format(new Date(), 'yyyy-MM-dd'),
+    };
+    
+    onSubmit(submittedData);
     reset();
     setDate(undefined);
   };
 
+  const wrapperClass = inDialog ? '' : 'p-4 bg-card rounded-lg border';
+
   return (
-    <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 p-4 bg-card rounded-lg border">
-      <h2 className="text-xl font-bold">Adicionar Analisador</h2>
+    <form onSubmit={handleSubmit(handleFormSubmit)} className={`space-y-4 ${wrapperClass}`}>
+      {!inDialog && <h2 className="text-xl font-bold">Adicionar Analisador</h2>}
       
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label htmlFor="serial_number">N° de Série / Patrimônio</Label>
           <Input
             id="serial_number"
-            {...register('serial_number', { required: 'N° de Série / Patrimônio é obrigatório' })}
+            {...register('serial_number')}
             placeholder="Digite o N° de Série ou Patrimônio"
           />
           {errors.serial_number && (
@@ -66,7 +86,7 @@ const AnalyzerForm = ({ onSubmit }: AnalyzerFormProps) => {
           <Label htmlFor="model">Modelo</Label>
           <Input
             id="model"
-            {...register('model', { required: 'Modelo é obrigatório' })}
+            {...register('model')}
             placeholder="Digite o modelo do analisador"
           />
           {errors.model && (
@@ -88,26 +108,28 @@ const AnalyzerForm = ({ onSubmit }: AnalyzerFormProps) => {
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "PPP", { locale: ptBR }) : <span>Selecione a data</span>}
+                {date ? format(date, "MMM yyyy", { locale: ptBR }) : <span>Selecione a data</span>}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0">
+            <PopoverContent className="w-auto p-0" align="start">
               <Calendar
                 mode="single"
                 selected={date}
                 onSelect={(newDate) => {
                   setDate(newDate);
                   if (newDate) {
-                    setValue('calibration_due_date', format(newDate, 'yyyy-MM-dd'));
+                    setValue('calibration_due_date', format(newDate, 'yyyy-MM-01'));
                   }
                 }}
                 initialFocus
+                className={cn("p-3 pointer-events-auto")}
+                captionLayout="dropdown-buttons"
+                fromYear={2020}
+                toYear={2030}
+                showOutsideDays={false}
               />
             </PopoverContent>
           </Popover>
-          {errors.calibration_due_date && (
-            <p className="text-sm text-destructive">{errors.calibration_due_date.message}</p>
-          )}
         </div>
 
         <div className="flex items-end">

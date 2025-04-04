@@ -69,7 +69,7 @@ export const EditProfileDialog = ({
           
           toast({
             title: "Email atualizado",
-            description: "Um link de verificação foi enviado para seu novo email.",
+            description: "Seu email foi atualizado com sucesso.",
             className: "bg-blue-500 text-white border-none",
           });
           

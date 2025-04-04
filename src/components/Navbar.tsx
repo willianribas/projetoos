@@ -45,7 +45,7 @@ const NavItem = ({
       <div className="flex items-center gap-2">
         <Icon className={cn(
           "h-5 w-5 transition-colors duration-300",
-          isActive ? "text-primary" : "text-muted-foreground",
+          isActive ? "text-blue-500" : "text-blue-400",
           "group-hover:text-[#ff8fa3] dark:group-hover:text-[#ff8fa3]"
         )} />
         <AnimatePresence>
