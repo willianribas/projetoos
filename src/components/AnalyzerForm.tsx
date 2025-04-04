@@ -11,6 +11,7 @@ import { ptBR } from 'date-fns/locale';
 import { Analyzer } from '@/types/analyzer';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Switch } from '@/components/ui/switch';
 
 interface AnalyzerFormProps {
   onSubmit: (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => void;
@@ -24,6 +25,7 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<Omit<Analyzer, 'id' | 'created_at' | 'user_id'>>({
     defaultValues: {
@@ -41,6 +43,8 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
       ? parse(initialData.calibration_due_date.substring(0, 7), 'yyyy-MM', new Date()) 
       : undefined
   );
+
+  const inCalibrationValue = watch('in_calibration');
 
   const handleFormSubmit = (data: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     // Set default values for empty fields with a dash
@@ -148,15 +152,17 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
 
         {/* Only show "Em Calibração" when editing, not when adding new */}
         {initialData && (
-          <div className="space-y-2 flex items-end">
-            <input 
-              type="checkbox" 
+          <div className="space-y-2 flex items-end gap-2">
+            <Switch 
               id="in_calibration"
-              className="mr-2" 
-              checked={initialData.in_calibration}
-              {...register('in_calibration')} 
+              checked={inCalibrationValue}
+              onCheckedChange={(checked) => setValue('in_calibration', checked)}
             />
             <Label htmlFor="in_calibration">Em Calibração</Label>
+            <input 
+              type="hidden" 
+              {...register('in_calibration')} 
+            />
           </div>
         )}
 
