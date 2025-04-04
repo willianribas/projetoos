@@ -140,8 +140,6 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
                 fromYear={2020}
                 toYear={2030}
                 showOutsideDays={false}
-                // Only show month and year in the calendar
-                view="month"
                 defaultMonth={date || new Date()}
               />
             </PopoverContent>
