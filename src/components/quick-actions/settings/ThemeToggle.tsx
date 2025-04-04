@@ -1,5 +1,6 @@
+
 import React from "react";
-import { Toggle } from "@/components/ui/toggle";
+import { Switch } from "@/components/ui/switch";
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 
@@ -9,13 +10,15 @@ export const ThemeToggle = () => {
   return (
     <div className="flex items-center justify-between">
       <span className="text-sm">Tema</span>
-      <Toggle
-        pressed={theme === "dark"}
-        onPressedChange={(pressed) => setTheme(pressed ? "dark" : "light")}
-        aria-label="Toggle theme"
-      >
-        {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
-      </Toggle>
+      <div className="flex items-center gap-2">
+        <Sun className="h-4 w-4" />
+        <Switch
+          checked={theme === "dark"}
+          onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
+          aria-label="Toggle theme"
+        />
+        <Moon className="h-4 w-4" />
+      </div>
     </div>
   );
 };

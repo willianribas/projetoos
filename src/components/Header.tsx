@@ -1,9 +1,16 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useTheme } from "next-themes";
 
 const Header = () => {
+  const { theme } = useTheme();
   const text = "Sistema de Gerenciamento de Ordens de Serviço".split("");
+  
+  // Hide the header in light mode
+  if (theme === "light") {
+    return null;
+  }
   
   return (
     <div className="bg-background/50 backdrop-blur-sm rounded-xl shadow-lg transition-all duration-300 hover:shadow-xl p-4">
