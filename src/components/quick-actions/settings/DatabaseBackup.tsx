@@ -79,25 +79,29 @@ export const DatabaseBackup = () => {
         }
       }
 
-      // For regular users, update the data to have the current user's ID and remove existing IDs
-      const filtered = importedData.map(item => ({
+      // Important fix: Update user_id for ALL records in the imported data
+      // and remove any existing IDs to ensure they are created as new records
+      const processedData = importedData.map(item => ({
         ...item,
-        user_id: user?.id, // Update user_id to current user
-        id: undefined // Remove any existing IDs to create new records
+        user_id: user?.id, // Set the current user ID
+        id: undefined, // Remove existing ID to create a new record
+        deleted_at: null // Ensure it's not marked as deleted
       }));
 
-      // Insert the data
+      // Insert the processed data
       const { error: insertError } = await supabase
         .from('service_orders')
-        .insert(filtered);
+        .insert(processedData);
 
       if (insertError) throw insertError;
 
-      await queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
+      // Important: invalidate the queries to refresh the data
+      await queryClient.invalidateQueries({ queryKey: ['service_orders'] });
+      await queryClient.invalidateQueries({ queryKey: ['service_orders', user?.id] });
 
       toast({
         title: "Dados importados com sucesso!",
-        description: `${filtered.length} ordens de serviço foram importadas para sua conta.`,
+        description: `${processedData.length} ordens de serviço foram importadas para sua conta.`,
       });
     } catch (error: any) {
       console.error('Erro ao importar dados:', error);
@@ -149,13 +153,20 @@ export const DatabaseBackup = () => {
 
       if (deleteError) throw deleteError;
 
+      // Process data for admin import
+      const processedData = importedData.map(({ id, ...rest }) => ({
+        ...rest,
+        deleted_at: null // Ensure it's not marked as deleted
+      }));
+
       const { error: insertError } = await supabase
         .from('service_orders')
-        .insert(importedData.map(({ id, ...rest }) => rest));
+        .insert(processedData);
 
       if (insertError) throw insertError;
 
-      await queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
+      // Invalidate all relevant queries
+      await queryClient.invalidateQueries({ queryKey: ['service_orders'] });
 
       toast({
         title: "Dados importados com sucesso!",
