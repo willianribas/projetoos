@@ -56,15 +56,33 @@ export const DatabaseBackup = () => {
 
     try {
       const fileContent = await file.text();
-      const importedData = JSON.parse(fileContent);
+      let importedData;
+      
+      try {
+        importedData = JSON.parse(fileContent);
+      } catch (parseError) {
+        throw new Error('Formato de arquivo inválido. O arquivo deve ser um JSON válido.');
+      }
 
-      if (!Array.isArray(importedData)) throw new Error('Formato de arquivo inválido');
+      if (!Array.isArray(importedData)) {
+        throw new Error('Formato de arquivo inválido. O conteúdo deve ser um array de ordens de serviço.');
+      }
 
-      // For regular users, only insert their own backup
-      // First, ensure we're not uploading other users' data
+      // Validate structure of imported data
+      if (importedData.length > 0) {
+        const requiredFields = ['numeroos', 'patrimonio', 'equipamento', 'status'];
+        const firstItem = importedData[0];
+        const missingFields = requiredFields.filter(field => !Object.prototype.hasOwnProperty.call(firstItem, field));
+        
+        if (missingFields.length > 0) {
+          throw new Error(`Formato de arquivo inválido. Campos obrigatórios ausentes: ${missingFields.join(', ')}`);
+        }
+      }
+
+      // For regular users, update the data to have the current user's ID and remove existing IDs
       const filtered = importedData.map(item => ({
         ...item,
-        user_id: user?.id, // Ensure the user_id is set to current user
+        user_id: user?.id, // Update user_id to current user
         id: undefined // Remove any existing IDs to create new records
       }));
 
@@ -79,13 +97,13 @@ export const DatabaseBackup = () => {
 
       toast({
         title: "Dados importados com sucesso!",
-        description: "Suas ordens de serviço foram restauradas.",
+        description: `${filtered.length} ordens de serviço foram importadas para sua conta.`,
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao importar dados:', error);
       toast({
         title: "Erro ao importar dados",
-        description: "Verifique se o arquivo está no formato correto.",
+        description: error.message || "Verifique se o arquivo está no formato correto.",
         variant: "destructive",
       });
     }
@@ -101,9 +119,28 @@ export const DatabaseBackup = () => {
 
     try {
       const fileContent = await file.text();
-      const importedData = JSON.parse(fileContent);
+      let importedData;
+      
+      try {
+        importedData = JSON.parse(fileContent);
+      } catch (parseError) {
+        throw new Error('Formato de arquivo inválido. O arquivo deve ser um JSON válido.');
+      }
 
-      if (!Array.isArray(importedData)) throw new Error('Formato de arquivo inválido');
+      if (!Array.isArray(importedData)) {
+        throw new Error('Formato de arquivo inválido. O conteúdo deve ser um array de ordens de serviço.');
+      }
+
+      // Validate structure of imported data
+      if (importedData.length > 0) {
+        const requiredFields = ['numeroos', 'patrimonio', 'equipamento', 'status'];
+        const firstItem = importedData[0];
+        const missingFields = requiredFields.filter(field => !Object.prototype.hasOwnProperty.call(firstItem, field));
+        
+        if (missingFields.length > 0) {
+          throw new Error(`Formato de arquivo inválido. Campos obrigatórios ausentes: ${missingFields.join(', ')}`);
+        }
+      }
 
       const { error: deleteError } = await supabase
         .from('service_orders')
@@ -124,11 +161,11 @@ export const DatabaseBackup = () => {
         title: "Dados importados com sucesso!",
         description: "O banco de dados foi atualizado com os dados do backup.",
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erro ao importar dados:', error);
       toast({
         title: "Erro ao importar dados",
-        description: "Verifique se o arquivo está no formato correto.",
+        description: error.message || "Verifique se o arquivo está no formato correto.",
         variant: "destructive",
       });
     }
