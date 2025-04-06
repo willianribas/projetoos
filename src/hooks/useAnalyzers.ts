@@ -71,12 +71,20 @@ export const useAnalyzers = () => {
         formattedDate = format(new Date(), 'yyyy-MM-01');
       }
 
+      // Convert empty strings to dash
+      const formattedData = {
+        ...analyzerData,
+        serial_number: analyzerData.serial_number || '-',
+        model: analyzerData.model || '-',
+        brand: analyzerData.brand || '-',
+        calibration_due_date: formattedDate,
+      };
+
       // Use the any type to bypass TypeScript type checking
       const { data, error } = await (supabase as any)
         .from('analyzers')
         .insert({
-          ...analyzerData,
-          calibration_due_date: formattedDate,
+          ...formattedData,
           user_id: user?.id,
         })
         .select()
@@ -111,10 +119,18 @@ export const useAnalyzers = () => {
         updateData.calibration_due_date = format(dateObj, 'yyyy-MM-01');
       }
 
+      // Convert empty strings to dash
+      const formattedData = {
+        ...updateData,
+        serial_number: updateData.serial_number === '' ? '-' : updateData.serial_number,
+        model: updateData.model === '' ? '-' : updateData.model,
+        brand: updateData.brand === '' ? '-' : updateData.brand,
+      };
+
       // Use the any type to bypass TypeScript type checking
       const { data, error } = await (supabase as any)
         .from('analyzers')
-        .update(updateData)
+        .update(formattedData)
         .eq('id', id)
         .select()
         .single();

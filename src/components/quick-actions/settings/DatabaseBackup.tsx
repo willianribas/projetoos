@@ -1,20 +1,27 @@
+
 import React, { useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Database, Upload } from "lucide-react";
+import { Database, Upload, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/components/AuthProvider";
 
 export const DatabaseBackup = () => {
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = user?.email === "williann.dev@gmail.com";
 
   const handleExportDatabase = async () => {
     try {
+      // Users can only export their own service orders
       const { data, error } = await supabase
         .from('service_orders')
-        .select('*');
+        .select('*')
+        .eq('user_id', user?.id)
+        .is('deleted_at', null);
 
       if (error) throw error;
 
@@ -43,9 +50,54 @@ export const DatabaseBackup = () => {
     }
   };
 
-  const handleImportDatabase = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImportOwnBackup = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+
+    try {
+      const fileContent = await file.text();
+      const importedData = JSON.parse(fileContent);
+
+      if (!Array.isArray(importedData)) throw new Error('Formato de arquivo inválido');
+
+      // For regular users, only insert their own backup
+      // First, ensure we're not uploading other users' data
+      const filtered = importedData.map(item => ({
+        ...item,
+        user_id: user?.id, // Ensure the user_id is set to current user
+        id: undefined // Remove any existing IDs to create new records
+      }));
+
+      // Insert the data
+      const { error: insertError } = await supabase
+        .from('service_orders')
+        .insert(filtered);
+
+      if (insertError) throw insertError;
+
+      await queryClient.invalidateQueries({ queryKey: ['serviceOrders'] });
+
+      toast({
+        title: "Dados importados com sucesso!",
+        description: "Suas ordens de serviço foram restauradas.",
+      });
+    } catch (error) {
+      console.error('Erro ao importar dados:', error);
+      toast({
+        title: "Erro ao importar dados",
+        description: "Verifique se o arquivo está no formato correto.",
+        variant: "destructive",
+      });
+    }
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
+  const handleAdminImportDatabase = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !isAdmin) return;
 
     try {
       const fileContent = await file.text();
@@ -87,33 +139,51 @@ export const DatabaseBackup = () => {
   };
 
   return (
-    <div className="flex items-center justify-between">
-      <span className="text-sm">Backup do Banco</span>
-      <div className="flex gap-2">
-        <Button 
-          variant="outline"
-          onClick={handleExportDatabase}
-        >
-          <Database className="mr-2 h-4 w-4" />
-          Exportar Backup
-        </Button>
-        <div className="relative">
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleImportDatabase}
-            accept=".json"
-            className="hidden"
-          />
+    <div className="flex flex-col space-y-4">
+      <div className="flex items-center justify-between">
+        <span className="text-sm">Backup do Banco</span>
+        <div className="flex gap-2">
           <Button 
             variant="outline"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={handleExportDatabase}
           >
-            <Upload className="mr-2 h-4 w-4" />
-            Importar Backup
+            <Download className="mr-2 h-4 w-4" />
+            Exportar Minhas OS
           </Button>
+          
+          {/* Regular users can import their own OS */}
+          <div className="relative">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={isAdmin ? handleAdminImportDatabase : handleImportOwnBackup}
+              accept=".json"
+              className="hidden"
+            />
+            <Button 
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Upload className="mr-2 h-4 w-4" />
+              {isAdmin ? "Importar Backup (Administrador)" : "Importar Minhas OS"}
+            </Button>
+          </div>
         </div>
       </div>
+      
+      {isAdmin && (
+        <div className="pl-6 text-xs text-muted-foreground">
+          Como administrador, você pode realizar operações de backup completo do banco de dados.
+          Ao importar um backup, todos os dados existentes serão substituídos.
+        </div>
+      )}
+      
+      {!isAdmin && (
+        <div className="pl-6 text-xs text-muted-foreground">
+          Você pode exportar suas ordens de serviço e importá-las novamente.
+          Isso é útil para transferir suas OS entre contas ou fazer backup pessoal.
+        </div>
+      )}
     </div>
   );
 };

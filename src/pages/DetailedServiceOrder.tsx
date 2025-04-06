@@ -1,3 +1,4 @@
+
 import React from "react";
 import { format } from "date-fns";
 import { useServiceOrders } from "@/components/ServiceOrderProvider";
@@ -9,13 +10,23 @@ import { ServiceOrderHistory } from "@/components/quick-actions/ServiceOrderHist
 import { useState } from "react";
 import ServiceOrderPagination from "@/components/pagination/ServiceOrderPagination";
 import { filterServiceOrders, getStatusColor } from "@/components/filters/ServiceOrderFilters";
-import { Clock, History } from "lucide-react";
+import { Clock, FileDown, History } from "lucide-react";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import Header from "@/components/Header";
 import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
+import { Button } from "@/components/ui/button";
+import { 
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { BlobProvider } from "@react-pdf/renderer";
+import ServiceOrderPDF from "@/components/ServiceOrderPDF";
 
 const DetailedServiceOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -24,7 +35,9 @@ const DetailedServiceOrder = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedOrderId, setSelectedOrderId] = useState<number | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
-  const itemsPerPage = 10;
+  const [itemsPerPage, setItemsPerPage] = useState(20); // Default to 20 items per page
+  const [exportStatus, setExportStatus] = useState<string | "all">("all");
+  const [showExportOptions, setShowExportOptions] = useState(false);
 
   const { serviceOrders } = useServiceOrders();
 
@@ -40,6 +53,10 @@ const DetailedServiceOrder = () => {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedOrders = filteredOrders.slice(startIndex, startIndex + itemsPerPage);
 
+  const ordersToExport = exportStatus === "all" 
+    ? filteredOrders
+    : filteredOrders.filter(order => order.status === exportStatus);
+
   return (
     <div className="min-h-screen w-full">
       <Navbar />
@@ -47,16 +64,99 @@ const DetailedServiceOrder = () => {
         <div className="container mx-auto p-6 space-y-6 animate-fade-in">
           <Header />
           <div className="px-2 sm:px-0">
-            <SearchBar
-              searchQuery={searchQuery}
-              setSearchQuery={setSearchQuery}
-              searchField={searchField}
-              setSearchField={setSearchField}
-              searchCriteria={searchCriteria}
-              setSearchCriteria={setSearchCriteria}
-            />
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+              <div className="flex-1">
+                <SearchBar
+                  searchQuery={searchQuery}
+                  setSearchQuery={setSearchQuery}
+                  searchField={searchField}
+                  setSearchField={setSearchField}
+                  searchCriteria={searchCriteria}
+                  setSearchCriteria={setSearchCriteria}
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  className="whitespace-nowrap"
+                  onClick={() => setShowExportOptions(!showExportOptions)}
+                >
+                  <FileDown className="mr-2 h-4 w-4" />
+                  Gerar Relatório
+                </Button>
 
-            <Card className="mt-6">
+                <Select 
+                  value={itemsPerPage.toString()} 
+                  onValueChange={(value) => {
+                    setItemsPerPage(parseInt(value));
+                    setCurrentPage(1);
+                  }}
+                >
+                  <SelectTrigger className="w-[130px]">
+                    <SelectValue placeholder="Itens por página" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10 por página</SelectItem>
+                    <SelectItem value="20">20 por página</SelectItem>
+                    <SelectItem value="50">50 por página</SelectItem>
+                    <SelectItem value="100">100 por página</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {showExportOptions && (
+              <Card className="mb-4 p-4">
+                <div className="flex flex-col sm:flex-row items-center gap-4">
+                  <h3 className="text-sm font-medium">Exportar Ordens de Serviço:</h3>
+                  <div className="flex items-center gap-2 flex-1">
+                    <Select value={exportStatus} onValueChange={setExportStatus}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Selecione o status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">Todas as OS</SelectItem>
+                        {statusOptions.map((status) => (
+                          <SelectItem key={status.value} value={status.value}>
+                            {status.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <BlobProvider document={<ServiceOrderPDF serviceOrders={ordersToExport} />}>
+                      {({ url, loading }) => (
+                        <Button 
+                          variant="outline" 
+                          disabled={loading} 
+                          className="bg-blue-600 hover:bg-blue-700 text-white"
+                          onClick={() => {
+                            if (url) {
+                              const link = document.createElement('a');
+                              link.href = url;
+                              link.download = 'ordens-servico.pdf';
+                              link.click();
+                            }
+                          }}
+                        >
+                          <FileDown className="mr-2 h-4 w-4" />
+                          {loading ? "Gerando PDF..." : "Exportar PDF"}
+                        </Button>
+                      )}
+                    </BlobProvider>
+                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => setShowExportOptions(false)}
+                    className="self-end"
+                  >
+                    Fechar
+                  </Button>
+                </div>
+              </Card>
+            )}
+
+            <Card className="mt-4">
               <CardHeader>
                 <CardTitle>Ordens de Serviço</CardTitle>
                 <ScrollArea className="w-full whitespace-nowrap">
