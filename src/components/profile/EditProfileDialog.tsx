@@ -7,6 +7,7 @@ import { User } from "@supabase/supabase-js";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
+import { useAuth } from "@/components/AuthProvider";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -28,6 +29,7 @@ export const EditProfileDialog = ({
   const { isUpdating, updateProfile } = useProfileUpdate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { refreshUser } = useAuth();
 
   useEffect(() => {
     setFullName(initialFullName);
@@ -62,8 +64,12 @@ export const EditProfileDialog = ({
 
       // Update email if changed
       if (newEmail && newEmail !== user.email) {
-        const emailPromise = supabase.auth.updateUser({
-          email: newEmail,
+        const emailPromise = supabase.functions.invoke('manage-users', {
+          body: {
+            action: 'update-email',
+            userId: user.id,
+            newEmail: newEmail,
+          }
         }).then(({ error }) => {
           if (error) throw error;
           
@@ -72,6 +78,9 @@ export const EditProfileDialog = ({
             description: "Seu email foi atualizado com sucesso.",
             className: "bg-blue-500 text-white border-none",
           });
+          
+          // Refresh user data after email update
+          refreshUser();
           
           // Invalidate users query to refresh user management data
           queryClient.invalidateQueries({ queryKey: ["users"] });

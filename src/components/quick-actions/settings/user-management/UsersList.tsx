@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useAuth } from "@/components/AuthProvider";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -149,10 +150,13 @@ const ChangeEmailDialog = ({ user }: { user: User }) => {
 
   const handleUpdateEmail = async () => {
     try {
-      const { data, error } = await supabase.auth.admin.updateUserById(
-        user.id,
-        { email: newEmail, email_confirm: true }
-      );
+      const { data, error } = await supabase.functions.invoke('manage-users', {
+        body: {
+          action: 'update-email',
+          userId: user.id,
+          newEmail,
+        }
+      });
 
       if (error) throw error;
 
