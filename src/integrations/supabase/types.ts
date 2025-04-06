@@ -11,6 +11,7 @@ export type Database = {
     Tables: {
       analyzers: {
         Row: {
+          brand: string
           calibration_due_date: string
           created_at: string
           id: string
@@ -21,6 +22,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          brand?: string
           calibration_due_date: string
           created_at?: string
           id?: string
@@ -31,6 +33,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          brand?: string
           calibration_due_date?: string
           created_at?: string
           id?: string

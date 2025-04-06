@@ -33,9 +33,7 @@ export const useAnalyzers = () => {
   const fetchAnalyzers = async () => {
     try {
       setLoading(true);
-      // Use the any type to bypass TypeScript type checking for the table name
-      // Since Supabase's type system might not be updated with our new table
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('analyzers')
         .select('*')
         .order('created_at', { ascending: false });
@@ -80,8 +78,7 @@ export const useAnalyzers = () => {
         calibration_due_date: formattedDate,
       };
 
-      // Use the any type to bypass TypeScript type checking
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('analyzers')
         .insert({
           ...formattedData,
@@ -127,8 +124,7 @@ export const useAnalyzers = () => {
         brand: updateData.brand === '' ? '-' : updateData.brand,
       };
 
-      // Use the any type to bypass TypeScript type checking
-      const { data, error } = await (supabase as any)
+      const { data, error } = await supabase
         .from('analyzers')
         .update(formattedData)
         .eq('id', id)
@@ -162,8 +158,7 @@ export const useAnalyzers = () => {
 
   const deleteAnalyzer = async (id: string) => {
     try {
-      // Use the any type to bypass TypeScript type checking
-      const { error } = await (supabase as any)
+      const { error } = await supabase
         .from('analyzers')
         .delete()
         .eq('id', id);
