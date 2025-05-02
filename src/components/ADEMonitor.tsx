@@ -247,11 +247,6 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                 </p>
               )}
               
-              {/* Add fixed notification about 1 OS in ADE for 7 days */}
-              <p className={`${isMobile ? 'text-sm' : 'text-base'} text-foreground/90 bg-muted/40 p-3 rounded-md`}>
-                Você tem <span className="font-bold text-blue-400">1</span> OS em ADE há <span className="text-red-500 font-bold">7</span> dias.
-              </p>
-              
               {adpdOrders.length > 0 && (
                 <p className={`${isMobile ? 'text-sm' : 'text-base'} text-foreground/90`}>
                   Você tem <span className="font-bold text-fuchsia-400">{adpdOrders.length}</span> {adpdOrders.length === 1 ? 'OS' : 'ordens de serviço'} em ADPD.
