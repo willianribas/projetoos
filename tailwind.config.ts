@@ -34,6 +34,9 @@ export default {
         'lg': ['1.125rem', { lineHeight: '1.75rem' }],
         'xl': ['1.25rem', { lineHeight: '1.75rem' }],
         '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['3rem', { lineHeight: '1' }],
       },
       spacing: {
         '4xs': '0.125rem',
@@ -113,21 +116,34 @@ export default {
         fadeIn: {
           from: { opacity: '0', transform: 'translateY(10px)' },
           to: { opacity: '1', transform: 'translateY(0)' }
+        },
+        slideIn: {
+          from: { transform: 'translateX(-100%)' },
+          to: { transform: 'translateX(0)' }
+        },
+        pulse: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.5' }
         }
       },
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         'gradient': 'gradient 3s ease infinite',
-        'fade-in': 'fadeIn 0.5s ease-out forwards'
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'slide-in': 'slideIn 0.3s ease-out forwards',
+        'pulse-slow': 'pulse 3s ease-in-out infinite'
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-card': 'linear-gradient(180deg, rgba(30, 30, 30, 0.3) 0%, rgba(15, 15, 15, 0.4) 100%)'
+        'gradient-card': 'linear-gradient(180deg, rgba(255, 255, 255, 0.05) 0%, rgba(240, 240, 240, 0.05) 100%)',
+        'gradient-dark-card': 'linear-gradient(180deg, rgba(30, 30, 30, 0.3) 0%, rgba(15, 15, 15, 0.4) 100%)'
       },
       boxShadow: {
         'glass': '0 4px 20px 0 rgba(0, 0, 0, 0.05)',
-        'glass-hover': '0 8px 30px 0 rgba(0, 0, 0, 0.1), 0 0 10px 0 rgba(97, 218, 251, 0.2)'
+        'glass-hover': '0 8px 30px 0 rgba(0, 0, 0, 0.1), 0 0 10px 0 rgba(97, 218, 251, 0.2)',
+        'card': '0 2px 10px rgba(0, 0, 0, 0.08)',
+        'card-hover': '0 5px 15px rgba(0, 0, 0, 0.1)'
       }
     }
   },
