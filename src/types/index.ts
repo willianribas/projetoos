@@ -10,7 +10,4 @@ export interface ServiceOrder {
   user_id?: string;
   priority?: 'normal' | 'critical';
   deleted_at?: string | null;
-  status_array?: string[];
-  deadline?: string;
-  is_deleted?: boolean;
 }

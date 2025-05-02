@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useServiceOrders } from "@/components/ServiceOrderProvider";
@@ -9,18 +8,12 @@ import { cn } from "@/lib/utils";
 import { getStatusColor } from "@/components/filters/ServiceOrderFilters";
 import Header from "@/components/Header";
 import StatusTimeAnalysis from "@/components/analysis/StatusTimeAnalysis";
-import { Hash, Building2, Settings2, StickyNote, ActivitySquare, Clock, Bell, Trash2 } from "lucide-react";
+import { Hash, Building2, Settings2, StickyNote, ActivitySquare, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Navbar from "@/components/Navbar";
-import AddNotificationDialog from "@/components/AddNotificationDialog";
-import { useNotifications } from "@/contexts/NotificationContext";
-import { formatDistanceToNow } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Button } from "@/components/ui/button";
 
 const ADEMonitorPage = () => {
   const { serviceOrders } = useServiceOrders();
-  const { notifications, removeNotification } = useNotifications();
 
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
   const amOrders = serviceOrders.filter(order => order.status === "A.M");
@@ -116,63 +109,12 @@ const ADEMonitorPage = () => {
     </Card>
   );
 
-  const formatNotificationDate = (dateString: string) => {
-    try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: ptBR });
-    } catch (error) {
-      return "Data inválida";
-    }
-  };
-
   return (
     <div className="min-h-screen w-full">
       <Navbar />
       <div className="pt-16">
         <div className="container mx-auto p-6 space-y-6 animate-fade-in">
           <Header />
-          
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold flex items-center gap-2">
-              <Bell className="h-5 w-5 text-blue-400" />
-              Notificações
-            </h2>
-            <AddNotificationDialog />
-          </div>
-          
-          {notifications.length > 0 && (
-            <Card className="mb-6">
-              <CardHeader>
-                <CardTitle>Notificações Personalizadas</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ScrollArea className="h-[300px]">
-                  <div className="space-y-4">
-                    {notifications.map(notification => (
-                      <div key={notification.id} className="flex items-start justify-between gap-4 border-b pb-4 last:border-0">
-                        <div className="flex-grow">
-                          <h3 className="text-base font-medium">{notification.title}</h3>
-                          <p className="text-sm text-muted-foreground mt-1">{notification.description}</p>
-                          <span className="text-xs text-blue-400 mt-2 block">
-                            {formatNotificationDate(notification.createdAt)}
-                          </span>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-red-400 hover:text-red-600 hover:bg-red-100/10"
-                          onClick={() => removeNotification(notification.id)}
-                        >
-                          <Trash2 className="h-4 w-4 mr-1" />
-                          Excluir
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                </ScrollArea>
-              </CardContent>
-            </Card>
-          )}
-          
           <div className="grid gap-6">
             <TableWithObservation orders={adeOrders} title="Ordens de Serviço em ADE" />
             <TableWithObservation orders={amOrders} title="Ordens de Serviço em A.M" />

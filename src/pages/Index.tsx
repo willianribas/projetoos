@@ -6,7 +6,6 @@ import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrde
 import ADENotification from "@/components/ADENotification";
 import MetricsHighlight from "@/components/charts/MetricsHighlight";
 import Navbar from "@/components/Navbar";
-import { NotificationProvider } from "@/contexts/NotificationContext";
 
 const IndexContent = () => {
   const { serviceOrders } = useServiceOrders();
@@ -23,6 +22,9 @@ const IndexContent = () => {
             <ADEMonitor serviceOrders={serviceOrders} />
             <ServiceOrderContent showTableByDefault={true} />
           </div>
+          <div className="text-center text-sm text-foreground/60 py-4">
+            &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
+          </div>
         </div>
       </div>
     </div>
@@ -33,9 +35,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background/95 to-background/90">
       <ServiceOrderProvider>
-        <NotificationProvider>
-          <IndexContent />
-        </NotificationProvider>
+        <IndexContent />
       </ServiceOrderProvider>
     </div>
   );
