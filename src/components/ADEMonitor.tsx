@@ -109,11 +109,6 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
               </p>
             )}
             
-            {/* Fixed notification as requested */}
-            <p className="text-sm sm:text-base text-foreground/90">
-              Você tem <span className="font-bold text-blue-400">1</span> OS em ADE há <span className={getDaysColor(7)}>7</span> dias.
-            </p>
-            
             {adpdOrders.length > 0 && (
               <p className="text-sm sm:text-base text-foreground/90">
                 Você tem <span className="font-bold text-fuchsia-400">{adpdOrders.length}</span> {adpdOrders.length === 1 ? 'OS' : 'ordens de serviço'} em ADPD.
