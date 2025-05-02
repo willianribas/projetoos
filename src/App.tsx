@@ -16,15 +16,7 @@ import DetailedServiceOrder from "./pages/DetailedServiceOrder";
 import AnalyzersPage from "./pages/Analyzers";
 import { useAuth } from "./components/AuthProvider";
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-      retry: 1,
-      staleTime: 30000,
-    },
-  },
-});
+const queryClient = new QueryClient();
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();

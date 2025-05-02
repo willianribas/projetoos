@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useServiceOrders } from "@/components/ServiceOrderProvider";
@@ -9,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { getStatusColor } from "@/components/filters/ServiceOrderFilters";
 import Header from "@/components/Header";
 import StatusTimeAnalysis from "@/components/analysis/StatusTimeAnalysis";
-import { Hash, Building2, Settings2, StickyNote, ActivitySquare, Clock, Bell } from "lucide-react";
+import { Hash, Building2, Settings2, StickyNote, ActivitySquare, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import Navbar from "@/components/Navbar";
 
@@ -24,7 +23,7 @@ const ADEMonitorPage = () => {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Bell className="h-5 w-5 text-primary" />
+          <Clock className="h-5 w-5 text-primary" />
           {title}
         </CardTitle>
       </CardHeader>
@@ -117,9 +116,9 @@ const ADEMonitorPage = () => {
         <div className="container mx-auto p-6 space-y-6 animate-fade-in">
           <Header />
           <div className="grid gap-6">
-            <TableWithObservation orders={adeOrders} title="Notificações de Ordens em ADE" />
-            <TableWithObservation orders={amOrders} title="Notificações de Ordens em A.M" />
-            <TableWithObservation orders={msOrders} title="Notificações de Ordens em M.S" />
+            <TableWithObservation orders={adeOrders} title="Ordens de Serviço em ADE" />
+            <TableWithObservation orders={amOrders} title="Ordens de Serviço em A.M" />
+            <TableWithObservation orders={msOrders} title="Ordens de Serviço em M.S" />
             <StatusTimeAnalysis serviceOrders={serviceOrders} />
           </div>
         </div>

@@ -1,27 +1,50 @@
 
-import { useState, useEffect } from 'react';
+import * as React from "react"
 
-export function useMobileDetect() {
-  const [isMobile, setIsMobile] = useState(false);
-  const [isTablet, setIsTablet] = useState(false);
+// A breakpoint that represents mobile devices
+const MOBILE_BREAKPOINT = 768
 
-  useEffect(() => {
-    const checkDevice = () => {
-      setIsMobile(window.innerWidth < 640);
-      setIsTablet(window.innerWidth >= 640 && window.innerWidth < 1024);
-    };
+export function useIsMobile() {
+  const [isMobile, setIsMobile] = React.useState<boolean>(() => {
+    // Initialize with the current window width if available
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < MOBILE_BREAKPOINT
+    }
+    // Default to false for SSR
+    return false
+  })
 
-    // Initial check
-    checkDevice();
+  React.useEffect(() => {
+    // Skip if not in browser environment
+    if (typeof window === 'undefined') return
 
-    // Add event listener for resize
-    window.addEventListener('resize', checkDevice);
+    // Function to update state based on window size
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < MOBILE_BREAKPOINT)
+    }
+
+    // Add event listener with debounce for performance
+    let timeoutId: number | null = null
+    const debouncedHandleResize = () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+      timeoutId = window.setTimeout(handleResize, 100) as unknown as number
+    }
+
+    window.addEventListener('resize', debouncedHandleResize)
+    
+    // Set initial state
+    handleResize()
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', checkDevice);
-    };
-  }, []);
+      window.removeEventListener('resize', debouncedHandleResize)
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [])
 
-  return { isMobile, isTablet, isDesktop: !isMobile && !isTablet };
+  return isMobile
 }

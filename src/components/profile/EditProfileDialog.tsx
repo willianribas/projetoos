@@ -8,7 +8,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/components/AuthProvider";
-import { motion } from "framer-motion";
 
 interface EditProfileDialogProps {
   open: boolean;
@@ -125,27 +124,13 @@ export const EditProfileDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-[500px]">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <DialogHeader className="border-b pb-4">
-            <DialogTitle className="text-2xl font-semibold flex items-center gap-2">
-              <span className="bg-primary/10 text-primary p-2 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </span>
-              Editar Perfil
-            </DialogTitle>
-            <DialogDescription className="text-muted-foreground mt-1">
-              Atualize suas informações de perfil aqui. Clique em salvar quando terminar.
-            </DialogDescription>
-          </DialogHeader>
-        </motion.div>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Editar Perfil</DialogTitle>
+          <DialogDescription>
+            Atualize suas informações de perfil aqui. Todas as alterações serão salvas automaticamente.
+          </DialogDescription>
+        </DialogHeader>
         <ProfileForm
           fullName={fullName}
           email={user?.email}

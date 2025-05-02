@@ -5,17 +5,17 @@
 
 @layer base {
   :root {
-    --background: 220 33% 98%;
-    --foreground: 222 47% 11%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 222.2 84% 4.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -33,11 +33,11 @@
     --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    --sidebar-background: 220 33% 96%;
+    --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary: 240 5.9% 10%;
     --sidebar-primary-foreground: 0 0% 98%;
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
@@ -46,13 +46,13 @@
   }
 
   .dark {
-    --background: 222 47% 4%;
+    --background: 222 47% 5%;
     --foreground: 210 40% 98%;
 
-    --card: 222 47% 6%;
+    --card: 222 47% 7%;
     --card-foreground: 210 40% 98%;
 
-    --popover: 222 47% 6%;
+    --popover: 222.2 47% 5%;
     --popover-foreground: 210 40% 98%;
 
     --primary: 217.2 91.2% 59.8%;
@@ -74,13 +74,13 @@
     --input: 217.2 32.6% 15%;
     --ring: 224.3 76.3% 48%;
 
-    --sidebar-background: 222 47% 6%;
+    --sidebar-background: 222 47% 8%;
     --sidebar-foreground: 210 40% 90%;
     --sidebar-primary: 217.2 91.2% 59.8%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 47% 10%;
+    --sidebar-accent: 222 47% 12%;
     --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 222 47% 14%;
+    --sidebar-border: 222 47% 15%;
     --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
@@ -92,13 +92,12 @@
 
   body {
     @apply bg-background text-foreground;
-    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
 @layer utilities {
   .glass-effect {
-    @apply bg-white/10 backdrop-blur-md border border-white/10;
+    @apply bg-black/10 backdrop-blur-md border border-white/10;
   }
   
   .text-gradient {
@@ -118,13 +117,5 @@
       opacity: 1;
       transform: translateY(0);
     }
-  }
-  
-  .card-hover {
-    @apply transition-all duration-300 hover:shadow-lg hover:bg-accent/50;
-  }
-  
-  .btn-hover {
-    @apply transition-all duration-300 hover:shadow-md hover:scale-[1.02];
   }
 }
