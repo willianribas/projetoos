@@ -70,7 +70,7 @@ const IndexContent = () => {
                     </TabsTrigger>
                     <TabsTrigger value="monitor" className="flex items-center gap-2">
                       <Bell className="h-4 w-4" />
-                      <span className="hidden sm:inline">ADE Monitor</span>
+                      <span className="hidden sm:inline">Notificações</span>
                     </TabsTrigger>
                     <TabsTrigger value="orders" className="flex items-center gap-2">
                       <BarChart2 className="h-4 w-4" />
@@ -92,7 +92,7 @@ const IndexContent = () => {
                       </Card>
                       <Card className="col-span-1 lg:col-span-4 shadow-sm hover:shadow-md transition-shadow">
                         <CardHeader>
-                          <CardTitle>Monitoramento ADE</CardTitle>
+                          <CardTitle>Notificações</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <ADEMonitor serviceOrders={serviceOrders} />
@@ -105,7 +105,7 @@ const IndexContent = () => {
                     <motion.div variants={itemVariants}>
                       <Card className="shadow-sm hover:shadow-md transition-shadow">
                         <CardHeader>
-                          <CardTitle>Monitoramento ADE Detalhado</CardTitle>
+                          <CardTitle>Notificações Detalhadas</CardTitle>
                         </CardHeader>
                         <CardContent>
                           <ADEMonitor serviceOrders={serviceOrders} />
@@ -130,10 +130,6 @@ const IndexContent = () => {
               </motion.div>
             </>
           )}
-          
-          <div className="text-center text-sm text-foreground/60 pt-8">
-            &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
-          </div>
         </div>
       </div>
     </div>

@@ -31,10 +31,6 @@ const AppLayout = ({ children, title }: AppLayoutProps) => {
           >
             {children}
           </motion.div>
-          
-          <div className="text-center text-sm text-foreground/60 pt-6">
-            &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
-          </div>
         </div>
       </div>
     </div>
