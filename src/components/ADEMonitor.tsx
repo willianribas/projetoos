@@ -5,7 +5,7 @@ import { Bell } from "lucide-react";
 import { ServiceOrder } from "@/types";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useMobileDetect } from "@/hooks/use-mobile";
 
 interface ADEMonitorProps {
   serviceOrders: ServiceOrder[];
@@ -13,7 +13,7 @@ interface ADEMonitorProps {
 
 const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   const navigate = useNavigate();
-  const isMobile = useIsMobile();
+  const { isMobile } = useMobileDetect();
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
   const criticalAdeOrders = adeOrders.filter(order => order.priority === "critical");
   const adpdOrders = serviceOrders.filter(order => order.status === "ADPD");
