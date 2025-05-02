@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "next-themes";
 import { AuthProvider } from "./components/AuthProvider";
 import { ServiceOrderProvider } from "./components/ServiceOrderProvider";
+import { NotificationProvider } from "./contexts/NotificationContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Statistics from "./pages/Statistics";
@@ -27,7 +28,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ServiceOrderProvider>
-      {children}
+      <NotificationProvider>
+        {children}
+      </NotificationProvider>
     </ServiceOrderProvider>
   );
 };
