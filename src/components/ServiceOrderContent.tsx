@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import SearchBar from "@/components/SearchBar";
@@ -48,7 +49,7 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const itemsPerPage = 10;
   
-  const { serviceOrders, createServiceOrder, updateServiceOrder, deleteServiceOrder } = useServiceOrders();
+  const { serviceOrders, addServiceOrder, updateServiceOrder, deleteServiceOrder } = useServiceOrders();
 
   const handleSearchQueryChange = (query: string) => {
     setSearchQuery(query);
@@ -71,7 +72,7 @@ export default function ServiceOrderContent({ showTableByDefault = false }: { sh
   };
 
   const onSubmit = (data: Omit<ServiceOrder, "id" | "created_at">) => {
-    createServiceOrder(data);
+    addServiceOrder(data as ServiceOrder);
     form.reset();
     setShowTable(true);
     setShowStats(false);

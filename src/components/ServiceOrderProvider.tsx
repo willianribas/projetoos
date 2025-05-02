@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { ServiceOrder } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,7 +51,13 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
         console.error("Supabase error:", error);
         setError(new Error(error.message));
       } else {
-        setServiceOrders(data || []);
+        // Ensure priority is always 'normal' or 'critical'
+        const typeSafeData = data?.map(item => ({
+          ...item,
+          priority: (item.priority === 'critical' ? 'critical' : 'normal') as 'normal' | 'critical'
+        })) || [];
+        
+        setServiceOrders(typeSafeData);
       }
     } catch (err) {
       setError(err instanceof Error ? err : new Error('An unexpected error occurred'));
@@ -82,7 +89,13 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
         throw error;
       }
 
-      setServiceOrders(prevOrders => [data, ...prevOrders]);
+      // Ensure priority is 'normal' or 'critical'
+      const typeSafeOrder = {
+        ...data,
+        priority: (data.priority === 'critical' ? 'critical' : 'normal') as 'normal' | 'critical'
+      };
+
+      setServiceOrders(prevOrders => [typeSafeOrder, ...prevOrders]);
     } catch (err) {
       console.error("Failed to add service order:", err);
       throw err;
@@ -103,8 +116,14 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
         throw error;
       }
 
+      // Ensure priority is 'normal' or 'critical'
+      const typeSafeOrder = {
+        ...data,
+        priority: (data.priority === 'critical' ? 'critical' : 'normal') as 'normal' | 'critical'
+      };
+
       setServiceOrders(prevOrders =>
-        prevOrders.map(o => (o.id === order.id ? data : o))
+        prevOrders.map(o => (o.id === order.id ? typeSafeOrder : o))
       );
     } catch (err) {
       console.error("Failed to update service order:", err);
@@ -135,7 +154,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     try {
       const { error } = await supabase
         .from('service_orders')
-        .update({ is_deleted: true })
+        .update({ deleted_at: new Date().toISOString() })
         .eq('id', id);
 
       if (error) {
@@ -144,7 +163,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       }
 
       setServiceOrders(prevOrders =>
-        prevOrders.map(order => (order.id === id ? { ...order, is_deleted: true } : order))
+        prevOrders.map(order => (order.id === id ? { ...order, deleted_at: new Date().toISOString() } : order))
       );
     } catch (err) {
       console.error("Failed to soft delete service order:", err);
