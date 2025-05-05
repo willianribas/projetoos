@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ServiceOrder } from "@/types";
@@ -5,13 +6,16 @@ import { Progress } from "@/components/ui/progress";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Clock, BarChart2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 interface StatusTimeAnalysisProps {
   serviceOrders: ServiceOrder[];
 }
+
 const StatusTimeAnalysis = ({
   serviceOrders
 }: StatusTimeAnalysisProps) => {
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+
   const getMaxHoursForStatus = (status: string) => {
     switch (status) {
       case "ADE":
@@ -27,23 +31,28 @@ const StatusTimeAnalysis = ({
         return 24;
     }
   };
+
   const calculateAverageTimeInStatus = (status: string) => {
     const ordersInStatus = serviceOrders.filter(order => order.status === status);
     if (ordersInStatus.length === 0) return 0;
     const maxHours = getMaxHoursForStatus(status);
     const totalHours = ordersInStatus.reduce((acc, order) => {
+      // For ADE orders, use the created_at timestamp (which is reset when status changes to ADE)
       const hours = (new Date().getTime() - new Date(order.created_at).getTime()) / (1000 * 60 * 60);
       return acc + Math.min(hours, maxHours);
     }, 0);
     return Math.min(totalHours / ordersInStatus.length, maxHours);
   };
+
   const statuses = ["ADE", "A.M", "M.S"];
   const averageTimes = statuses.map(status => ({
     status,
     hours: calculateAverageTimeInStatus(status),
     days: Math.round(calculateAverageTimeInStatus(status) / 24 * 10) / 10
   }));
+
   const maxHours = Math.max(...averageTimes.map(t => t.hours));
+  
   const getStatusColor = (status: string) => {
     switch (status) {
       case "ADE":
@@ -59,10 +68,13 @@ const StatusTimeAnalysis = ({
         return "#6b7280";
     }
   };
+
   const handleStatusClick = (status: string) => {
     setSelectedStatus(selectedStatus === status ? null : status);
   };
+
   const filteredData = selectedStatus ? averageTimes.filter(item => item.status === selectedStatus) : averageTimes;
+
   return <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all duration-300 animate-fade-in">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="flex items-center gap-2 text-lg font-semibold">
@@ -134,4 +146,5 @@ const StatusTimeAnalysis = ({
       </CardContent>
     </Card>;
 };
+
 export default StatusTimeAnalysis;

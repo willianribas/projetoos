@@ -58,16 +58,8 @@ export const useAnalyzers = () => {
 
   const addAnalyzer = async (analyzerData: Omit<Analyzer, 'id' | 'created_at' | 'user_id'>) => {
     try {
-      // Ensure calibration_due_date is in the format 'YYYY-MM-01'
+      // Use the exact date from the form input
       let formattedDate = analyzerData.calibration_due_date;
-      if (formattedDate) {
-        // Parse the date and set day to 1
-        const dateObj = parseISO(formattedDate);
-        formattedDate = format(dateObj, 'yyyy-MM-01');
-      } else {
-        // Use current date with day set to 1 if no date provided
-        formattedDate = format(new Date(), 'yyyy-MM-01');
-      }
 
       // Convert empty strings to dash
       const formattedData = {
@@ -110,13 +102,7 @@ export const useAnalyzers = () => {
 
   const updateAnalyzer = async (id: string, updateData: Partial<Analyzer>) => {
     try {
-      // Format date if it's being updated
-      if (updateData.calibration_due_date) {
-        const dateObj = parseISO(updateData.calibration_due_date);
-        updateData.calibration_due_date = format(dateObj, 'yyyy-MM-01');
-      }
-
-      // Convert empty strings to dash
+      // Use the exact date from the form
       const formattedData = {
         ...updateData,
         serial_number: updateData.serial_number === '' ? '-' : updateData.serial_number,

@@ -78,22 +78,31 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
   // Update mutation
   const updateMutation = useMutation({
     mutationFn: async (data: ServiceOrder) => {
+      // Check if status has been changed to ADE
+      const currentOrder = serviceOrders.find(so => so.id === data.id);
+      const updatedData = { ...data };
+      
+      // Reset the created_at to now if status changed to ADE (to reset the timer)
+      if (currentOrder && currentOrder.status !== "ADE" && data.status === "ADE") {
+        updatedData.created_at = new Date().toISOString();
+      }
+      
       const { error } = await supabase
         .from("service_orders")
         .update({
-          numeroos: data.numeroos,
-          patrimonio: data.patrimonio,
-          equipamento: data.equipamento,
-          status: data.status,
-          priority: data.priority,
-          observacao: data.observacao,
-          // Exclude id, user_id, created_at and other fields that shouldn't be updated
+          numeroos: updatedData.numeroos,
+          patrimonio: updatedData.patrimonio,
+          equipamento: updatedData.equipamento,
+          status: updatedData.status,
+          priority: updatedData.priority,
+          observacao: updatedData.observacao,
+          created_at: updatedData.created_at, // Include the possibly updated timestamp
         })
-        .eq("id", data.id)
+        .eq("id", updatedData.id)
         .eq("user_id", user?.id);
 
       if (error) throw error;
-      return data;
+      return updatedData;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });

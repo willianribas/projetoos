@@ -53,7 +53,7 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
       serial_number: data.serial_number || '-',
       model: data.model || '-',
       brand: data.brand || '-',
-      calibration_due_date: data.calibration_due_date || format(new Date(), 'yyyy-MM-01'),
+      calibration_due_date: data.calibration_due_date || format(new Date(), 'yyyy-MM-dd'),
     };
     
     onSubmit(submittedData);
@@ -125,7 +125,7 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "MMM yyyy", { locale: ptBR }) : <span>Selecione a data</span>}
+                {date ? format(date, "dd MMM yyyy", { locale: ptBR }) : <span>Selecione a data</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
@@ -135,7 +135,8 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
                 onSelect={(newDate) => {
                   setDate(newDate);
                   if (newDate) {
-                    setValue('calibration_due_date', format(newDate, 'yyyy-MM-01'));
+                    // Use yyyy-MM-dd format to preserve the exact date
+                    setValue('calibration_due_date', format(newDate, 'yyyy-MM-dd'));
                   }
                 }}
                 initialFocus

@@ -3,18 +3,29 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ServiceOrder } from "@/types";
 import { useToast } from "@/hooks/use-toast";
+import { useServiceOrders } from "@/components/ServiceOrderProvider";
 
 export const useUpdateServiceOrder = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const { serviceOrders } = useServiceOrders();
 
   return useMutation({
     mutationFn: async (updatedOrder: ServiceOrder) => {
       const { id, ...dataToUpdate } = updatedOrder;
       
+      // Check if status has been changed to ADE
+      const currentOrder = serviceOrders.find(so => so.id === id);
+      let updatePayload = { ...dataToUpdate };
+      
+      // Reset the created_at to now if status changed to ADE (to reset the timer)
+      if (currentOrder && currentOrder.status !== "ADE" && dataToUpdate.status === "ADE") {
+        updatePayload.created_at = new Date().toISOString();
+      }
+      
       const { data, error } = await supabase
         .from("service_orders")
-        .update(dataToUpdate)
+        .update(updatePayload)
         .eq("id", id)
         .select()
         .single();

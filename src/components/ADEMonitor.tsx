@@ -23,7 +23,8 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
     return null;
   }
 
-  // Calculate days for each ADE order
+  // Calculate days for each ADE order using the created_at field
+  // This timestamp is reset whenever the status changes to ADE
   const calculateDays = (createdAt: string): number => {
     return Math.floor(
       (new Date().getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24)
