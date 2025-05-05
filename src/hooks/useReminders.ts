@@ -29,7 +29,7 @@ export const useReminders = () => {
         .from('reminders')
         .select('*')
         .eq('user_id', user.id)
-        .order('due_date', { ascending: true, nullsLast: true });
+        .order('due_date', { ascending: true });
         
       if (error) {
         toast({
