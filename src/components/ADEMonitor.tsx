@@ -65,12 +65,26 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
           <div className={`flex ${isMobile ? 'flex-col space-y-2' : 'items-center justify-between'} animate-fade-in`}>
             <div className="space-y-2 text-left">
               {adeOrders.length > 0 && (
-                <p className={`${isMobile ? 'text-sm' : 'text-base'} text-foreground/90`}>
-                  Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> {adeOrders.length === 1 ? 'OS' : 'ordens de serviço'} em ADE 
-                  {oldestAdeDays > 0 && (
-                    <span> há <span className={getDaysColor(oldestAdeDays)}>{oldestAdeDays}</span> dias</span>
-                  )}.
-                </p>
+                <div>
+                  <p className={`${isMobile ? 'text-sm' : 'text-base'} text-foreground/90 mb-2`}>
+                    Você tem <span className="font-bold text-blue-400">{adeOrders.length}</span> {adeOrders.length === 1 ? 'OS' : 'ordens de serviço'} em ADE:
+                  </p>
+                  <div className="ml-4 space-y-2 max-h-48 overflow-y-auto pr-2">
+                    {adeOrdersWithDays.map((order) => (
+                      <div key={order.id} className="text-sm border-l-2 border-blue-400 pl-2 py-1">
+                        <p className="flex flex-wrap gap-x-2">
+                          <span className="font-medium">OS: {order.numeroos}</span>
+                          <span>|</span>
+                          <span className="font-medium">Patrimônio: {order.patrimonio}</span>
+                          <span>|</span>
+                          <span className="font-medium truncate max-w-[200px]" title={order.equipamento}>Equip: {order.equipamento}</span>
+                          <span>|</span>
+                          <span className="font-medium">Dias: <span className={getDaysColor(order.days)}>{order.days}</span></span>
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               )}
               
               {adpdOrders.length > 0 && (
