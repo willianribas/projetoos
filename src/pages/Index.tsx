@@ -6,6 +6,7 @@ import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrde
 import ADENotification from "@/components/ADENotification";
 import MetricsHighlight from "@/components/charts/MetricsHighlight";
 import Navbar from "@/components/Navbar";
+import RemindersSection from "@/components/reminders/RemindersSection";
 
 const IndexContent = () => {
   const { serviceOrders } = useServiceOrders();
@@ -19,6 +20,7 @@ const IndexContent = () => {
           <Header />
           <div className="px-2 sm:px-0">
             <MetricsHighlight serviceOrders={serviceOrders} />
+            <RemindersSection />
             <ADEMonitor serviceOrders={serviceOrders} />
             <ServiceOrderContent showTableByDefault={true} />
           </div>
