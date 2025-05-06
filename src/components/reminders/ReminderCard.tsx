@@ -34,10 +34,10 @@ const ReminderCard = ({ reminder, onDelete, onUpdate, onToggleComplete }: Remind
   return (
     <>
       <Card className={cn(
-        "mb-3 border-l-4 transition-all duration-200 hover:shadow-md",
+        "border-l-4 transition-all duration-200 hover:shadow-md h-full",
         reminder.is_completed ? "border-l-green-500 bg-green-50/10" : "border-l-blue-500"
       )}>
-        <CardContent className="p-4">
+        <CardContent className="p-3">
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-start gap-2">
               <Checkbox
@@ -46,12 +46,12 @@ const ReminderCard = ({ reminder, onDelete, onUpdate, onToggleComplete }: Remind
                 className="mt-1"
               />
               <div className={cn(
-                "space-y-1",
+                "space-y-1 flex-1 min-w-0",
                 reminder.is_completed && "text-muted-foreground line-through"
               )}>
-                <h3 className="font-medium">{reminder.title}</h3>
+                <h3 className="font-medium text-sm truncate">{reminder.title}</h3>
                 {reminder.description && (
-                  <p className="text-sm text-muted-foreground">{reminder.description}</p>
+                  <p className="text-xs text-muted-foreground line-clamp-2">{reminder.description}</p>
                 )}
                 {formattedDate && (
                   <div className="flex items-center gap-1 text-xs text-muted-foreground">
@@ -62,16 +62,16 @@ const ReminderCard = ({ reminder, onDelete, onUpdate, onToggleComplete }: Remind
               </div>
             </div>
             
-            <div className="flex gap-1">
+            <div className="flex gap-1 shrink-0">
               <Tooltip>
                 <TooltipTrigger asChild>
                   <Button
                     variant="ghost" 
                     size="sm" 
-                    className="h-8 w-8 p-0"
+                    className="h-6 w-6 p-0"
                     onClick={() => setShowEditDialog(true)}
                   >
-                    <Pencil className="h-4 w-4" />
+                    <Pencil className="h-3 w-3" />
                     <span className="sr-only">Editar</span>
                   </Button>
                 </TooltipTrigger>
@@ -83,10 +83,10 @@ const ReminderCard = ({ reminder, onDelete, onUpdate, onToggleComplete }: Remind
                   <Button
                     variant="ghost" 
                     size="sm" 
-                    className="h-8 w-8 p-0 text-destructive hover:text-destructive"
+                    className="h-6 w-6 p-0 text-destructive hover:text-destructive"
                     onClick={() => onDelete(reminder.id)}
                   >
-                    <Trash2 className="h-4 w-4" />
+                    <Trash2 className="h-3 w-3" />
                     <span className="sr-only">Excluir</span>
                   </Button>
                 </TooltipTrigger>

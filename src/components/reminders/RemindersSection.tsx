@@ -39,7 +39,7 @@ const RemindersSection = () => {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
             </div>
           ) : reminders.length > 0 ? (
-            <div className="space-y-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {reminders.map(reminder => (
                 <ReminderCard
                   key={reminder.id}
