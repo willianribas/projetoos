@@ -1,4 +1,3 @@
-
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { 
@@ -77,7 +76,7 @@ const Sidebar = () => {
         <div className="flex-1 flex justify-center">
           <span 
             className={cn(
-              "text-foreground font-semibold text-lg transition-all duration-300 opacity-0 bg-clip-text text-transparent bg-gradient-to-r from-gray-500 via-gray-600 to-gray-700 animate-gradient",
+              "text-foreground font-semibold text-lg transition-all duration-300 opacity-0 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 animate-gradient",
               isOpen && "opacity-100"
             )}
           >

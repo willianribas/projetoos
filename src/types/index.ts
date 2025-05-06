@@ -5,7 +5,6 @@ export interface ServiceOrder {
   patrimonio: string;
   equipamento: string;
   status: string;
-  status_array?: string[];
   observacao: string | null;
   created_at: string;
   user_id?: string;

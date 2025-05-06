@@ -38,15 +38,15 @@ const NavItem = ({
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
         "relative h-12 transition-all duration-300 group",
-        "hover:bg-[#E6E6E6] dark:hover:bg-[#E6E6E6]/10",
+        "hover:bg-[#FFDEE2] dark:hover:bg-[#FFDEE2]/10",
         isHovered ? "w-auto px-4" : "w-12"
       )}
     >
       <div className="flex items-center gap-2">
         <Icon className={cn(
           "h-5 w-5 transition-colors duration-300",
-          isActive ? "text-gray-600" : "text-gray-400",
-          "group-hover:text-[#888888] dark:group-hover:text-[#888888]"
+          isActive ? "text-blue-500" : "text-blue-400",
+          "group-hover:text-[#ff8fa3] dark:group-hover:text-[#ff8fa3]"
         )} />
         <AnimatePresence>
           {isHovered && (

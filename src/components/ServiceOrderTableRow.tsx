@@ -23,9 +23,6 @@ const ServiceOrderTableRow = ({
   onRowClick,
   onDelete,
 }: ServiceOrderTableRowProps) => {
-  // Get primary status color
-  const primaryStatusColor = getStatusColor(order.status);
-  
   return (
     <TableRow
       key={index}
@@ -53,39 +50,21 @@ const ServiceOrderTableRow = ({
       </TableCell>
       <TableCell className="text-center">
         <div className="flex flex-col gap-1 items-center">
-          {/* Primary Status Badge */}
           <Badge
             variant="outline"
-            className={`${primaryStatusColor} transition-colors duration-200`}
+            className={`${getStatusColor(
+              order.status
+            )} transition-colors duration-200`}
           >
             {order.status}
           </Badge>
-          
-          {/* Additional Statuses */}
-          {order.status_array && order.status_array.length > 1 && (
-            <div className="flex flex-wrap gap-1 justify-center mt-1">
-              {order.status_array
-                .filter(status => status !== order.status)
-                .map((status, idx) => (
-                  <Badge
-                    key={idx}
-                    variant="outline"
-                    className={`${getStatusColor(status)} text-xs transition-colors duration-200`}
-                  >
-                    {status}
-                  </Badge>
-                ))}
-            </div>
-          )}
-          
-          {/* Priority Badge */}
           <Badge
             variant="outline"
             className={`${
               order.priority === "critical"
                 ? "border-red-500 text-red-500 hover:bg-red-500/10"
                 : "border-green-500 text-green-500 hover:bg-green-500/10"
-            } text-xs transition-colors duration-200 mt-1`}
+            } text-xs transition-colors duration-200`}
           >
             {order.priority === "critical" ? "Crítico" : "Normal"}
           </Badge>
