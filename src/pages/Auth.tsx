@@ -43,7 +43,7 @@ const Auth = () => {
       setLoading(false);
     }
   };
-  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background/95 to-background/90 p-4">
+  return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background/95 to-background/90 p-4 bg-neutral-900">
       <motion.div initial={{
       opacity: 0,
       y: 20
