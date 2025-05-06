@@ -11,13 +11,13 @@ export const ThemeToggle = () => {
     <div className="flex items-center justify-between">
       <span className="text-sm">Tema</span>
       <div className="flex items-center gap-2">
-        <Sun className="h-4 w-4 text-gray-600" />
+        <Sun className="h-4 w-4" />
         <Switch
           checked={theme === "dark"}
           onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
           aria-label="Toggle theme"
         />
-        <Moon className="h-4 w-4 text-gray-600" />
+        <Moon className="h-4 w-4" />
       </div>
     </div>
   );
