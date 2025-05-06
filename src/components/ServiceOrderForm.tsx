@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -10,7 +11,9 @@ import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { toast } from "@/hooks/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, PlusCircle, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface ServiceOrderFormProps {
   form: UseFormReturn<any>;
@@ -28,8 +31,45 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
   const yearSuffix = currentYear.toString().slice(-2);
   const [selectedYear, setSelectedYear] = useState(yearSuffix);
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const years = Array.from({ length: 12 }, (_, i) => (24 + i).toString());
+
+  const handleAddStatus = () => {
+    if (!selectedStatus) return;
+    
+    if (!selectedStatuses.includes(selectedStatus)) {
+      const newStatuses = [...selectedStatuses, selectedStatus];
+      setSelectedStatuses(newStatuses);
+      
+      // Update the primary status field in the form
+      if (newStatuses.length === 1) {
+        form.setValue("status", selectedStatus);
+      }
+    }
+    
+    setSelectedStatus("");
+  };
+
+  const handleRemoveStatus = (statusToRemove: string) => {
+    const updatedStatuses = selectedStatuses.filter(status => status !== statusToRemove);
+    setSelectedStatuses(updatedStatuses);
+    
+    // Update the primary status field if needed
+    if (form.getValues("status") === statusToRemove) {
+      form.setValue("status", updatedStatuses.length > 0 ? updatedStatuses[0] : "");
+    }
+  };
+
+  const handlePrimaryStatusChange = (status: string) => {
+    form.setValue("status", status);
+  };
+
+  const getStatusColor = (status: string) => {
+    const statusOption = statusOptions.find(option => option.value === status);
+    return statusOption?.color || "";
+  };
 
   const handleSubmit = async (data: any) => {
     const formattedOSNumber = `${selectedYear}.${data.numeroos.padStart(2, '0')}`;
@@ -48,8 +88,10 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
     onSubmit({
       ...data,
       numeroos: formattedOSNumber,
+      status_array: selectedStatuses.length > 0 ? selectedStatuses : [data.status],
     });
     setIsOpen(false);
+    setSelectedStatuses([]);
   };
 
   return (
@@ -168,28 +210,83 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
                 render={({ field }) => (
                   <FormItem className="md:col-span-6">
                     <FormLabel>Status</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="bg-background/50">
-                          <SelectValue placeholder="Selecione o status" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {statusOptions.map((status) => (
-                          <SelectItem 
-                            key={status.value} 
-                            value={status.value}
-                            className={status.color}
-                          >
-                            {status.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Select 
+                        value={selectedStatus}
+                        onValueChange={setSelectedStatus}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="bg-background/50">
+                            <SelectValue placeholder="Selecione o status" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {statusOptions.map((status) => (
+                            <SelectItem 
+                              key={status.value} 
+                              value={status.value}
+                              className={status.color}
+                            >
+                              {status.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Button 
+                        type="button" 
+                        size="icon" 
+                        variant="outline"
+                        onClick={handleAddStatus}
+                        disabled={!selectedStatus}
+                      >
+                        <PlusCircle className="h-4 w-4" />
+                      </Button>
+                      <input type="hidden" {...field} />
+                    </div>
+                    <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
+
+            {/* Display selected statuses */}
+            {selectedStatuses.length > 0 && (
+              <div className="space-y-2">
+                <label>Status selecionados:</label>
+                <ScrollArea className="h-20 w-full rounded-md border p-2">
+                  <div className="flex flex-wrap gap-2">
+                    {selectedStatuses.map((status) => (
+                      <Badge 
+                        key={status} 
+                        variant="outline"
+                        className={`${getStatusColor(status)} flex items-center gap-1`}
+                      >
+                        <button 
+                          type="button"
+                          className={`rounded-full p-0.5 ${
+                            status === form.getValues("status") 
+                              ? 'bg-blue-500 text-white' 
+                              : 'bg-gray-200 hover:bg-gray-300'
+                          } mr-1 h-4 w-4 text-[8px] flex items-center justify-center`}
+                          onClick={() => handlePrimaryStatusChange(status)}
+                          title={status === form.getValues("status") ? "Status principal" : "Definir como status principal"}
+                        >
+                          P
+                        </button>
+                        {status}
+                        <button 
+                          type="button" 
+                          className="ml-1 rounded-full hover:bg-gray-300 p-0.5"
+                          onClick={() => handleRemoveStatus(status)}
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                </ScrollArea>
+              </div>
+            )}
 
             <FormField
               control={form.control}

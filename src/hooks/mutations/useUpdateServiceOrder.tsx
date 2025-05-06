@@ -23,6 +23,16 @@ export const useUpdateServiceOrder = () => {
         updatePayload.created_at = new Date().toISOString();
       }
       
+      // Ensure status_array is always populated
+      if (!updatePayload.status_array || updatePayload.status_array.length === 0) {
+        updatePayload.status_array = [updatePayload.status];
+      }
+      
+      // Ensure primary status is included in status_array
+      if (updatePayload.status_array && !updatePayload.status_array.includes(updatePayload.status)) {
+        updatePayload.status_array = [...updatePayload.status_array, updatePayload.status];
+      }
+      
       const { data, error } = await supabase
         .from("service_orders")
         .update(updatePayload)

@@ -6,6 +6,7 @@ import { ServiceOrder } from "@/types";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/card";
 
 interface ADEMonitorProps {
   serviceOrders: ServiceOrder[];
@@ -14,10 +15,22 @@ interface ADEMonitorProps {
 const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
-  const adeOrders = serviceOrders.filter(order => order.status === "ADE");
+  
+  // Include orders that have ADE in their status_array
+  const adeOrders = serviceOrders.filter(order => 
+    order.status === "ADE" || (order.status_array && order.status_array.includes("ADE"))
+  );
   const criticalAdeOrders = adeOrders.filter(order => order.priority === "critical");
-  const adpdOrders = serviceOrders.filter(order => order.status === "ADPD");
-  const msOrders = serviceOrders.filter(order => order.status === "M.S");
+  
+  // Include orders that have ADPD in their status_array
+  const adpdOrders = serviceOrders.filter(order => 
+    order.status === "ADPD" || (order.status_array && order.status_array.includes("ADPD"))
+  );
+  
+  // Include orders that have M.S in their status_array
+  const msOrders = serviceOrders.filter(order => 
+    order.status === "M.S" || (order.status_array && order.status_array.includes("M.S"))
+  );
 
   if (adeOrders.length === 0 && msOrders.length === 0 && adpdOrders.length === 0) {
     return null;
@@ -80,6 +93,16 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                           <span className="font-medium truncate max-w-[200px]" title={order.equipamento}>Equip: {order.equipamento}</span>
                           <span>|</span>
                           <span className="font-medium">Dias: <span className={getDaysColor(order.days)}>{order.days}</span></span>
+                          {order.status_array && order.status_array.length > 1 && (
+                            <>
+                              <span>|</span>
+                              <span className="font-medium">
+                                Outros status: {order.status_array
+                                  .filter(s => s !== "ADE")
+                                  .join(', ')}
+                              </span>
+                            </>
+                          )}
                         </p>
                       </div>
                     ))}
