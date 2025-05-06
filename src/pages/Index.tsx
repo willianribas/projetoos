@@ -35,7 +35,7 @@ const IndexContent = () => {
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-100 via-gray-200 to-gray-100 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <ServiceOrderProvider>
         <IndexContent />
       </ServiceOrderProvider>
