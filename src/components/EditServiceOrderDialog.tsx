@@ -10,13 +10,18 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ServiceOrder } from "@/types";
+import { X, PlusCircle } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Checkbox } from "@/components/ui/checkbox";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { Check } from "lucide-react";
 
 interface EditServiceOrderDialogProps {
   isOpen: boolean;
@@ -39,49 +44,44 @@ const EditServiceOrderDialog = ({
   statusOptions,
   onSave,
 }: EditServiceOrderDialogProps) => {
+  const [selectedStatus, setSelectedStatus] = React.useState<string>("");
+
   if (!editedOrder) return null;
 
-  const handleStatusToggle = (status: string) => {
-    const currentStatuses = editedOrder.status_array || [];
-    let newStatuses: string[];
+  const handleAddStatus = () => {
+    if (!selectedStatus) return;
     
-    if (currentStatuses.includes(status)) {
-      // If removing the primary status, we need to set a new primary status
-      const isPrimaryStatus = editedOrder.status === status;
-      newStatuses = currentStatuses.filter(s => s !== status);
-      
-      if (isPrimaryStatus && newStatuses.length > 0) {
-        // Set the first remaining status as the primary
-        setEditedOrder({
-          ...editedOrder,
-          status_array: newStatuses,
-          status: newStatuses[0]
-        });
-      } else {
-        setEditedOrder({
-          ...editedOrder,
-          status_array: newStatuses,
-          ...(isPrimaryStatus && newStatuses.length === 0 ? { status: "" } : {})
-        });
-      }
-    } else {
-      // Adding a new status
-      newStatuses = [...currentStatuses, status];
-      
-      // If this is the first status, make it the primary
-      if (newStatuses.length === 1) {
-        setEditedOrder({
-          ...editedOrder,
-          status_array: newStatuses,
-          status: status
-        });
-      } else {
-        setEditedOrder({
-          ...editedOrder,
-          status_array: newStatuses
-        });
-      }
+    // Only add if not already in the array
+    if (!editedOrder.status_array?.includes(selectedStatus)) {
+      const updatedStatusArray = [...(editedOrder.status_array || []), selectedStatus];
+      setEditedOrder({ 
+        ...editedOrder, 
+        status_array: updatedStatusArray,
+        // Also update the primary status
+        status: selectedStatus
+      });
     }
+    
+    setSelectedStatus("");
+  };
+
+  const handleRemoveStatus = (statusToRemove: string) => {
+    if (!editedOrder.status_array) return;
+    
+    const updatedStatusArray = editedOrder.status_array.filter(
+      (status) => status !== statusToRemove
+    );
+    
+    // Update the main status if we're removing the current primary status
+    const updatedStatus = statusToRemove === editedOrder.status 
+      ? (updatedStatusArray.length > 0 ? updatedStatusArray[0] : "")
+      : editedOrder.status;
+    
+    setEditedOrder({ 
+      ...editedOrder, 
+      status_array: updatedStatusArray,
+      status: updatedStatus
+    });
   };
 
   const handlePrimaryStatusChange = (newPrimaryStatus: string) => {
@@ -127,48 +127,44 @@ const EditServiceOrderDialog = ({
               }
             />
           </div>
-          
           <div className="space-y-2">
             <label>Status</label>
-            <div className="border rounded-md p-3">
-              <ToggleGroup 
-                type="multiple" 
-                className="flex flex-wrap gap-2 w-full"
-                value={editedOrder.status_array || []}
-                onValueChange={(values) => {
-                  // Ensure we don't remove all statuses
-                  if (values.length === 0) return;
-                  
-                  // Update the status array
-                  setEditedOrder({
-                    ...editedOrder,
-                    status_array: values,
-                    // If current primary status is removed, set the first one as primary
-                    status: values.includes(editedOrder.status) ? editedOrder.status : values[0]
-                  });
-                }}
+            <div className="flex gap-2">
+              <Select
+                value={selectedStatus}
+                onValueChange={setSelectedStatus}
               >
-                {statusOptions.map((statusOption) => (
-                  <ToggleGroupItem 
-                    key={statusOption.value} 
-                    value={statusOption.value}
-                    className={`border ${statusOption.color} transition-colors`}
-                    aria-label={statusOption.label}
-                  >
-                    {statusOption.label}
-                    {editedOrder.status === statusOption.value && (
-                      <Check className="ml-1 h-3 w-3" />
-                    )}
-                  </ToggleGroupItem>
-                ))}
-              </ToggleGroup>
+                <SelectTrigger className="flex-1">
+                  <SelectValue placeholder="Selecionar status" />
+                </SelectTrigger>
+                <SelectContent>
+                  {statusOptions.map((status) => (
+                    <SelectItem
+                      key={status.value}
+                      value={status.value}
+                      className={status.color}
+                    >
+                      {status.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button 
+                type="button" 
+                size="icon" 
+                variant="outline"
+                onClick={handleAddStatus}
+                disabled={!selectedStatus}
+              >
+                <PlusCircle className="h-4 w-4" />
+              </Button>
             </div>
           </div>
           
-          {/* Display selected statuses and allow setting primary */}
+          {/* Status tags display */}
           {editedOrder.status_array && editedOrder.status_array.length > 0 && (
             <div className="space-y-2">
-              <label>Status selecionados:</label>
+              <label>Status ativos:</label>
               <ScrollArea className="h-20 w-full rounded-md border p-2">
                 <div className="flex flex-wrap gap-2">
                   {editedOrder.status_array.map((status) => (
@@ -176,21 +172,31 @@ const EditServiceOrderDialog = ({
                       key={status} 
                       variant="outline"
                       className={`${getStatusColor(status)} flex items-center gap-1`}
-                      onClick={() => handlePrimaryStatusChange(status)}
                     >
-                      <span 
-                        className={`inline-flex h-2 w-2 rounded-full mr-1 ${
-                          status === editedOrder.status ? "bg-blue-500" : "bg-gray-300"
-                        }`}
-                      ></span>
-                      {status} {status === editedOrder.status && "(Principal)"}
+                      <button 
+                        type="button"
+                        className={`rounded-full p-0.5 ${
+                          status === editedOrder.status 
+                            ? 'bg-blue-500 text-white' 
+                            : 'bg-gray-200 hover:bg-gray-300'
+                        } mr-1 h-4 w-4 text-[8px] flex items-center justify-center`}
+                        onClick={() => handlePrimaryStatusChange(status)}
+                        title={status === editedOrder.status ? "Status principal" : "Definir como status principal"}
+                      >
+                        P
+                      </button>
+                      {status}
+                      <button 
+                        type="button" 
+                        className="ml-1 rounded-full hover:bg-gray-300 p-0.5"
+                        onClick={() => handleRemoveStatus(status)}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
                     </Badge>
                   ))}
                 </div>
               </ScrollArea>
-              <p className="text-xs text-muted-foreground">
-                Clique em um status para definir como principal.
-              </p>
             </div>
           )}
           
