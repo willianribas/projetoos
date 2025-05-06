@@ -28,12 +28,12 @@
 }
 
 .logo:hover {
-  filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.7));
+  filter: drop-shadow(0 0 2em rgba(169, 169, 169, 0.7));
   transform: scale(1.05);
 }
 
 .logo.react:hover {
-  filter: drop-shadow(0 0 2em rgba(97, 218, 251, 0.7));
+  filter: drop-shadow(0 0 2em rgba(169, 169, 169, 0.7));
 }
 
 @keyframes logo-spin {
@@ -112,6 +112,6 @@
 }
 
 .glass-card:hover {
-  border-color: rgba(97, 218, 251, 0.3);
+  border-color: rgba(169, 169, 169, 0.3);
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
