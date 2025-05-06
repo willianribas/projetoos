@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -11,9 +10,10 @@ import { Label } from "@/components/ui/label";
 import { UseFormReturn } from "react-hook-form";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { toast } from "@/hooks/use-toast";
-import { Plus, PlusCircle, X } from "lucide-react";
+import { Plus, Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface ServiceOrderFormProps {
   form: UseFormReturn<any>;
@@ -32,35 +32,8 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
   const [selectedYear, setSelectedYear] = useState(yearSuffix);
   const [isOpen, setIsOpen] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const years = Array.from({ length: 12 }, (_, i) => (24 + i).toString());
-
-  const handleAddStatus = () => {
-    if (!selectedStatus) return;
-    
-    if (!selectedStatuses.includes(selectedStatus)) {
-      const newStatuses = [...selectedStatuses, selectedStatus];
-      setSelectedStatuses(newStatuses);
-      
-      // Update the primary status field in the form
-      if (newStatuses.length === 1) {
-        form.setValue("status", selectedStatus);
-      }
-    }
-    
-    setSelectedStatus("");
-  };
-
-  const handleRemoveStatus = (statusToRemove: string) => {
-    const updatedStatuses = selectedStatuses.filter(status => status !== statusToRemove);
-    setSelectedStatuses(updatedStatuses);
-    
-    // Update the primary status field if needed
-    if (form.getValues("status") === statusToRemove) {
-      form.setValue("status", updatedStatuses.length > 0 ? updatedStatuses[0] : "");
-    }
-  };
 
   const handlePrimaryStatusChange = (status: string) => {
     form.setValue("status", status);
@@ -84,11 +57,21 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
       });
       return;
     }
+    
+    // Ensure we have at least one status and the primary status is included in status_array
+    if (selectedStatuses.length === 0) {
+      toast({
+        title: "Erro ao criar OS",
+        description: "Selecione pelo menos um status para a OS",
+        variant: "destructive",
+      });
+      return;
+    }
 
     onSubmit({
       ...data,
       numeroos: formattedOSNumber,
-      status_array: selectedStatuses.length > 0 ? selectedStatuses : [data.status],
+      status_array: selectedStatuses,
     });
     setIsOpen(false);
     setSelectedStatuses([]);
@@ -210,46 +193,47 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
                 render={({ field }) => (
                   <FormItem className="md:col-span-6">
                     <FormLabel>Status</FormLabel>
-                    <div className="flex gap-2">
-                      <Select 
-                        value={selectedStatus}
-                        onValueChange={setSelectedStatus}
+                    <div className="border rounded-md p-3">
+                      <ToggleGroup 
+                        type="multiple" 
+                        className="flex flex-wrap gap-2 w-full"
+                        value={selectedStatuses}
+                        onValueChange={(values) => {
+                          // Don't allow empty selection
+                          if (values.length === 0) return;
+                          
+                          setSelectedStatuses(values);
+                          
+                          // Set primary status (keep existing or use first selected)
+                          const primaryStatus = values.includes(field.value) ? 
+                            field.value : values[0];
+                          
+                          form.setValue("status", primaryStatus);
+                        }}
                       >
-                        <FormControl>
-                          <SelectTrigger className="bg-background/50">
-                            <SelectValue placeholder="Selecione o status" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          {statusOptions.map((status) => (
-                            <SelectItem 
-                              key={status.value} 
-                              value={status.value}
-                              className={status.color}
-                            >
-                              {status.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <Button 
-                        type="button" 
-                        size="icon" 
-                        variant="outline"
-                        onClick={handleAddStatus}
-                        disabled={!selectedStatus}
-                      >
-                        <PlusCircle className="h-4 w-4" />
-                      </Button>
-                      <input type="hidden" {...field} />
+                        {statusOptions.map((statusOption) => (
+                          <ToggleGroupItem 
+                            key={statusOption.value} 
+                            value={statusOption.value}
+                            className={`border ${statusOption.color} transition-colors`}
+                            aria-label={statusOption.label}
+                          >
+                            {statusOption.label}
+                            {field.value === statusOption.value && (
+                              <Check className="ml-1 h-3 w-3" />
+                            )}
+                          </ToggleGroupItem>
+                        ))}
+                      </ToggleGroup>
                     </div>
                     <FormMessage />
+                    <input type="hidden" {...field} />
                   </FormItem>
                 )}
               />
             </div>
 
-            {/* Display selected statuses */}
+            {/* Display selected statuses and allow setting primary */}
             {selectedStatuses.length > 0 && (
               <div className="space-y-2">
                 <label>Status selecionados:</label>
@@ -259,32 +243,22 @@ const ServiceOrderForm = ({ form, onSubmit, statusOptions }: ServiceOrderFormPro
                       <Badge 
                         key={status} 
                         variant="outline"
-                        className={`${getStatusColor(status)} flex items-center gap-1`}
+                        className={`${getStatusColor(status)} flex items-center gap-1 cursor-pointer`}
+                        onClick={() => handlePrimaryStatusChange(status)}
                       >
-                        <button 
-                          type="button"
-                          className={`rounded-full p-0.5 ${
-                            status === form.getValues("status") 
-                              ? 'bg-blue-500 text-white' 
-                              : 'bg-gray-200 hover:bg-gray-300'
-                          } mr-1 h-4 w-4 text-[8px] flex items-center justify-center`}
-                          onClick={() => handlePrimaryStatusChange(status)}
-                          title={status === form.getValues("status") ? "Status principal" : "Definir como status principal"}
-                        >
-                          P
-                        </button>
-                        {status}
-                        <button 
-                          type="button" 
-                          className="ml-1 rounded-full hover:bg-gray-300 p-0.5"
-                          onClick={() => handleRemoveStatus(status)}
-                        >
-                          <X className="h-3 w-3" />
-                        </button>
+                        <span 
+                          className={`inline-flex h-2 w-2 rounded-full mr-1 ${
+                            status === form.getValues("status") ? "bg-blue-500" : "bg-gray-300"
+                          }`}
+                        ></span>
+                        {status} {status === form.getValues("status") && "(Principal)"}
                       </Badge>
                     ))}
                   </div>
                 </ScrollArea>
+                <p className="text-xs text-muted-foreground">
+                  Clique em um status para definir como principal.
+                </p>
               </div>
             )}
 
