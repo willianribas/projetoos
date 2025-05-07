@@ -39,7 +39,7 @@ export function Toaster() {
           );
         })}
         <ToastViewport className="md:max-w-[420px]" />
-      </ToastProvider>
+      </AnimatePresence>
     </ToastProvider>
   );
 }
