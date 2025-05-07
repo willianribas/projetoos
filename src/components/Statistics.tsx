@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -13,6 +14,7 @@ import StatusDistributionChart from "./charts/StatusDistributionChart";
 import TimelineChart from "./charts/TimelineChart";
 import MetricsHighlight from "./charts/MetricsHighlight";
 import { ScrollArea } from "./ui/scroll-area";
+import ExportableReports from "./charts/ExportableReports";
 
 interface StatisticsProps {
   serviceOrders: ServiceOrder[];
@@ -48,12 +50,23 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
     <div className="space-y-8 p-6 animate-fade-in">
       <MetricsHighlight serviceOrders={serviceOrders} />
       
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <StatusDistributionChart 
-          serviceOrders={serviceOrders} 
-          statusOptions={statusOptions} 
-        />
-        <TimelineChart serviceOrders={serviceOrders} />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <StatusDistributionChart 
+              serviceOrders={serviceOrders} 
+              statusOptions={statusOptions} 
+            />
+            <TimelineChart serviceOrders={serviceOrders} />
+          </div>
+        </div>
+        
+        <div className="lg:col-span-1">
+          <ExportableReports 
+            serviceOrders={serviceOrders}
+            statusOptions={statusOptions}
+          />
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

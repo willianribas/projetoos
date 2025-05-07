@@ -15,8 +15,73 @@ import ADEMonitorPage from "./pages/ADEMonitor";
 import DetailedServiceOrder from "./pages/DetailedServiceOrder";
 import AnalyzersPage from "./pages/Analyzers";
 import { useAuth } from "./components/AuthProvider";
+import { useEffect } from "react";
+import { useServiceOrders } from "./components/ServiceOrderProvider";
+import { useToast } from "./hooks/use-toast";
 
 const queryClient = new QueryClient();
+
+const KeyboardShortcuts = () => {
+  const { lastDeletedServiceOrder, undoDeletedServiceOrder } = useAuth();
+  const { serviceOrders, restoreServiceOrder } = useServiceOrders();
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Check for Ctrl+Z to undo deletion
+      if ((event.ctrlKey || event.metaKey) && event.key === 'z') {
+        event.preventDefault();
+        
+        // Check if there's a recently deleted order
+        if (lastDeletedServiceOrder.id && lastDeletedServiceOrder.timestamp) {
+          // Check if deletion was recent (within 30 seconds)
+          const now = Date.now();
+          const timeDifference = now - lastDeletedServiceOrder.timestamp;
+          
+          if (timeDifference <= 30000) {
+            restoreServiceOrder(lastDeletedServiceOrder.id);
+            toast({
+              title: "Ação desfeita",
+              description: "Ordem de serviço restaurada com sucesso",
+              variant: "success",
+            });
+          } else {
+            toast({
+              title: "Não foi possível desfazer",
+              description: "Tempo limite para desfazer expirado (30 segundos)",
+              variant: "warning",
+            });
+          }
+        } else {
+          toast({
+            title: "Nada para desfazer",
+            description: "Não há ações recentes para desfazer",
+            variant: "default",
+          });
+        }
+      }
+      
+      // Add more keyboard shortcuts as needed
+      // F1 or ? to show help
+      if (event.key === 'F1' || event.key === '?') {
+        event.preventDefault();
+        toast({
+          title: "Atalhos de teclado disponíveis",
+          description: "Ctrl+Z: Desfazer exclusão • F1/?: Mostrar ajuda • Esc: Fechar diálogos",
+          variant: "default",
+          duration: 5000,
+        });
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [lastDeletedServiceOrder, restoreServiceOrder, toast]);
+
+  return null;
+};
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user } = useAuth();
@@ -27,6 +92,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <ServiceOrderProvider>
+      <KeyboardShortcuts />
       {children}
     </ServiceOrderProvider>
   );
