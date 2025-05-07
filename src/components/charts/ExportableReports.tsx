@@ -9,7 +9,7 @@ import { ServiceOrder } from '@/types';
 import { format, subDays, differenceInDays, isBefore, isAfter, isEqual, parseISO } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
-import { toast } from '@/hooks/use-toast';
+import { useToast } from '@/hooks/use-toast';
 import * as XLSX from 'xlsx';
 
 interface ExportableReportsProps {
@@ -29,6 +29,7 @@ const ExportableReports = ({ serviceOrders, statusOptions }: ExportableReportsPr
     from: subDays(new Date(), 30),
     to: new Date()
   });
+  const { toast } = useToast();
 
   const filteredOrders = serviceOrders.filter(order => {
     const orderDate = parseISO(order.created_at);
@@ -74,7 +75,7 @@ const ExportableReports = ({ serviceOrders, statusOptions }: ExportableReportsPr
     toast({
       title: "Relatório exportado",
       description: "O relatório Excel foi baixado com sucesso.",
-      variant: "success",
+      variant: "default",
     });
   };
 
@@ -235,7 +236,7 @@ const ExportableReports = ({ serviceOrders, statusOptions }: ExportableReportsPr
               selected={dateRange}
               onSelect={(range) => {
                 if (range?.from && range?.to) {
-                  setDateRange(range);
+                  setDateRange({ from: range.from, to: range.to });
                 }
               }}
               numberOfMonths={2}

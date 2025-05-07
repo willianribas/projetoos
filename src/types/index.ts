@@ -8,6 +8,6 @@ export interface ServiceOrder {
   observacao: string | null;
   created_at: string;
   user_id?: string;
-  priority?: 'normal' | 'critical';
+  priority?: string;
   deleted_at?: string | null;
 }

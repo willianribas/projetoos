@@ -46,13 +46,14 @@ export function Toaster() {
       <AnimatePresence>
         {toasts.map(function ({ id, title, description, action, variant = "default", ...props }) {
           // Select animation variant based on toast type
-          const animation = variant === "destructive" 
-            ? toastAnimationVariants.destructive 
-            : variant === "success" 
-              ? toastAnimationVariants.success 
-              : variant === "warning"
-                ? toastAnimationVariants.warning
-                : toastAnimationVariants.default;
+          const animation = 
+            variant === "destructive" 
+              ? toastAnimationVariants.destructive 
+              : variant === "success" 
+                ? toastAnimationVariants.success 
+                : variant === "warning"
+                  ? toastAnimationVariants.warning
+                  : toastAnimationVariants.default;
 
           // Group similar toasts - this is a placeholder to show how we would group
           // In a real implementation, this would be based on actual toast content
@@ -66,7 +67,7 @@ export function Toaster() {
               exit={animation.exit}
               transition={animation.transition}
             >
-              <Toast key={id} {...props} className={`group backdrop-blur-sm border-opacity-50 ${isGrouped ? 'mb-1' : 'mb-2'}`}>
+              <Toast key={id} {...props} variant={variant} className={`group backdrop-blur-sm border-opacity-50 ${isGrouped ? 'mb-1' : 'mb-2'}`}>
                 <div className="grid gap-1">
                   {title && <ToastTitle>{title}</ToastTitle>}
                   {description && (
@@ -79,8 +80,8 @@ export function Toaster() {
             </motion.div>
           );
         })}
-        <ToastViewport className="md:max-w-[420px]" />
       </AnimatePresence>
+      <ToastViewport className="md:max-w-[420px]" />
     </ToastProvider>
   );
 }

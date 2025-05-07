@@ -15,6 +15,7 @@ type ToasterToast = ToastProps & {
   action?: ToastActionElement
   groupId?: string
   count?: number
+  variant?: "default" | "destructive" | "success" | "warning" 
 }
 
 const actionTypes = {

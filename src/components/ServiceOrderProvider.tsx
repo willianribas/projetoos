@@ -84,7 +84,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       toast({
         title: "Ordem de serviço criada",
         description: "A ordem de serviço foi criada com sucesso.",
-        variant: "success",
+        variant: "default",
       });
     },
     onError: (error) => {
@@ -130,7 +130,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       toast({
         title: "Ordem de serviço atualizada",
         description: "A ordem de serviço foi atualizada com sucesso.",
-        variant: "success",
+        variant: "default",
       });
     },
     onError: (error) => {
@@ -200,7 +200,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       toast({
         title: "Ordem de serviço restaurada",
         description: "A ordem de serviço foi restaurada com sucesso.",
-        variant: "success",
+        variant: "default",
       });
     },
     onError: (error) => {
@@ -232,7 +232,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       toast({
         title: "Ordens atualizadas em lote",
         description: `${ids.length} ordens de serviço foram atualizadas com sucesso.`,
-        variant: "success",
+        variant: "default",
       });
       // Clear selection after batch update
       clearSelection();

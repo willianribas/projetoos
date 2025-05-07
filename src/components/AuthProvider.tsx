@@ -123,7 +123,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               toast({
                 title: "Problemas de conexão",
                 description: "Sua sessão está com problemas. Tente atualizar a página.",
-                variant: "warning",
+                variant: "default",
               });
             }
           }

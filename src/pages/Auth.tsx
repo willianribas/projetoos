@@ -23,13 +23,7 @@ const Auth = () => {
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
-        password,
-        options: {
-          // Setting session persistence based on rememberMe option
-          // If true, session will last much longer
-          persistSession: true,
-          autoRefreshToken: true,
-        }
+        password
       });
 
       if (rememberMe) {

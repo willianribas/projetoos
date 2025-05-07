@@ -43,13 +43,13 @@ const KeyboardShortcuts = () => {
             toast({
               title: "Ação desfeita",
               description: "Ordem de serviço restaurada com sucesso",
-              variant: "success",
+              variant: "default",
             });
           } else {
             toast({
               title: "Não foi possível desfazer",
               description: "Tempo limite para desfazer expirado (30 segundos)",
-              variant: "warning",
+              variant: "default",
             });
           }
         } else {
