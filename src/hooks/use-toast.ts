@@ -1,3 +1,4 @@
+
 import * as React from "react"
 
 import type {
@@ -13,9 +14,6 @@ type ToasterToast = ToastProps & {
   title?: React.ReactNode
   description?: React.ReactNode
   action?: ToastActionElement
-  groupId?: string
-  count?: number
-  variant?: "default" | "destructive" | "success" | "warning" 
 }
 
 const actionTypes = {
@@ -23,7 +21,6 @@ const actionTypes = {
   UPDATE_TOAST: "UPDATE_TOAST",
   DISMISS_TOAST: "DISMISS_TOAST",
   REMOVE_TOAST: "REMOVE_TOAST",
-  GROUP_TOASTS: "GROUP_TOASTS",
 } as const
 
 let count = 0
@@ -31,13 +28,6 @@ let count = 0
 function genId() {
   count = (count + 1) % Number.MAX_SAFE_INTEGER
   return count.toString()
-}
-
-// Create a hash from title and description for grouping similar toasts
-function createGroupId(title: React.ReactNode, description: React.ReactNode): string {
-  const titleStr = typeof title === 'string' ? title : JSON.stringify(title)
-  const descStr = typeof description === 'string' ? description : JSON.stringify(description)
-  return `${titleStr}::${descStr}`
 }
 
 type ActionType = typeof actionTypes
@@ -58,9 +48,6 @@ type Action =
   | {
       type: ActionType["REMOVE_TOAST"]
       toastId?: ToasterToast["id"]
-    }
-  | {
-      type: ActionType["GROUP_TOASTS"]
     }
 
 interface State {
@@ -87,43 +74,11 @@ const addToRemoveQueue = (toastId: string) => {
 
 export const reducer = (state: State, action: Action): State => {
   switch (action.type) {
-    case "ADD_TOAST": {
-      const { toast } = action
-      const groupId = createGroupId(toast.title, toast.description)
-      
-      // Check if a similar toast exists (same title and description)
-      const similarToastIndex = state.toasts.findIndex(t => 
-        createGroupId(t.title, t.description) === groupId && 
-        t.variant === toast.variant
-      )
-      
-      // If similar toast exists, update its count
-      if (similarToastIndex !== -1 && toast.title && toast.description) {
-        const updatedToasts = [...state.toasts]
-        const similarToast = updatedToasts[similarToastIndex]
-        
-        updatedToasts[similarToastIndex] = {
-          ...similarToast,
-          count: (similarToast.count || 1) + 1,
-          description: `${toast.description} (${(similarToast.count || 1) + 1})`,
-          id: toast.id, // Use new ID to refresh animation
-        }
-        
-        return {
-          ...state,
-          toasts: updatedToasts,
-        }
-      }
-      
-      // Otherwise, add as a new toast
+    case "ADD_TOAST":
       return {
         ...state,
-        toasts: [
-          { ...toast, groupId, count: 1 },
-          ...state.toasts,
-        ].slice(0, TOAST_LIMIT),
+        toasts: [action.toast, ...state.toasts].slice(0, TOAST_LIMIT),
       }
-    }
 
     case "UPDATE_TOAST":
       return {
@@ -167,8 +122,6 @@ export const reducer = (state: State, action: Action): State => {
         ...state,
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
-    default:
-      return state
   }
 }
 
