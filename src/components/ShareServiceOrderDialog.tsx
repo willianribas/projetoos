@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ServiceOrder } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { Loader2, Search, Share2, UserPlus } from "lucide-react";
 
