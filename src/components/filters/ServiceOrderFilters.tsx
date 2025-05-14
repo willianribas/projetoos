@@ -1,4 +1,3 @@
-
 import { ServiceOrder } from "@/types";
 import { statusOptions } from "@/components/ServiceOrderContent";
 
@@ -73,7 +72,27 @@ export const filterServiceOrders = ({
   });
 };
 
-export const getStatusColor = (status: string) => {
-  const statusOption = statusOptions.find(option => option.value === status);
-  return statusOption?.color || "text-muted-foreground";
+export const getStatusColor = (status: string): string => {
+  switch (status) {
+    case "ADE":
+      return "text-blue-900 border-blue-900";
+    case "AVT":
+      return "text-orange-500 border-orange-500";
+    case "EXT":
+      return "text-purple-500 border-purple-500";
+    case "A.M":
+      return "text-red-500 border-red-500";
+    case "INST":
+      return "text-pink-500 border-pink-500";
+    case "M.S":
+      return "text-cyan-500 border-cyan-500";
+    case "OSP":
+      return "text-green-500 border-green-500";
+    case "E.E":
+      return "text-amber-500 border-amber-500";
+    case "ADPD":
+      return "text-fuchsia-500 border-fuchsia-500";
+    default:
+      return "text-gray-500 border-gray-500";
+  }
 };

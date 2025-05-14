@@ -1,113 +1,116 @@
 
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { useNotifications } from "@/hooks/useNotifications";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { Database } from "@/integrations/supabase/types";
-import { useAuth } from "@/components/AuthProvider";
+import { useNavigate } from "react-router-dom";
+import { useSharedServiceOrders } from "@/hooks/useSharedServiceOrders";
 
-type ServiceOrder = Database['public']['Tables']['service_orders']['Row'];
+export default function NotificationBell() {
+  const { notifications, hasUnread, markAllAsRead } = useNotifications();
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const { receivedOrders } = useSharedServiceOrders();
+  
+  const pendingShares = receivedOrders.length;
+  const hasSharedOrders = pendingShares > 0;
 
-interface Notification {
-  id: string;
-  message: string;
-  timestamp: Date;
-}
-
-const NotificationBell = () => {
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const { toast } = useToast();
-  const { user } = useAuth();
-
-  useEffect(() => {
-    if (!user) return;
-    
-    const channel = supabase
-      .channel('service-orders-changes')
-      .on(
-        'postgres_changes',
-        {
-          event: 'UPDATE',
-          schema: 'public',
-          table: 'service_orders',
-          filter: `user_id=eq.${user.id}`, // Filter for current user only
-        },
-        (payload) => {
-          const oldStatus = payload.old?.status;
-          const newStatus = payload.new?.status;
-          const orderNumber = payload.new?.numeroos;
-          
-          if (oldStatus && newStatus && orderNumber && oldStatus !== newStatus) {
-            const notification = {
-              id: new Date().getTime().toString(),
-              message: `OS ${orderNumber} mudou de ${oldStatus} para ${newStatus}`,
-              timestamp: new Date(),
-            };
-            
-            setNotifications(prev => [notification, ...prev].slice(0, 10));
-            setUnreadCount(prev => prev + 1);
-          }
-        }
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [user]);
-
-  const handleOpenChange = (open: boolean) => {
-    if (open) {
-      setUnreadCount(0);
+  const renderNotificationType = (type: string) => {
+    switch (type) {
+      case "shared_service_order":
+        return "Ordem de serviço compartilhada";
+      case "ade_reminder":
+        return "Lembrete ADE";
+      default:
+        return "Notificação";
     }
   };
 
   return (
-    <Popover onOpenChange={handleOpenChange}>
-      <PopoverTrigger className="relative">
-        <Bell className="h-6 w-6 text-foreground/80 hover:text-foreground transition-colors" />
-        {unreadCount > 0 && (
-          <Badge 
-            className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center p-0 bg-blue-500"
-            variant="default"
-          >
-            {unreadCount}
-          </Badge>
-        )}
-      </PopoverTrigger>
-      <PopoverContent className="w-80 -mt-6" align="end">
-        <div className="px-4 py-2 font-medium border-b">
-          Notificações
-        </div>
-        <ScrollArea className="h-[300px]">
-          {notifications.length > 0 ? (
-            <div className="divide-y">
-              {notifications.map((notification) => (
-                <div key={notification.id} className="p-4">
-                  <p className="text-sm text-foreground/90">{notification.message}</p>
-                  <p className="text-xs text-foreground/60 mt-1">
-                    {new Date(notification.timestamp).toLocaleString('pt-BR')}
-                  </p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="p-4 text-center text-sm text-foreground/60">
-              Nenhuma notificação
-            </div>
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-[1.2rem] w-[1.2rem]" />
+          {(hasUnread || hasSharedOrders) && (
+            <span className="absolute h-2.5 w-2.5 top-1 right-1.5 rounded-full bg-red-500 ring-2 ring-background animate-pulse" />
           )}
-        </ScrollArea>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-80" align="end">
+        <div className="flex justify-between items-center border-b pb-2 mb-2">
+          <h4 className="font-semibold">Notificações</h4>
+          <Button variant="ghost" size="sm" onClick={markAllAsRead}>
+            Marcar todas como lidas
+          </Button>
+        </div>
+
+        {hasSharedOrders && (
+          <div className="p-2 my-2 bg-orange-100 dark:bg-orange-900/20 rounded-md">
+            <p className="text-sm font-medium flex items-center justify-between">
+              Ordens compartilhadas pendentes
+              <Badge variant="outline" className="ml-2">
+                {pendingShares}
+              </Badge>
+            </p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Você tem {pendingShares} ordens compartilhadas aguardando sua aprovação.
+            </p>
+          </div>
+        )}
+
+        {notifications.length > 0 ? (
+          <ScrollArea className="h-[300px]">
+            {notifications.map((notification) => (
+              <div
+                key={notification.id}
+                className={`p-3 border-b last:border-b-0 cursor-pointer ${
+                  !notification.is_read
+                    ? "bg-muted/50"
+                    : ""
+                }`}
+                onClick={() => {
+                  setOpen(false);
+                  // Handle notification click based on type
+                  if (notification.notification_type === "shared_service_order") {
+                    navigate("/");
+                  }
+                }}
+              >
+                <div className="flex justify-between items-start">
+                  <h5 className="font-medium text-sm">
+                    {renderNotificationType(notification.notification_type)}
+                  </h5>
+                  {!notification.is_read && (
+                    <Badge variant="default" className="ml-2 h-1.5 w-1.5 rounded-full p-0" />
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {notification.notification_type === "shared_service_order" && 
+                    "Uma nova ordem de serviço foi compartilhada com você."}
+                </p>
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  {format(
+                    new Date(notification.created_at),
+                    "dd/MM/yyyy HH:mm"
+                  )}
+                </p>
+              </div>
+            ))}
+          </ScrollArea>
+        ) : (
+          <div className="py-4 text-center text-muted-foreground text-sm">
+            Nenhuma notificação no momento.
+          </div>
+        )}
       </PopoverContent>
     </Popover>
   );
-};
-
-export default NotificationBell;
+}
