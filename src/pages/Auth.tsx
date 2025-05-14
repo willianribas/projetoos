@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,24 +7,32 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
+import { Checkbox } from "@/components/ui/checkbox";
+
 const Auth = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const navigate = useNavigate();
-  const {
-    toast
-  } = useToast();
+  const { toast } = useToast();
+
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const {
-        error
-      } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signInWithPassword({
         email,
         password
       });
+
+      if (rememberMe) {
+        // Store the preference in localStorage
+        localStorage.setItem('rememberMe', 'true');
+      } else {
+        localStorage.removeItem('rememberMe');
+      }
+
       if (error) {
         toast({
           variant: "destructive",
@@ -43,6 +52,7 @@ const Auth = () => {
       setLoading(false);
     }
   };
+
   return <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-background via-background/95 to-background/90 p-4 bg-neutral-900">
       <motion.div initial={{
       opacity: 0,
@@ -85,6 +95,16 @@ const Auth = () => {
             <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} required placeholder="Digite sua senha" className="transition-all duration-200 focus:ring-2 focus:ring-blue-500 bg-white/5 border-white/10" />
           </div>
 
+          <div className="flex items-center space-x-2">
+            <Checkbox 
+              id="rememberMe" 
+              checked={rememberMe} 
+              onCheckedChange={(checked) => setRememberMe(checked as boolean)} 
+              className="data-[state=checked]:bg-primary"
+            />
+            <Label htmlFor="rememberMe" className="text-sm cursor-pointer">Lembrar de mim</Label>
+          </div>
+
           <Button type="submit" disabled={loading} className="w-full animate-gradient bg-gradient-to-r from-white via-purple-300 to-pink-400 rounded-full text-gray-50">
             {loading ? "Carregando..." : "Entrar"}
           </Button>
@@ -97,7 +117,7 @@ const Auth = () => {
     }} transition={{
       delay: 0.6
     }} className="mt-8 text-sm text-foreground/60">
-        &copy; 2025 Daily.Flow. Todos os direitos reservados.
+        &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
       </motion.div>
     </div>;
 };

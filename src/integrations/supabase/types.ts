@@ -438,51 +438,6 @@ export type Database = {
         }
         Relationships: []
       }
-      shared_service_orders: {
-        Row: {
-          id: string
-          is_accepted: boolean | null
-          message: string | null
-          service_order_id: number
-          shared_at: string
-          shared_by: string
-          shared_with: string
-        }
-        Insert: {
-          id?: string
-          is_accepted?: boolean | null
-          message?: string | null
-          service_order_id: number
-          shared_at?: string
-          shared_by: string
-          shared_with: string
-        }
-        Update: {
-          id?: string
-          is_accepted?: boolean | null
-          message?: string | null
-          service_order_id?: number
-          shared_at?: string
-          shared_by?: string
-          shared_with?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "shared_service_orders_service_order_id_fkey"
-            columns: ["service_order_id"]
-            isOneToOne: false
-            referencedRelation: "deleted_service_orders"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "shared_service_orders_service_order_id_fkey"
-            columns: ["service_order_id"]
-            isOneToOne: false
-            referencedRelation: "service_orders"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       user_preferences: {
         Row: {
           created_at: string

@@ -1,4 +1,3 @@
-
 import Header from "@/components/Header";
 import ADEMonitor from "@/components/ADEMonitor";
 import ServiceOrderContent from "@/components/ServiceOrderContent";
@@ -7,8 +6,6 @@ import ADENotification from "@/components/ADENotification";
 import MetricsHighlight from "@/components/charts/MetricsHighlight";
 import Navbar from "@/components/Navbar";
 import RemindersSection from "@/components/reminders/RemindersSection";
-import SharedServiceOrders from "@/components/SharedServiceOrders";
-
 const IndexContent = () => {
   const {
     serviceOrders
@@ -22,12 +19,6 @@ const IndexContent = () => {
           <div className="px-2 sm:px-0">
             <MetricsHighlight serviceOrders={serviceOrders} />
             <RemindersSection />
-            
-            {/* Adicionando o componente de ordens compartilhadas */}
-            <div className="my-6">
-              <SharedServiceOrders />
-            </div>
-            
             <ADEMonitor serviceOrders={serviceOrders} />
             <ServiceOrderContent showTableByDefault={true} />
           </div>
@@ -38,7 +29,6 @@ const IndexContent = () => {
       </div>
     </div>;
 };
-
 const Index = () => {
   return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
       <ServiceOrderProvider>
@@ -46,5 +36,4 @@ const Index = () => {
       </ServiceOrderProvider>
     </div>;
 };
-
 export default Index;

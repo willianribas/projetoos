@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,6 +9,8 @@ interface AuthContextType {
   session: Session | null;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  undoDeletedServiceOrder: (id: number) => void;
+  lastDeletedServiceOrder: { id: number | null, timestamp: number | null };
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -17,6 +18,8 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   signOut: async () => {},
   refreshUser: async () => {},
+  undoDeletedServiceOrder: () => {},
+  lastDeletedServiceOrder: { id: null, timestamp: null }
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -25,8 +28,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastDeletedServiceOrder, setLastDeletedServiceOrder] = useState<{ id: number | null, timestamp: number | null }>({ id: null, timestamp: null });
   const navigate = useNavigate();
   const { toast } = useToast();
+
+  // Function to undo a deleted service order
+  const undoDeletedServiceOrder = (id: number) => {
+    setLastDeletedServiceOrder({ id, timestamp: Date.now() });
+  };
 
   const fetchCurrentUser = async () => {
     const { data } = await supabase.auth.getUser();
@@ -96,16 +105,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
       });
 
-      // Set up session expiration check
+      // Get rememberMe preference
+      const rememberMe = localStorage.getItem('rememberMe') === 'true';
+      
+      // Set up session expiration check with different intervals based on rememberMe
       const checkSessionInterval = setInterval(async () => {
         // If we have a session, check if it's still valid
         if (session && new Date(session.expires_at * 1000) < new Date()) {
+          // If "Remember Me" is enabled, try to refresh more aggressively
           const success = await refreshSession();
           if (!success) {
-            await signOut();
+            // Only sign out automatically if "Remember Me" is not enabled
+            if (!rememberMe) {
+              await signOut();
+            } else {
+              // For "Remember Me" users, show a notification but keep trying to refresh
+              toast({
+                title: "Problemas de conexão",
+                description: "Sua sessão está com problemas. Tente atualizar a página.",
+                variant: "default",
+              });
+            }
           }
         }
-      }, 60000); // Check every minute
+      }, rememberMe ? 300000 : 60000); // Check every 5 minutes for remember me users, every 1 minute otherwise
       
       setLoading(false);
 
@@ -122,6 +145,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
+    localStorage.removeItem('rememberMe');
     navigate("/auth");
   };
 
@@ -134,7 +158,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ user, session, signOut, refreshUser }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      signOut, 
+      refreshUser, 
+      undoDeletedServiceOrder, 
+      lastDeletedServiceOrder 
+    }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,19 +1,28 @@
+
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Trash2, Share2 } from "lucide-react";
+import { MoreHorizontal, Trash, Edit } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ServiceOrder } from "@/types";
-import { Tooltip } from "@/components/ui/tooltip";
-import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Badge } from "./ui/badge";
+import { Checkbox } from "./ui/checkbox";
 
 interface ServiceOrderTableRowProps {
   order: ServiceOrder;
   index: number;
   getStatusColor: (status: string) => string;
   onRowClick: (order: ServiceOrder, index: number) => void;
-  onDelete: (e: React.MouseEvent, order: ServiceOrder) => void;
-  onShare: (order: ServiceOrder) => void; // Nova prop
+  onDelete: (e: React.MouseEvent<HTMLDivElement>, order: ServiceOrder) => void;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
+  batchMode?: boolean;
 }
 
 const ServiceOrderTableRow = ({
@@ -22,77 +31,78 @@ const ServiceOrderTableRow = ({
   getStatusColor,
   onRowClick,
   onDelete,
-  onShare,
+  isSelected = false,
+  onToggleSelect = () => {},
+  batchMode = false
 }: ServiceOrderTableRowProps) => {
-  const handleShare = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onShare(order);
+  const handleRowClick = () => {
+    if (batchMode && onToggleSelect) {
+      onToggleSelect();
+    } else {
+      onRowClick(order, index);
+    }
   };
 
   return (
     <TableRow
-      key={index}
-      className="cursor-pointer hover:bg-muted/50 transition-colors animate-fade-in"
-      onClick={() => onRowClick(order, index)}
+      className={`cursor-pointer hover:bg-muted/50 transition-all ${isSelected ? 'bg-primary/10 hover:bg-primary/20' : ''}`}
+      onClick={handleRowClick}
     >
+      {batchMode && (
+        <TableCell className="text-center">
+          <Checkbox 
+            checked={isSelected}
+            onCheckedChange={() => onToggleSelect()}
+            onClick={(e) => e.stopPropagation()}
+            className="data-[state=checked]:bg-primary"
+          />
+        </TableCell>
+      )}
       <TableCell className="text-center font-medium">{order.numeroos}</TableCell>
       <TableCell className="text-center">{order.patrimonio}</TableCell>
       <TableCell className="text-center">{order.equipamento}</TableCell>
+      <TableCell className="text-center">{order.observacao || "—"}</TableCell>
       <TableCell className="text-center">
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger>
-              <div className="max-w-[200px] truncate">
-                {order.observacao || "-"}
-              </div>
-            </TooltipTrigger>
-            {order.observacao && (
-              <TooltipContent>
-                <p className="max-w-[300px] text-sm">{order.observacao}</p>
-              </TooltipContent>
-            )}
-          </Tooltip>
-        </TooltipProvider>
+        <Badge className={`${getStatusColor(order.status)}`}>
+          {order.status}
+        </Badge>
       </TableCell>
       <TableCell className="text-center">
-        <div className="flex flex-col gap-1 items-center">
-          <Badge
-            variant="outline"
-            className={`${getStatusColor(
-              order.status
-            )} transition-colors duration-200`}
-          >
-            {order.status}
-          </Badge>
-          <Badge
-            variant="outline"
-            className={`${
-              order.priority === "critical"
-                ? "border-red-500 text-red-500 hover:bg-red-500/10"
-                : "border-green-500 text-green-500 hover:bg-green-500/10"
-            } text-xs transition-colors duration-200`}
-          >
-            {order.priority === "critical" ? "Crítico" : "Normal"}
-          </Badge>
-        </div>
-      </TableCell>
-      <TableCell className="text-center">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="mr-1 text-blue-500 hover:text-blue-800"
-          onClick={handleShare}
-        >
-          <Share2 className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="hover:bg-destructive/10 hover:text-destructive transition-colors"
-          onClick={(e) => onDelete(e, order)}
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="h-8 w-8 p-0"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="sr-only">Abrir menu</span>
+              <MoreHorizontal className="h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                onRowClick(order, index);
+              }}
+              className="flex items-center"
+            >
+              <Edit className="mr-2 h-4 w-4" />
+              Editar
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(e, order);
+              }}
+              className="flex items-center text-destructive focus:text-destructive"
+            >
+              <Trash className="mr-2 h-4 w-4" />
+              Excluir
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </TableCell>
     </TableRow>
   );

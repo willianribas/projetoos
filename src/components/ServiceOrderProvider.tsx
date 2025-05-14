@@ -1,4 +1,5 @@
-import React, { createContext, useContext } from "react";
+
+import React, { createContext, useContext, useState } from "react";
 import { ServiceOrder } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,14 +12,33 @@ interface ServiceOrderContextType {
   createServiceOrder: (data: Omit<ServiceOrder, "id" | "created_at">) => void;
   updateServiceOrder: (data: ServiceOrder) => void;
   deleteServiceOrder: (id: number) => void;
-  shareServiceOrder: (serviceOrderId: number, recipientUserId: string, message?: string) => void;
+  restoreServiceOrder: (id: number) => void;
+  selectedOrders: number[];
+  toggleOrderSelection: (id: number) => void;
+  bulkUpdateServiceOrders: (updates: Partial<ServiceOrder>) => void;
+  clearSelection: () => void;
 }
 
 const ServiceOrderContext = createContext<ServiceOrderContextType | undefined>(undefined);
 
 export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useAuth();
+  const { user, undoDeletedServiceOrder } = useAuth();
   const queryClient = useQueryClient();
+  const [selectedOrders, setSelectedOrders] = useState<number[]>([]);
+
+  // Toggle order selection for batch operations
+  const toggleOrderSelection = (id: number) => {
+    setSelectedOrders(prevSelected => 
+      prevSelected.includes(id) 
+        ? prevSelected.filter(orderId => orderId !== id)
+        : [...prevSelected, id]
+    );
+  };
+
+  // Clear all selections
+  const clearSelection = () => {
+    setSelectedOrders([]);
+  };
 
   // Fetch service orders with React Query - exclude deleted items
   const { data: serviceOrders = [], isLoading } = useQuery({
@@ -64,6 +84,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       toast({
         title: "Ordem de serviço criada",
         description: "A ordem de serviço foi criada com sucesso.",
+        variant: "default",
       });
     },
     onError: (error) => {
@@ -109,6 +130,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       toast({
         title: "Ordem de serviço atualizada",
         description: "A ordem de serviço foi atualizada com sucesso.",
+        variant: "default",
       });
     },
     onError: (error) => {
@@ -140,9 +162,13 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
       console.log("Successfully deleted service order with ID:", id);
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
       queryClient.invalidateQueries({ queryKey: ["deleted_service_orders", user?.id] });
+      
+      // Track the deleted service order for potential undo
+      undoDeletedServiceOrder(id);
+      
       toast({
         title: "Ordem de serviço excluída",
-        description: "A ordem de serviço foi movida para a lixeira. Você pode restaurá-la nas configurações.",
+        description: "A ordem de serviço foi movida para a lixeira. Pressione Ctrl+Z para desfazer.",
         className: "bg-red-500 text-white border-none",
       });
     },
@@ -156,34 +182,64 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     },
   });
 
-  // Share mutation
-  const shareMutation = useMutation({
-    mutationFn: async ({ serviceOrderId, recipientUserId, message }: { serviceOrderId: number; recipientUserId: string; message?: string }) => {
-      const { data, error } = await supabase
-        .from("shared_service_orders")
-        .insert([{ 
-          service_order_id: serviceOrderId, 
-          shared_by: user?.id, 
-          shared_with: recipientUserId,
-          message 
-        }])
-        .select();
+  // Restore mutation
+  const restoreMutation = useMutation({
+    mutationFn: async (id: number) => {
+      const { error } = await supabase
+        .from("service_orders")
+        .update({ deleted_at: null })
+        .eq("id", id)
+        .eq("user_id", user?.id);
 
       if (error) throw error;
-      return data;
+      return id;
     },
-    onSuccess: () => {
+    onSuccess: (id) => {
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
+      queryClient.invalidateQueries({ queryKey: ["deleted_service_orders", user?.id] });
       toast({
-        title: "Ordem de serviço compartilhada",
-        description: "A ordem de serviço foi compartilhada com sucesso.",
+        title: "Ordem de serviço restaurada",
+        description: "A ordem de serviço foi restaurada com sucesso.",
         variant: "default",
       });
     },
     onError: (error) => {
-      console.error("Error sharing service order:", error);
       toast({
-        title: "Erro ao compartilhar ordem de serviço",
+        title: "Erro ao restaurar ordem de serviço",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Bulk update mutation
+  const bulkUpdateMutation = useMutation({
+    mutationFn: async ({ ids, updates }: { ids: number[], updates: Partial<ServiceOrder> }) => {
+      // For each ID, update the order with the provided updates
+      const promises = ids.map(id => 
+        supabase
+          .from("service_orders")
+          .update(updates)
+          .eq("id", id)
+          .eq("user_id", user?.id)
+      );
+      
+      await Promise.all(promises);
+      return { ids, updates };
+    },
+    onSuccess: ({ ids }) => {
+      queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
+      toast({
+        title: "Ordens atualizadas em lote",
+        description: `${ids.length} ordens de serviço foram atualizadas com sucesso.`,
+        variant: "default",
+      });
+      // Clear selection after batch update
+      clearSelection();
+    },
+    onError: (error) => {
+      toast({
+        title: "Erro ao atualizar ordens em lote",
         description: error.message,
         variant: "destructive",
       });
@@ -202,9 +258,25 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     console.log("Deleting service order with ID from provider:", id);
     deleteMutation.mutate(id);
   };
-
-  const shareServiceOrder = (serviceOrderId: number, recipientUserId: string, message?: string) => {
-    shareMutation.mutate({ serviceOrderId, recipientUserId, message });
+  
+  const restoreServiceOrder = (id: number) => {
+    restoreMutation.mutate(id);
+  };
+  
+  const bulkUpdateServiceOrders = (updates: Partial<ServiceOrder>) => {
+    if (selectedOrders.length === 0) {
+      toast({
+        title: "Nenhuma ordem selecionada",
+        description: "Selecione pelo menos uma ordem de serviço para atualizar em lote.",
+        variant: "warning",
+      });
+      return;
+    }
+    
+    bulkUpdateMutation.mutate({
+      ids: selectedOrders,
+      updates
+    });
   };
 
   return (
@@ -215,7 +287,11 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
         createServiceOrder,
         updateServiceOrder,
         deleteServiceOrder,
-        shareServiceOrder,
+        restoreServiceOrder,
+        selectedOrders,
+        toggleOrderSelection,
+        bulkUpdateServiceOrders,
+        clearSelection
       }}
     >
       {children}
