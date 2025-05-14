@@ -16,7 +16,7 @@ interface ShareServiceOrderDialogProps {
   onClose: () => void;
 }
 
-// Define a simple type for the recipient user
+// Define a simpler type for the recipient user
 interface RecipientUser {
   id: string;
 }
@@ -38,13 +38,13 @@ export function ShareServiceOrderDialog({
       setIsLoading(true);
 
       // First check if recipient user exists
-      const { data: recipientUser, error: userError } = await supabase
+      const { data: recipientData, error: userError } = await supabase
         .from("profiles")
         .select("id")
         .eq("email", recipientEmail.trim())
         .single();
 
-      if (userError || !recipientUser) {
+      if (userError || !recipientData) {
         toast({
           title: "Usuário não encontrado",
           description: "O email informado não corresponde a nenhum usuário cadastrado.",
@@ -52,6 +52,9 @@ export function ShareServiceOrderDialog({
         });
         return;
       }
+
+      // Explicitly type recipientUser to avoid circular references
+      const recipientUser: RecipientUser = { id: recipientData.id };
 
       // Create shared service order
       const { error: shareError } = await supabase
