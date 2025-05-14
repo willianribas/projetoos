@@ -1,9 +1,9 @@
 
 import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
 import {
-  toast as toastNotification,
-  useToast as useToastHook,
+  Toaster as ToasterComponent,
 } from "@/components/ui/toaster";
+import { useToast as useToastPrimitive } from "@radix-ui/react-toast";
 
 type ToastOptions = Omit<ToastProps, "children">;
 type ToastMessageProps = {
@@ -12,14 +12,35 @@ type ToastMessageProps = {
   action?: ToastActionElement;
 } & ToastOptions;
 
-const toast = ({ title, description, variant = "default", action, ...props }: ToastMessageProps) => {
-  return toastNotification({
-    title,
-    description,
-    variant,
-    action,
-    ...props,
-  });
+interface ToastState {
+  toasts: ToastOptions[];
+}
+
+const toastState: ToastState = {
+  toasts: []
 };
 
-export { toast, useToastHook as useToast };
+export const useToast = () => {
+  const toastPrimitive = useToastPrimitive();
+  
+  return {
+    ...toastPrimitive,
+    toast: (props: ToastMessageProps) => toast(props),
+    toasts: toastState.toasts,
+  };
+};
+
+const toast = ({ title, description, variant = "default", action, ...props }: ToastMessageProps) => {
+  const id = Math.random().toString(36).substring(2, 9);
+  
+  // Add toast to state
+  toastState.toasts = [
+    ...toastState.toasts, 
+    { id, title, description, variant, action, ...props }
+  ];
+  
+  // Return toast id for potential future reference
+  return id;
+};
+
+export { toast };

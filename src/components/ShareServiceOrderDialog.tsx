@@ -16,6 +16,10 @@ interface ShareServiceOrderDialogProps {
   onClose: () => void;
 }
 
+interface RecipientUser {
+  id: string;
+}
+
 export function ShareServiceOrderDialog({ 
   serviceOrder, 
   isOpen, 

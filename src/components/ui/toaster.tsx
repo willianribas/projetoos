@@ -1,5 +1,4 @@
 
-import { useToast } from "@/hooks/use-toast";
 import {
   Toast,
   ToastClose,
@@ -8,6 +7,7 @@ import {
   ToastTitle,
   ToastViewport,
 } from "@/components/ui/toast";
+import { useToast } from "@/hooks/use-toast";
 import { motion, AnimatePresence } from "framer-motion";
 
 // Animation variants for different toast types
@@ -45,13 +45,18 @@ export function Toaster() {
     <ToastProvider>
       <AnimatePresence>
         {toasts.map(function ({ id, title, description, action, variant = "default", ...props }) {
+          // Cast variant to the allowed union type
+          const safeVariant = (variant === "destructive" || variant === "success" || variant === "warning") 
+            ? variant 
+            : "default";
+          
           // Select animation variant based on toast type
           const animation = 
-            variant === "destructive" 
+            safeVariant === "destructive" 
               ? toastAnimationVariants.destructive 
-              : variant === "success" 
+              : safeVariant === "success" 
                 ? toastAnimationVariants.success 
-                : variant === "warning"
+                : safeVariant === "warning"
                   ? toastAnimationVariants.warning
                   : toastAnimationVariants.default;
 
@@ -67,7 +72,7 @@ export function Toaster() {
               exit={animation.exit}
               transition={animation.transition}
             >
-              <Toast key={id} {...props} variant={variant} className={`group backdrop-blur-sm border-opacity-50 ${isGrouped ? 'mb-1' : 'mb-2'}`}>
+              <Toast key={id} {...props} variant={safeVariant} className={`group backdrop-blur-sm border-opacity-50 ${isGrouped ? 'mb-1' : 'mb-2'}`}>
                 <div className="grid gap-1">
                   {title && <ToastTitle>{title}</ToastTitle>}
                   {description && (

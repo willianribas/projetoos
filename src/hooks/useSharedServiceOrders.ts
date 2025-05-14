@@ -21,7 +21,14 @@ interface ProfileData {
   email?: string;
 }
 
-interface SharedOrderWithDetails extends SharedServiceOrder {
+interface SharedOrderWithDetails {
+  id: string;
+  service_order_id: number;
+  shared_by: string;
+  shared_with: string;
+  message?: string | null;
+  shared_at: string;
+  is_accepted: boolean | null;
   service_orders: ServiceOrder;
   profiles: ProfileData;
 }
@@ -45,7 +52,8 @@ export const useSharedServiceOrders = () => {
         .is("is_accepted", null);
 
       if (error) throw error;
-      return data as unknown as SharedOrderWithDetails[];
+      // Use type assertion to ensure the shape is correct
+      return (data || []) as unknown as SharedOrderWithDetails[];
     },
     enabled: !!user,
   });
@@ -64,7 +72,8 @@ export const useSharedServiceOrders = () => {
         .eq("shared_by", user?.id);
 
       if (error) throw error;
-      return data as unknown as SharedOrderWithDetails[];
+      // Use type assertion to ensure the shape is correct
+      return (data || []) as unknown as SharedOrderWithDetails[];
     },
     enabled: !!user,
   });

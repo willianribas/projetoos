@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   MoreVertical,
   Edit,
@@ -23,92 +25,93 @@ import { useState } from "react";
 import { ShareServiceOrderDialog } from "./ShareServiceOrderDialog";
 
 interface ServiceOrderTableRowProps {
-  serviceOrder: ServiceOrder;
+  order: ServiceOrder;
   index: number;
   getStatusColor: (status: string) => string;
-  statusOptions: { value: string; label: string }[];
-  onUpdateServiceOrder: (index: number, updatedOrder: ServiceOrder) => void;
-  onDeleteServiceOrder: (id: number) => void;
-  selectedStatus: string | null;
-  onStatusChange: (status: string | null) => void;
+  onRowClick: (order: ServiceOrder, index: number) => void;
+  onDelete: (e: React.MouseEvent, order: ServiceOrder) => void;
+  isSelected?: boolean;
+  onToggleSelect?: () => void;
+  batchMode?: boolean;
 }
 
 export function ServiceOrderTableRow({
-  serviceOrder,
+  order,
   index,
   getStatusColor,
-  statusOptions,
-  onUpdateServiceOrder,
-  onDeleteServiceOrder,
-  selectedStatus,
-  onStatusChange,
+  onRowClick,
+  onDelete,
+  isSelected = false,
+  onToggleSelect = () => {},
+  batchMode = false,
 }: ServiceOrderTableRowProps) {
-  const [isEditing, setIsEditing] = useState(false);
   const [showShareDialog, setShowShareDialog] = useState(false);
-
-  const handleStatusClick = (status: string) => {
-    onStatusChange(selectedStatus === status ? null : status);
-  };
 
   return (
     <>
-      <tr>
-        <td>{serviceOrder.numeroos}</td>
-        <td>{serviceOrder.patrimonio}</td>
-        <td>{serviceOrder.equipamento}</td>
-        <td>
-          <Badge className={getStatusColor(serviceOrder.status)}>
-            {serviceOrder.status}
+      <TableRow 
+        className={`cursor-pointer ${isSelected ? 'bg-muted/90' : ''}`}
+        onClick={() => batchMode ? onToggleSelect() : onRowClick(order, index)}
+      >
+        {batchMode && (
+          <TableCell className="w-[40px] text-center">
+            <Checkbox 
+              checked={isSelected}
+              onCheckedChange={() => onToggleSelect()}
+              onClick={(e) => e.stopPropagation()}
+              className="mx-auto"
+            />
+          </TableCell>
+        )}
+        <TableCell className="text-center font-medium">{order.numeroos}</TableCell>
+        <TableCell className="text-center">{order.patrimonio}</TableCell>
+        <TableCell className="text-center">{order.equipamento}</TableCell>
+        <TableCell className="text-center max-w-[300px] truncate">
+          {order.observacao || "-"}
+        </TableCell>
+        <TableCell className="text-center">
+          <Badge className={getStatusColor(order.status)}>
+            {order.status}
           </Badge>
-        </td>
-        <td>{serviceOrder.observacao}</td>
-        <td>{format(new Date(serviceOrder.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}</td>
-        <td className="text-right">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreVertical className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => {
-                  // Logic to edit
-                }}
-              >
-                <Edit className="mr-2 h-4 w-4" /> Edit
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                onClick={() => {
-                  onDeleteServiceOrder(serviceOrder.id);
-                }}
-              >
-                <Trash className="mr-2 h-4 w-4" /> Delete
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setShowShareDialog(true);
-                  }}
-                  title="Compartilhar OS"
-                >
-                  <Share2 className="h-4 w-4" />
+        </TableCell>
+        <TableCell className="text-right">
+          <div className="flex justify-end items-center gap-1">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
+                <Button variant="ghost" className="h-8 w-8 p-0">
+                  <span className="sr-only">Abrir menu</span>
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </td>
-      </tr>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation();
+                  onRowClick(order, index);
+                }}>
+                  <Edit className="mr-2 h-4 w-4" /> Editar
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(e, order);
+                }}>
+                  <Trash className="mr-2 h-4 w-4" /> Excluir
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={(e) => {
+                  e.stopPropagation();
+                  setShowShareDialog(true);
+                }}>
+                  <Share2 className="mr-2 h-4 w-4" /> Compartilhar
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </TableCell>
+      </TableRow>
       {showShareDialog && (
         <ShareServiceOrderDialog
-          serviceOrder={serviceOrder}
+          serviceOrder={order}
           isOpen={showShareDialog}
           onClose={() => setShowShareDialog(false)}
         />
