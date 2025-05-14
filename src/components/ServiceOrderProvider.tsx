@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext } from "react";
 import { ServiceOrder } from "@/types";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +11,7 @@ interface ServiceOrderContextType {
   createServiceOrder: (data: Omit<ServiceOrder, "id" | "created_at">) => void;
   updateServiceOrder: (data: ServiceOrder) => void;
   deleteServiceOrder: (id: number) => void;
+  shareServiceOrder: (serviceOrderId: number, recipientUserId: string, message?: string) => void;
 }
 
 const ServiceOrderContext = createContext<ServiceOrderContextType | undefined>(undefined);
@@ -156,6 +156,40 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     },
   });
 
+  // Share mutation
+  const shareMutation = useMutation({
+    mutationFn: async ({ serviceOrderId, recipientUserId, message }: { serviceOrderId: number; recipientUserId: string; message?: string }) => {
+      const { data, error } = await supabase
+        .from("shared_service_orders")
+        .insert([{ 
+          service_order_id: serviceOrderId, 
+          shared_by: user?.id, 
+          shared_with: recipientUserId,
+          message 
+        }])
+        .select();
+
+      if (error) throw error;
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
+      toast({
+        title: "Ordem de serviço compartilhada",
+        description: "A ordem de serviço foi compartilhada com sucesso.",
+        variant: "default",
+      });
+    },
+    onError: (error) => {
+      console.error("Error sharing service order:", error);
+      toast({
+        title: "Erro ao compartilhar ordem de serviço",
+        description: error.message,
+        variant: "destructive",
+      });
+    },
+  });
+
   const createServiceOrder = (data: Omit<ServiceOrder, "id" | "created_at">) => {
     createMutation.mutate(data);
   };
@@ -169,6 +203,10 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
     deleteMutation.mutate(id);
   };
 
+  const shareServiceOrder = (serviceOrderId: number, recipientUserId: string, message?: string) => {
+    shareMutation.mutate({ serviceOrderId, recipientUserId, message });
+  };
+
   return (
     <ServiceOrderContext.Provider
       value={{
@@ -177,6 +215,7 @@ export const ServiceOrderProvider = ({ children }: { children: React.ReactNode }
         createServiceOrder,
         updateServiceOrder,
         deleteServiceOrder,
+        shareServiceOrder,
       }}
     >
       {children}

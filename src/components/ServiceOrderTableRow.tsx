@@ -1,9 +1,8 @@
-
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2 } from "lucide-react";
+import { Trash2, Share2 } from "lucide-react";
 import { ServiceOrder } from "@/types";
 import { Tooltip } from "@/components/ui/tooltip";
 import { TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -14,6 +13,7 @@ interface ServiceOrderTableRowProps {
   getStatusColor: (status: string) => string;
   onRowClick: (order: ServiceOrder, index: number) => void;
   onDelete: (e: React.MouseEvent, order: ServiceOrder) => void;
+  onShare: (order: ServiceOrder) => void; // Nova prop
 }
 
 const ServiceOrderTableRow = ({
@@ -22,7 +22,13 @@ const ServiceOrderTableRow = ({
   getStatusColor,
   onRowClick,
   onDelete,
+  onShare,
 }: ServiceOrderTableRowProps) => {
+  const handleShare = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onShare(order);
+  };
+
   return (
     <TableRow
       key={index}
@@ -71,6 +77,14 @@ const ServiceOrderTableRow = ({
         </div>
       </TableCell>
       <TableCell className="text-center">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="mr-1 text-blue-500 hover:text-blue-800"
+          onClick={handleShare}
+        >
+          <Share2 className="h-4 w-4" />
+        </Button>
         <Button
           variant="ghost"
           size="icon"

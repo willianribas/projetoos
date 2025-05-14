@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -7,7 +8,9 @@ import { ServiceOrder } from "@/types";
 import ServiceOrderTableRow from "./ServiceOrderTableRow";
 import EditServiceOrderDialog from "./EditServiceOrderDialog";
 import DeleteServiceOrderDialog from "./DeleteServiceOrderDialog";
+import ShareServiceOrderDialog from "./ShareServiceOrderDialog";
 import { Hash, Building2, Settings2, ActivitySquare, MessageSquare, GripHorizontal, Filter, StickyNote } from "lucide-react";
+
 interface ServiceOrderTableProps {
   serviceOrders: ServiceOrder[];
   getStatusColor: (status: string) => string;
@@ -22,6 +25,7 @@ interface ServiceOrderTableProps {
   selectedStatus: string | null;
   onStatusChange: (status: string | null) => void;
 }
+
 const ServiceOrderTable = ({
   serviceOrders,
   getStatusColor,
@@ -33,12 +37,15 @@ const ServiceOrderTable = ({
 }: ServiceOrderTableProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isShareDialogOpen, setIsShareDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<{
     order: ServiceOrder;
     index: number;
   } | null>(null);
   const [editedOrder, setEditedOrder] = useState<ServiceOrder | null>(null);
   const [deleteOrderId, setDeleteOrderId] = useState<number | null>(null);
+  const [shareOrder, setShareOrder] = useState<ServiceOrder | null>(null);
+  
   const handleRowClick = (order: ServiceOrder, index: number) => {
     setSelectedOrder({
       order,
@@ -49,18 +56,21 @@ const ServiceOrderTable = ({
     });
     setIsDialogOpen(true);
   };
+  
   const handleSaveEdit = () => {
     if (selectedOrder && editedOrder) {
       onUpdateServiceOrder(selectedOrder.index, editedOrder);
       setIsDialogOpen(false);
     }
   };
+  
   const handleDelete = (e: React.MouseEvent, order: ServiceOrder) => {
     e.stopPropagation();
     console.log("Delete clicked for service order ID:", order.id, "Number:", order.numeroos);
     setDeleteOrderId(order.id);
     setIsDeleteDialogOpen(true);
   };
+  
   const confirmDelete = () => {
     if (deleteOrderId !== null) {
       console.log("Confirming delete for service order ID:", deleteOrderId);
@@ -69,6 +79,12 @@ const ServiceOrderTable = ({
       setDeleteOrderId(null);
     }
   };
+  
+  const handleShare = (order: ServiceOrder) => {
+    setShareOrder(order);
+    setIsShareDialogOpen(true);
+  };
+  
   return <>
       <Card className="mt-8 border-muted backdrop-blur-sm transition-all duration-300 hover:shadow-lg animate-fade-in bg-zinc-900">
         <CardHeader className="space-y-4 bg-zinc-900">
@@ -132,7 +148,7 @@ const ServiceOrderTable = ({
                       Status
                     </div>
                   </TableHead>
-                  <TableHead className="w-[70px] text-center text-foreground/90 font-semibold">
+                  <TableHead className="w-[100px] text-center text-foreground/90 font-semibold">
                     <div className="flex items-center justify-center gap-2">
                       <GripHorizontal className="h-4 w-4" />
                       <span className="hidden sm:inline">Ações</span>
@@ -141,16 +157,45 @@ const ServiceOrderTable = ({
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {serviceOrders.map((order, index) => <ServiceOrderTableRow key={order.id} order={order} index={index} getStatusColor={getStatusColor} onRowClick={handleRowClick} onDelete={handleDelete} />)}
+                {serviceOrders.map((order, index) => (
+                  <ServiceOrderTableRow 
+                    key={order.id} 
+                    order={order} 
+                    index={index} 
+                    getStatusColor={getStatusColor} 
+                    onRowClick={handleRowClick} 
+                    onDelete={handleDelete} 
+                    onShare={handleShare}
+                  />
+                ))}
               </TableBody>
             </Table>
           </div>
         </CardContent>
       </Card>
 
-      <EditServiceOrderDialog isOpen={isDialogOpen} setIsOpen={setIsDialogOpen} editedOrder={editedOrder} setEditedOrder={setEditedOrder} statusOptions={statusOptions} onSave={handleSaveEdit} />
+      <EditServiceOrderDialog 
+        isOpen={isDialogOpen} 
+        setIsOpen={setIsDialogOpen} 
+        editedOrder={editedOrder} 
+        setEditedOrder={setEditedOrder} 
+        statusOptions={statusOptions} 
+        onSave={handleSaveEdit} 
+      />
 
-      <DeleteServiceOrderDialog isOpen={isDeleteDialogOpen} setIsOpen={setIsDeleteDialogOpen} onConfirm={confirmDelete} serviceOrderId={deleteOrderId ?? undefined} />
+      <DeleteServiceOrderDialog 
+        isOpen={isDeleteDialogOpen} 
+        setIsOpen={setIsDeleteDialogOpen} 
+        onConfirm={confirmDelete} 
+        serviceOrderId={deleteOrderId ?? undefined} 
+      />
+
+      <ShareServiceOrderDialog 
+        isOpen={isShareDialogOpen}
+        setIsOpen={setIsShareDialogOpen}
+        serviceOrder={shareOrder}
+      />
     </>;
 };
+
 export default ServiceOrderTable;
