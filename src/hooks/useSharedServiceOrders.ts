@@ -16,12 +16,14 @@ interface SharedServiceOrder {
   is_accepted: boolean | null;
 }
 
+interface ProfileData {
+  full_name: string;
+  email?: string;
+}
+
 interface SharedOrderWithDetails extends SharedServiceOrder {
   service_orders: ServiceOrder;
-  profiles: {
-    full_name: string;
-    email?: string;
-  };
+  profiles: ProfileData;
 }
 
 export const useSharedServiceOrders = () => {
@@ -43,7 +45,7 @@ export const useSharedServiceOrders = () => {
         .is("is_accepted", null);
 
       if (error) throw error;
-      return data as SharedOrderWithDetails[];
+      return data as unknown as SharedOrderWithDetails[];
     },
     enabled: !!user,
   });
@@ -62,7 +64,7 @@ export const useSharedServiceOrders = () => {
         .eq("shared_by", user?.id);
 
       if (error) throw error;
-      return data as SharedOrderWithDetails[];
+      return data as unknown as SharedOrderWithDetails[];
     },
     enabled: !!user,
   });

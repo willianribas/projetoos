@@ -87,7 +87,7 @@ export function ShareServiceOrderDialog({
       });
 
       onClose();
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error sharing service order:", error);
       toast({
         title: "Erro ao compartilhar",

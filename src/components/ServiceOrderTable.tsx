@@ -5,7 +5,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { ServiceOrder } from "@/types";
-import ServiceOrderTableRow from "./ServiceOrderTableRow";
+import { ServiceOrderTableRow } from "./ServiceOrderTableRow";
 import EditServiceOrderDialog from "./EditServiceOrderDialog";
 import DeleteServiceOrderDialog from "./DeleteServiceOrderDialog";
 import { Hash, Building2, Settings2, ActivitySquare, MessageSquare, GripHorizontal, Filter, StickyNote, CheckSquare, Edit, Trash, X, AlertTriangle } from "lucide-react";
