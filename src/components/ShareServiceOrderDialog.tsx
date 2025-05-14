@@ -16,8 +16,8 @@ interface ShareServiceOrderDialogProps {
   onClose: () => void;
 }
 
-// Define a simpler type for the recipient user
-interface RecipientUser {
+// Simplified type for recipient user to avoid type recursion
+interface ProfileData {
   id: string;
 }
 
@@ -53,8 +53,8 @@ export function ShareServiceOrderDialog({
         return;
       }
 
-      // Explicitly type recipientUser to avoid circular references
-      const recipientUser: RecipientUser = { id: recipientData.id };
+      // Store recipient ID directly without circular references
+      const recipientId = recipientData.id;
 
       // Create shared service order
       const { error: shareError } = await supabase
@@ -62,7 +62,7 @@ export function ShareServiceOrderDialog({
         .insert({
           service_order_id: serviceOrder.id,
           shared_by: user.id,
-          shared_with: recipientUser.id,
+          shared_with: recipientId,
           message: message.trim() || null,
         });
 
@@ -72,7 +72,7 @@ export function ShareServiceOrderDialog({
       const { error: notificationError } = await supabase
         .from("notification_states")
         .insert({
-          user_id: recipientUser.id,
+          user_id: recipientId,
           service_order_id: serviceOrder.id,
           notification_type: "shared_service_order",
         });
