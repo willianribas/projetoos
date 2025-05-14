@@ -16,11 +16,6 @@ interface ShareServiceOrderDialogProps {
   onClose: () => void;
 }
 
-// Simplified type for recipient user to avoid type recursion
-interface ProfileData {
-  id: string;
-}
-
 export function ShareServiceOrderDialog({ 
   serviceOrder, 
   isOpen, 
@@ -53,7 +48,7 @@ export function ShareServiceOrderDialog({
         return;
       }
 
-      // Store recipient ID directly without circular references
+      // Simply get the ID directly without any complex typing
       const recipientId = recipientData.id;
 
       // Create shared service order
