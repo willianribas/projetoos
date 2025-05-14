@@ -44,8 +44,8 @@ export function Toaster() {
   return (
     <ToastProvider>
       <AnimatePresence>
-        {toasts.map(function ({ id, title, description, action, variant = "default", ...props }) {
-          // Cast variant to the allowed union type
+        {toasts.map(function ({ id, title, description, action, variant, ...props }) {
+          // Ensure we're only using valid variant types
           const safeVariant = (variant === "destructive" || variant === "success" || variant === "warning") 
             ? variant 
             : "default";

@@ -16,6 +16,7 @@ interface ShareServiceOrderDialogProps {
   onClose: () => void;
 }
 
+// Define a simple type for the recipient user
 interface RecipientUser {
   id: string;
 }
