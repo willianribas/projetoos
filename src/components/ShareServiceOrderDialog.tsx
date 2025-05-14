@@ -29,6 +29,11 @@ interface User {
   full_name?: string;
 }
 
+interface AuthUser {
+  id: string;
+  email?: string | null;
+}
+
 const ShareServiceOrderDialog = ({
   isOpen,
   setIsOpen,
@@ -59,12 +64,15 @@ const ShareServiceOrderDialog = ({
       if (error) throw error;
 
       // Também buscar por email na tabela auth.users
-      const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers();
+      const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
 
       if (authError) throw authError;
 
+      // Typecasting to ensure we have the right structure
+      const authUsers: AuthUser[] = authData?.users || [];
+
       // Combinar resultados
-      const filteredUsers = authUsers?.users
+      const filteredUsers = authUsers
         .filter(authUser => 
           authUser.email?.toLowerCase().includes(searchQuery.toLowerCase()))
         .map(authUser => {
@@ -74,7 +82,7 @@ const ShareServiceOrderDialog = ({
             email: authUser.email || '',
             full_name: profile?.full_name || '',
           };
-        }) || [];
+        });
 
       setUsers(filteredUsers);
     } catch (error: any) {
