@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -47,6 +46,18 @@ export function ServiceOrderTableRow({
 }: ServiceOrderTableRowProps) {
   const [showShareDialog, setShowShareDialog] = useState(false);
 
+  // Custom status badge with transparent background, colored border and text
+  const StatusBadge = ({ status }: { status: string }) => {
+    const colorClass = getStatusColor(status).replace('bg-', 'border-');
+    const textColorClass = getStatusColor(status).replace('bg-', 'text-');
+    
+    return (
+      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold ${colorClass} ${textColorClass} bg-transparent`}>
+        {status}
+      </span>
+    );
+  };
+
   return (
     <>
       <TableRow 
@@ -70,9 +81,7 @@ export function ServiceOrderTableRow({
           {order.observacao || "-"}
         </TableCell>
         <TableCell className="text-center">
-          <Badge className={getStatusColor(order.status)}>
-            {order.status}
-          </Badge>
+          <StatusBadge status={order.status} />
         </TableCell>
         <TableCell className="text-right">
           <div className="flex justify-end items-center gap-1">

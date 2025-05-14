@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Table, TableBody, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -61,6 +60,25 @@ const ServiceOrderTable = ({
     clearSelection 
   } = useServiceOrders();
   
+  // Custom status badge with transparent background, colored border and text
+  const StatusBadge = ({ status, selected }: { status: string, selected: boolean }) => {
+    const baseClass = "cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200";
+    let colorClass = "";
+    
+    if (selected) {
+      colorClass = getStatusColor(status);
+    } else {
+      colorClass = getStatusColor(status).replace('bg-', 'border-') + ' ' + 
+                  getStatusColor(status).replace('bg-', 'text-') + ' bg-transparent';
+    }
+    
+    return (
+      <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs ${baseClass} ${colorClass}`}>
+        {status}
+      </span>
+    );
+  };
+
   const handleRowClick = (order: ServiceOrder, index: number) => {
     // If batch mode is on, toggle selection instead of opening edit dialog
     if (showBatchOperations) {
@@ -204,17 +222,31 @@ const ServiceOrderTable = ({
           
           <ScrollArea className="w-full whitespace-nowrap">
             <div className="flex space-x-2 pb-4">
-              <Badge variant={selectedStatus === null ? "default" : "outline"} className="cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 hover:bg-primary/90" onClick={() => onStatusChange(null)}>
+              <span 
+                className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${selectedStatus === null ? 'bg-primary text-primary-foreground' : 'bg-transparent border-primary text-primary hover:bg-primary/10'}`}
+                onClick={() => onStatusChange(null)}
+              >
                 <Filter className="h-3 w-3" />
                 Todos
-              </Badge>
+              </span>
+              
               {statusOptions.map(status => {
-              const Icon = status.icon;
-              return <Badge key={status.value} variant={selectedStatus === status.value ? "default" : "outline"} className={`cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${selectedStatus === status.value ? getStatusColor(status.value) : "hover:bg-primary/90"}`} onClick={() => onStatusChange(status.value)}>
+                const Icon = status.icon;
+                return (
+                  <span 
+                    key={status.value}
+                    className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs cursor-pointer flex items-center gap-1 font-medium transition-colors duration-200 ${
+                      selectedStatus === status.value 
+                        ? getStatusColor(status.value) 
+                        : `bg-transparent ${getStatusColor(status.value).replace('bg-', 'border-')} ${getStatusColor(status.value).replace('bg-', 'text-')} hover:bg-opacity-10`
+                    }`}
+                    onClick={() => onStatusChange(status.value)}
+                  >
                     <Icon className="h-3 w-3" />
                     {status.value}
-                  </Badge>;
-            })}
+                  </span>
+                );
+              })}
             </div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +9,7 @@ import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { ServiceOrder } from "@/types";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ShareServiceOrderDialogProps {
   serviceOrder: ServiceOrder | null;
@@ -16,40 +17,50 @@ interface ShareServiceOrderDialogProps {
   onClose: () => void;
 }
 
+interface Profile {
+  id: string;
+  full_name: string;
+  email?: string;
+}
+
 export function ShareServiceOrderDialog({ 
   serviceOrder, 
   isOpen, 
   onClose 
 }: ShareServiceOrderDialogProps) {
-  const [recipientEmail, setRecipientEmail] = useState("");
+  const [recipientId, setRecipientId] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [availableUsers, setAvailableUsers] = useState<Profile[]>([]);
   const { user } = useAuth();
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      if (!user) return;
+      
+      try {
+        // Fetch all users except the current one
+        const { data, error } = await supabase
+          .from("profiles")
+          .select("id, full_name, email")
+          .neq("id", user.id);
+        
+        if (error) throw error;
+        
+        setAvailableUsers(data || []);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+    
+    fetchUsers();
+  }, [user]);
+
   const handleShare = async () => {
-    if (!serviceOrder || !user || !recipientEmail.trim()) return;
+    if (!serviceOrder || !user || !recipientId) return;
 
     try {
       setIsLoading(true);
-
-      // First check if recipient user exists
-      const { data: recipientData, error: userError } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("email", recipientEmail.trim())
-        .single();
-
-      if (userError || !recipientData) {
-        toast({
-          title: "Usuário não encontrado",
-          description: "O email informado não corresponde a nenhum usuário cadastrado.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Simply get the ID directly without any complex typing
-      const recipientId = recipientData.id;
 
       // Create shared service order
       const { error: shareError } = await supabase
@@ -83,9 +94,13 @@ export function ShareServiceOrderDialog({
 
       if (deleteError) throw deleteError;
 
+      // Get recipient name for the toast message
+      const selectedUser = availableUsers.find(u => u.id === recipientId);
+      const recipientName = selectedUser?.full_name || recipientId;
+
       toast({
         title: "Ordem de serviço compartilhada",
-        description: `A ordem de serviço foi enviada para ${recipientEmail}`,
+        description: `A ordem de serviço foi enviada para ${recipientName}`,
         variant: "success",
       });
 
@@ -114,16 +129,22 @@ export function ShareServiceOrderDialog({
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="recipient" className="text-right">
-              Email
+              Usuário
             </Label>
-            <Input
-              id="recipient"
-              value={recipientEmail}
-              onChange={(e) => setRecipientEmail(e.target.value)}
-              className="col-span-3"
-              placeholder="email@example.com"
-              type="email"
-            />
+            <div className="col-span-3">
+              <Select value={recipientId} onValueChange={setRecipientId}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Selecione um usuário" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableUsers.map((profile) => (
+                    <SelectItem key={profile.id} value={profile.id}>
+                      {profile.full_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="message" className="text-right">
@@ -142,7 +163,7 @@ export function ShareServiceOrderDialog({
           <Button variant="outline" onClick={onClose}>
             Cancelar
           </Button>
-          <Button onClick={handleShare} disabled={isLoading || !recipientEmail.trim()}>
+          <Button onClick={handleShare} disabled={isLoading || !recipientId}>
             {isLoading ? "Enviando..." : "Enviar OS"}
           </Button>
         </DialogFooter>
