@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Dialog,
@@ -13,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ServiceOrder } from "@/types";
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useServiceOrders } from "./ServiceOrderProvider";
 import { Loader2, Search, Share2, UserPlus } from "lucide-react";
 
@@ -63,12 +62,12 @@ const ShareServiceOrderDialog = ({
 
       if (error) throw error;
 
-      // Também buscar por email na tabela auth.users
+      // Also buscar por email na tabela auth.users
       const { data: authData, error: authError } = await supabase.auth.admin.listUsers();
 
       if (authError) throw authError;
 
-      // Typecasting to ensure we have the right structure
+      // Properly type the auth users data
       const authUsers: AuthUser[] = authData?.users || [];
 
       // Combinar resultados
