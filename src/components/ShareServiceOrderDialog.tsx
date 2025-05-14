@@ -42,6 +42,7 @@ const ShareServiceOrderDialog = ({
   const [isSearching, setIsSearching] = useState(false);
   
   const { shareServiceOrder } = useServiceOrders();
+  const { toast } = useToast();
 
   const searchUsers = async () => {
     if (!searchQuery.trim()) return;
