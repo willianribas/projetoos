@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
-import { supabase, rpc } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { ServiceOrder } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -65,37 +65,38 @@ export function ShareServiceOrderDialog({
     try {
       setIsLoading(true);
 
-      // 1. Create shared service order
-      const { data: sharedOrder, error: shareError } = await supabase
+      // Clone the service order for the recipient
+      const newServiceOrder = {
+        numeroos: serviceOrder.numeroos,
+        patrimonio: serviceOrder.patrimonio,
+        equipamento: serviceOrder.equipamento,
+        status: serviceOrder.status,
+        priority: serviceOrder.priority,
+        observacao: serviceOrder.observacao ? 
+          `${serviceOrder.observacao}\n\n--- Compartilhado por ${user.email || 'outro usuário'} com mensagem: ${message || 'Nenhuma mensagem adicional.'}` : 
+          `--- Compartilhado por ${user.email || 'outro usuário'} com mensagem: ${message || 'Nenhuma mensagem adicional.'}`,
+        user_id: recipientId,
+      };
+
+      // Create a new service order directly for the recipient
+      const { error: createError } = await supabase
+        .from("service_orders")
+        .insert([newServiceOrder]);
+
+      if (createError) throw createError;
+      
+      // Keep a record of the share in shared_service_orders table
+      const { error: shareError } = await supabase
         .from("shared_service_orders")
         .insert({
           service_order_id: serviceOrder.id,
           shared_by: user.id,
           shared_with: recipientId,
           message: message.trim() || null,
-        })
-        .select()
-        .single();
+          is_accepted: true, // Auto-accept since we're skipping the approval process
+        });
 
-      if (shareError) throw shareError;
-
-      // 2. Create notification for recipient using our RPC wrapper
-      const { error: notificationError } = await rpc.createNotificationForRecipient(
-        recipientId,
-        serviceOrder.id,
-        'shared_service_order'
-      );
-
-      if (notificationError) throw notificationError;
-
-      // 3. Soft delete from sender's orders (set deleted_at)
-      const { error: deleteError } = await supabase
-        .from("service_orders")
-        .update({ deleted_at: new Date().toISOString() })
-        .eq("id", serviceOrder.id)
-        .eq("user_id", user.id);
-
-      if (deleteError) throw deleteError;
+      if (shareError) console.error("Error recording share:", shareError);
 
       // Get recipient name for the toast message
       const selectedUser = availableUsers.find(u => u.id === recipientId);
@@ -109,11 +110,8 @@ export function ShareServiceOrderDialog({
 
       // Close the dialog and reset form
       onClose();
-      
-      // Force refresh the page to update lists
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      setMessage("");
+      setRecipientId("");
       
     } catch (error: any) {
       console.error("Error sharing service order:", error);
