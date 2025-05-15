@@ -2,9 +2,8 @@
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
@@ -20,7 +19,6 @@ interface ShareServiceOrderDialogProps {
 interface Profile {
   id: string;
   full_name: string;
-  email?: string;
 }
 
 export function ShareServiceOrderDialog({ 
@@ -42,7 +40,7 @@ export function ShareServiceOrderDialog({
         // Fetch all users except the current one
         const { data, error } = await supabase
           .from("profiles")
-          .select("id, full_name, email")
+          .select("id, full_name")
           .neq("id", user.id);
         
         if (error) throw error;

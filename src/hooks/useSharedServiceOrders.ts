@@ -18,7 +18,6 @@ interface SharedServiceOrder {
 
 interface ProfileData {
   full_name: string;
-  email?: string;
 }
 
 interface SharedOrderWithDetails {
@@ -46,7 +45,7 @@ export const useSharedServiceOrders = () => {
         .select(`
           *,
           service_orders (*),
-          profiles:shared_by (full_name, email)
+          profiles:shared_by (full_name)
         `)
         .eq("shared_with", user?.id)
         .is("is_accepted", null);
@@ -67,7 +66,7 @@ export const useSharedServiceOrders = () => {
         .select(`
           *,
           service_orders (*),
-          profiles:shared_with (full_name, email)
+          profiles:shared_with (full_name)
         `)
         .eq("shared_by", user?.id);
 
