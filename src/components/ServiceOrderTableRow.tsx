@@ -2,26 +2,17 @@
 import React from "react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  MoreVertical,
   Edit,
-  Trash,
+  Trash2,
   Share2
 } from "lucide-react";
 import { ServiceOrder } from "@/types";
 import { useState } from "react";
 import { ShareServiceOrderDialog } from "./ShareServiceOrderDialog";
+import { Button } from "./ui/button";
 
 interface ServiceOrderTableRowProps {
   order: ServiceOrder;
@@ -85,36 +76,30 @@ export function ServiceOrderTableRow({
         </TableCell>
         <TableCell className="text-right">
           <div className="flex justify-end items-center gap-1">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Abrir menu</span>
-                  <MoreVertical className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  onRowClick(order, index);
-                }}>
-                  <Edit className="mr-2 h-4 w-4" /> Editar
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(e, order);
-                }}>
-                  <Trash className="mr-2 h-4 w-4" /> Excluir
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={(e) => {
-                  e.stopPropagation();
-                  setShowShareDialog(true);
-                }}>
-                  <Share2 className="mr-2 h-4 w-4" /> Compartilhar
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                setShowShareDialog(true);
+              }}
+            >
+              <span className="sr-only">Compartilhar</span>
+              <Share2 className="h-4 w-4" />
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-8 w-8 p-0 text-red-500 hover:text-red-600 hover:bg-red-50"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(e, order);
+              }}
+            >
+              <span className="sr-only">Excluir</span>
+              <Trash2 className="h-4 w-4" />
+            </Button>
           </div>
         </TableCell>
       </TableRow>

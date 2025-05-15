@@ -6,9 +6,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/use-toast";
 import { ServiceOrder } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Loader2 } from "lucide-react";
 
 interface ShareServiceOrderDialogProps {
   serviceOrder: ServiceOrder | null;
@@ -48,6 +49,11 @@ export function ShareServiceOrderDialog({
         setAvailableUsers(data || []);
       } catch (error) {
         console.error("Error fetching users:", error);
+        toast({
+          title: "Erro ao carregar usuários",
+          description: "Não foi possível obter a lista de usuários.",
+          variant: "destructive",
+        });
       }
     };
     
@@ -98,11 +104,18 @@ export function ShareServiceOrderDialog({
 
       toast({
         title: "Ordem de serviço compartilhada",
-        description: `A ordem de serviço foi enviada para ${recipientName}`,
+        description: `A ordem de serviço foi enviada para ${recipientName} com sucesso!`,
         variant: "success",
       });
 
+      // Close the dialog and reset form
       onClose();
+      
+      // Force refresh the page to update lists
+      setTimeout(() => {
+        window.location.reload();
+      }, 1500);
+      
     } catch (error: any) {
       console.error("Error sharing service order:", error);
       toast({
@@ -135,11 +148,15 @@ export function ShareServiceOrderDialog({
                   <SelectValue placeholder="Selecione um usuário" />
                 </SelectTrigger>
                 <SelectContent>
-                  {availableUsers.map((profile) => (
-                    <SelectItem key={profile.id} value={profile.id}>
-                      {profile.full_name}
-                    </SelectItem>
-                  ))}
+                  {availableUsers.length > 0 ? (
+                    availableUsers.map((profile) => (
+                      <SelectItem key={profile.id} value={profile.id}>
+                        {profile.full_name}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem disabled value="loading">Carregando usuários...</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -158,11 +175,22 @@ export function ShareServiceOrderDialog({
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={onClose}>
+          <Button variant="outline" onClick={onClose} disabled={isLoading}>
             Cancelar
           </Button>
-          <Button onClick={handleShare} disabled={isLoading || !recipientId}>
-            {isLoading ? "Enviando..." : "Enviar OS"}
+          <Button 
+            onClick={handleShare} 
+            disabled={isLoading || !recipientId}
+            className="relative"
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                Enviando...
+              </>
+            ) : (
+              "Enviar OS"
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
