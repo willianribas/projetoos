@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/components/AuthProvider";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, rpc } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 import { ServiceOrder } from "@/types";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -80,14 +79,11 @@ export function ShareServiceOrderDialog({
 
       if (shareError) throw shareError;
 
-      // 2. Create notification for recipient with proper permissions
-      const { error: notificationError } = await supabase.rpc(
-        'create_notification_for_recipient', 
-        { 
-          recipient_id: recipientId,
-          so_id: serviceOrder.id,
-          notification_type: 'shared_service_order'
-        }
+      // 2. Create notification for recipient using our RPC wrapper
+      const { error: notificationError } = await rpc.createNotificationForRecipient(
+        recipientId,
+        serviceOrder.id,
+        'shared_service_order'
       );
 
       if (notificationError) throw notificationError;

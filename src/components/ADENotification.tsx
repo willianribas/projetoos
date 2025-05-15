@@ -17,11 +17,13 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
 
   const createNotificationMutation = useMutation({
     mutationFn: async ({ serviceOrderId, notificationType }: { serviceOrderId: number; notificationType: string }) => {
+      if (!user) throw new Error("User not authenticated");
+      
       const { error } = await supabase
         .from('notification_states')
         .insert({
           service_order_id: serviceOrderId,
-          user_id: user?.id,
+          user_id: user.id,
           notification_type: notificationType,
           is_read: false
         });

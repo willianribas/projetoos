@@ -6,20 +6,21 @@ import type { Database } from './types';
 const SUPABASE_URL = "https://poqsauhwspmwkwiqxbqy.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBvcXNhdWh3c3Btd2t3aXF4YnF5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Mzc5MTI1NDksImV4cCI6MjA1MzQ4ODU0OX0.cJQaEdoqx-quYBwWJjzimtBlbqfyhI0v88mSfL6qK80";
 
-// Define our own function signatures for RPCs to fix TypeScript errors
-type RPCFunctions = {
-  has_role: (args: { user_id: string; role: string }) => boolean;
-  create_notification_for_recipient: (args: { 
-    recipient_id: string; 
-    so_id: number; 
-    notification_type: string 
-  }) => void;
-}
-
 // Import the supabase client like this:
 // import { supabase } from "@/integrations/supabase/client";
 
-export const supabase = createClient<Database, 'public', RPCFunctions>(
-  SUPABASE_URL, 
-  SUPABASE_PUBLISHABLE_KEY
-);
+// Create the Supabase client
+export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+// Define type-safe RPC function caller
+export const rpc = {
+  hasRole: (userId: string, role: string) => 
+    supabase.rpc('has_role', { user_id: userId, role }),
+    
+  createNotificationForRecipient: (recipientId: string, soId: number, notificationType: string) => 
+    supabase.rpc('create_notification_for_recipient', { 
+      recipient_id: recipientId,
+      so_id: soId,
+      notification_type: notificationType
+    })
+};
