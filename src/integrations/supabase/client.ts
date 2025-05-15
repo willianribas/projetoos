@@ -14,7 +14,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_PUBLISHABL
 
 // Define type-safe RPC function caller
 export const rpc = {
-  hasRole: (userId: string, role: string) => 
+  hasRole: (userId: string, role: Database["public"]["Enums"]["app_role"]) => 
     supabase.rpc('has_role', { user_id: userId, role }),
     
   createNotificationForRecipient: (recipientId: string, soId: number, notificationType: string) => 
