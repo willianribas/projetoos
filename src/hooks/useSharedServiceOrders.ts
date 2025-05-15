@@ -125,6 +125,11 @@ export const useSharedServiceOrders = () => {
       queryClient.invalidateQueries({ queryKey: ["received_service_orders", user?.id] });
       queryClient.invalidateQueries({ queryKey: ["service_orders", user?.id] });
       queryClient.invalidateQueries({ queryKey: ["notification_states", user?.id] });
+      
+      // Refresh page to show changes
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
     onError: (error) => {
       toast({
@@ -178,6 +183,11 @@ export const useSharedServiceOrders = () => {
       
       queryClient.invalidateQueries({ queryKey: ["received_service_orders", user?.id] });
       queryClient.invalidateQueries({ queryKey: ["notification_states", user?.id] });
+      
+      // Refresh page to show changes
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     },
     onError: (error) => {
       toast({

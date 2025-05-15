@@ -1,6 +1,5 @@
 
 import { Toast, ToastActionElement, ToastProps } from "@/components/ui/toast";
-import { Toaster as ToasterComponent } from "@/components/ui/toaster";
 
 type ToastOptions = Omit<ToastProps, "children">;
 type ToastMessageProps = {

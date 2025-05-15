@@ -66,30 +66,33 @@ export function ShareServiceOrderDialog({
     try {
       setIsLoading(true);
 
-      // Create shared service order
-      const { error: shareError } = await supabase
+      // 1. Create shared service order
+      const { data: sharedOrder, error: shareError } = await supabase
         .from("shared_service_orders")
         .insert({
           service_order_id: serviceOrder.id,
           shared_by: user.id,
           shared_with: recipientId,
           message: message.trim() || null,
-        });
+        })
+        .select()
+        .single();
 
       if (shareError) throw shareError;
 
-      // Create notification for recipient
-      const { error: notificationError } = await supabase
-        .from("notification_states")
-        .insert({
-          user_id: recipientId,
-          service_order_id: serviceOrder.id,
-          notification_type: "shared_service_order",
-        });
+      // 2. Create notification for recipient with proper permissions
+      const { error: notificationError } = await supabase.rpc(
+        'create_notification_for_recipient', 
+        { 
+          recipient_id: recipientId,
+          so_id: serviceOrder.id,
+          notification_type: 'shared_service_order'
+        }
+      );
 
       if (notificationError) throw notificationError;
 
-      // Soft delete from sender's orders (set deleted_at)
+      // 3. Soft delete from sender's orders (set deleted_at)
       const { error: deleteError } = await supabase
         .from("service_orders")
         .update({ deleted_at: new Date().toISOString() })
@@ -114,13 +117,13 @@ export function ShareServiceOrderDialog({
       // Force refresh the page to update lists
       setTimeout(() => {
         window.location.reload();
-      }, 1500);
+      }, 1000);
       
     } catch (error: any) {
       console.error("Error sharing service order:", error);
       toast({
         title: "Erro ao compartilhar",
-        description: "Não foi possível enviar a ordem de serviço.",
+        description: error.message || "Não foi possível enviar a ordem de serviço.",
         variant: "destructive",
       });
     } finally {
