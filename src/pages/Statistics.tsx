@@ -5,6 +5,7 @@ import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrde
 import { statusOptions } from "@/components/ServiceOrderContent";
 import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";
+import { SharedServiceOrders } from "@/components/SharedServiceOrders";
 
 const StatisticsContent = () => {
   const { serviceOrders } = useServiceOrders();
@@ -15,6 +16,10 @@ const StatisticsContent = () => {
       <div className="pt-16 pb-8">
         <div className="container mx-auto px-4 space-y-6 animate-fade-in">
           <Header />
+          
+          {/* Shared Service Orders Component */}
+          <SharedServiceOrders />
+          
           <div className="bg-card/30 backdrop-blur-sm rounded-lg border border-border/40 shadow-sm">
             <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
           </div>

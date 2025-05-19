@@ -55,29 +55,27 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
       
       {/* Main Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all h-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-semibold">Distribuição de Status</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <StatusDistributionChart 
-                  serviceOrders={serviceOrders} 
-                  statusOptions={statusOptions} 
-                />
-              </CardContent>
-            </Card>
-            
-            <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all h-full">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg font-semibold">Timeline de OS</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <TimelineChart serviceOrders={serviceOrders} />
-              </CardContent>
-            </Card>
-          </div>
+        <div className="lg:col-span-8 space-y-6">
+          <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all h-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-semibold">Distribuição de Status</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <StatusDistributionChart 
+                serviceOrders={serviceOrders} 
+                statusOptions={statusOptions} 
+              />
+            </CardContent>
+          </Card>
+          
+          <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all h-full">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg font-semibold">Timeline de OS</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <TimelineChart serviceOrders={serviceOrders} />
+            </CardContent>
+          </Card>
         </div>
         
         <div className="lg:col-span-4">
@@ -96,7 +94,7 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
       </div>
 
       {/* Data Tables Section */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg font-semibold">Status</CardTitle>

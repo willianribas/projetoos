@@ -12,6 +12,8 @@ export interface Notification {
   service_order_id?: number;
   is_read: boolean;
   created_at: string;
+  content?: string;
+  title?: string;
 }
 
 export function useNotifications() {
@@ -33,6 +35,7 @@ export function useNotifications() {
       return data as Notification[];
     },
     enabled: !!user,
+    refetchInterval: 30000, // Refetch every 30 seconds
   });
 
   // Check for unread notifications
@@ -52,8 +55,18 @@ export function useNotifications() {
       if (error) throw error;
       return notificationId;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notification_states", user?.id] });
+    onSuccess: (notificationId) => {
+      queryClient.setQueryData(
+        ["notification_states", user?.id],
+        (oldData: Notification[] | undefined) => {
+          if (!oldData) return [];
+          return oldData.map(notification => 
+            notification.id === notificationId 
+              ? { ...notification, is_read: true } 
+              : notification
+          );
+        }
+      );
     },
     onError: (error) => {
       console.error("Error marking notification as read:", error);
@@ -73,7 +86,14 @@ export function useNotifications() {
       return true;
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notification_states", user?.id] });
+      queryClient.setQueryData(
+        ["notification_states", user?.id],
+        (oldData: Notification[] | undefined) => {
+          if (!oldData) return [];
+          return oldData.map(notification => ({ ...notification, is_read: true }));
+        }
+      );
+      
       toast({
         title: "Notificações marcadas como lidas",
         description: "Todas as notificações foram marcadas como lidas.",

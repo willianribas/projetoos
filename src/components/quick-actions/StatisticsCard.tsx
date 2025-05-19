@@ -19,8 +19,8 @@ export const StatisticsCard = ({
 }: StatisticsCardProps) => {
   return (
     <Card className="hover:shadow-lg transition-all border-muted bg-card/50 backdrop-blur-sm animate-fade-in">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-purple-700 dark:text-purple-300">
           <BarChart3 className="h-5 w-5 text-purple-500" />
           Estatísticas
         </CardTitle>
@@ -28,7 +28,9 @@ export const StatisticsCard = ({
       <CardContent>
         <Button 
           variant={showStats ? "secondary" : "outline"} 
-          className="w-full hover:bg-purple-500/10 group"
+          className={`w-full hover:bg-purple-500/10 group transition-all ${
+            showStats ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300' : ''
+          }`}
           onClick={() => {
             setShowStats(!showStats);
             setShowTable(false);
