@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Bell } from "lucide-react";
 import {
@@ -13,15 +13,26 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { useNavigate } from "react-router-dom";
 import { useSharedServiceOrders } from "@/hooks/useSharedServiceOrders";
+import { useNotificationSound } from "@/lib/useNotificationSound";
 
 export default function NotificationBell() {
   const { notifications, hasUnread, markAllAsRead } = useNotifications();
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
   const { receivedOrders } = useSharedServiceOrders();
+  const { play } = useNotificationSound();
+  const [prevPendingShares, setPrevPendingShares] = useState(0);
   
   const pendingShares = receivedOrders.length;
   const hasSharedOrders = pendingShares > 0;
+  
+  // Play sound when new shared orders arrive
+  useEffect(() => {
+    if (pendingShares > prevPendingShares && pendingShares > 0) {
+      play();
+    }
+    setPrevPendingShares(pendingShares);
+  }, [pendingShares, prevPendingShares, play]);
 
   const renderNotificationType = (type: string) => {
     switch (type) {
@@ -53,16 +64,27 @@ export default function NotificationBell() {
         </div>
 
         {hasSharedOrders && (
-          <div className="p-2 my-2 bg-orange-100 dark:bg-orange-900/20 rounded-md">
+          <div className="p-2 my-2 bg-purple-100 dark:bg-purple-900/20 rounded-md border border-purple-200 dark:border-purple-800/30">
             <p className="text-sm font-medium flex items-center justify-between">
               Ordens compartilhadas pendentes
-              <Badge variant="outline" className="ml-2">
+              <Badge variant="outline" className="ml-2 bg-purple-500/10 text-purple-600 dark:text-purple-400">
                 {pendingShares}
               </Badge>
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Você tem {pendingShares} ordens compartilhadas aguardando sua aprovação.
+              Você tem {pendingShares} ordem(s) compartilhada(s) aguardando sua aprovação.
             </p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="w-full mt-2 bg-purple-500/10 hover:bg-purple-500/20 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800/30"
+              onClick={() => {
+                setOpen(false);
+                navigate("/");
+              }}
+            >
+              Ver ordens compartilhadas
+            </Button>
           </div>
         )}
 
