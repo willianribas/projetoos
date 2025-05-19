@@ -5,22 +5,17 @@ import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrde
 import { statusOptions } from "@/components/ServiceOrderContent";
 import Header from "@/components/Header";
 import Navbar from "@/components/Navbar";
-import { SharedServiceOrders } from "@/components/SharedServiceOrders";
 
 const StatisticsContent = () => {
   const { serviceOrders } = useServiceOrders();
 
   return (
-    <div className="min-h-screen w-full bg-gradient-to-b from-background/50 to-background">
+    <div className="min-h-screen w-full">
       <Navbar />
-      <div className="pt-16 pb-8">
-        <div className="container mx-auto px-4 space-y-6 animate-fade-in">
+      <div className="pt-16">
+        <div className="container mx-auto p-6 space-y-6 animate-fade-in">
           <Header />
-          
-          {/* Shared Service Orders Component */}
-          <SharedServiceOrders />
-          
-          <div className="bg-card/30 backdrop-blur-sm rounded-lg border border-border/40 shadow-sm">
+          <div className="px-2 sm:px-0">
             <Statistics serviceOrders={serviceOrders} statusOptions={statusOptions} />
           </div>
         </div>

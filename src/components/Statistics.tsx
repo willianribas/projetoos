@@ -47,56 +47,31 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
   }, {} as Record<string, number>);
 
   return (
-    <div className="space-y-8 p-4 md:p-6 animate-fade-in">
-      {/* Metrics Highlight Section */}
-      <div className="mb-8">
-        <MetricsHighlight serviceOrders={serviceOrders} />
-      </div>
+    <div className="space-y-8 p-6 animate-fade-in">
+      <MetricsHighlight serviceOrders={serviceOrders} />
       
-      {/* Main Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8 space-y-6">
-          <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all h-full">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-semibold">Distribuição de Status</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <StatusDistributionChart 
-                serviceOrders={serviceOrders} 
-                statusOptions={statusOptions} 
-              />
-            </CardContent>
-          </Card>
-          
-          <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all h-full">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-semibold">Timeline de OS</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <TimelineChart serviceOrders={serviceOrders} />
-            </CardContent>
-          </Card>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <StatusDistributionChart 
+              serviceOrders={serviceOrders} 
+              statusOptions={statusOptions} 
+            />
+            <TimelineChart serviceOrders={serviceOrders} />
+          </div>
         </div>
         
-        <div className="lg:col-span-4">
-          <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all h-full">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-lg font-semibold">Relatórios</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ExportableReports 
-                serviceOrders={serviceOrders}
-                statusOptions={statusOptions}
-              />
-            </CardContent>
-          </Card>
+        <div className="lg:col-span-1">
+          <ExportableReports 
+            serviceOrders={serviceOrders}
+            statusOptions={statusOptions}
+          />
         </div>
       </div>
 
-      {/* Data Tables Section */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
-          <CardHeader className="pb-2">
+          <CardHeader>
             <CardTitle className="text-lg font-semibold">Status</CardTitle>
           </CardHeader>
           <CardContent>
@@ -128,7 +103,7 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
         </Card>
 
         <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
-          <CardHeader className="pb-2">
+          <CardHeader>
             <CardTitle className="text-lg font-semibold">Patrimônio</CardTitle>
           </CardHeader>
           <CardContent>
@@ -156,7 +131,7 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
         </Card>
 
         <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
-          <CardHeader className="pb-2">
+          <CardHeader>
             <CardTitle className="text-lg font-semibold">Equipamento</CardTitle>
           </CardHeader>
           <CardContent>

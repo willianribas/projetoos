@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,30 +8,9 @@ import { Clock, Share2, Check, X, Loader2 } from "lucide-react";
 import { getStatusColor } from "@/components/filters/ServiceOrderFilters";
 import { format } from "date-fns";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useNotificationSound } from "@/lib/useNotificationSound";
-import { toast } from "@/hooks/use-toast";
-import { useLocation } from "react-router-dom";
 
 export function SharedServiceOrders() {
   const { receivedOrders, isLoading, acceptSharedOrder, rejectSharedOrder } = useSharedServiceOrders();
-  const { play } = useNotificationSound();
-  const location = useLocation();
-  
-  // Effect to show notification and play sound when new orders are received
-  useEffect(() => {
-    // Only show notification if there are received orders and we're not loading
-    if (!isLoading && receivedOrders.length > 0) {
-      // Play notification sound
-      play();
-      
-      // Show toast notification
-      toast({
-        title: `${receivedOrders.length} ordem(s) compartilhada(s)`,
-        description: "Você recebeu ordens de serviço compartilhadas.",
-        variant: "success",
-      });
-    }
-  }, [receivedOrders.length, isLoading]);
   
   if (isLoading) {
     return (
@@ -46,17 +25,11 @@ export function SharedServiceOrders() {
   }
   
   return (
-    <div className="grid gap-4 animate-fade-in">
-      <h3 className="text-lg font-semibold flex items-center gap-2">
-        <Share2 className="h-5 w-5 text-purple-500" />
-        Ordens de Serviço Compartilhadas
-        <Badge variant="outline" className="ml-1 bg-purple-500/10 text-purple-600 dark:text-purple-400">
-          {receivedOrders.length}
-        </Badge>
-      </h3>
+    <div className="grid gap-4">
+      <h3 className="text-lg font-semibold">Ordens de Serviço Compartilhadas</h3>
       <div className="grid gap-3">
         {receivedOrders.map((sharedOrder) => (
-          <Card key={sharedOrder.id} className="overflow-hidden border-muted bg-card/50 backdrop-blur-sm hover:shadow-md transition-all">
+          <Card key={sharedOrder.id} className="overflow-hidden">
             <CardHeader className="pb-2">
               <div className="flex justify-between items-center">
                 <div>
