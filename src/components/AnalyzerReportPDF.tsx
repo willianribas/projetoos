@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   tableColHeader: {
-    width: "16.6%",
+    width: "14.28%",
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 0,
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
   },
   tableCol: {
-    width: "16.6%",
+    width: "14.28%",
     borderStyle: "solid",
     borderWidth: 1,
     borderLeftWidth: 0,
@@ -125,6 +125,9 @@ const AnalyzerReportPDF = ({ analyzers, selectedStatus }: AnalyzerReportPDFProps
               <Text style={styles.tableCellHeader}>Modelo</Text>
             </View>
             <View style={styles.tableColHeader}>
+              <Text style={styles.tableCellHeader}>N° Certificado</Text>
+            </View>
+            <View style={styles.tableColHeader}>
               <Text style={styles.tableCellHeader}>Vencimento</Text>
             </View>
             <View style={styles.tableColHeader}>
@@ -145,6 +148,9 @@ const AnalyzerReportPDF = ({ analyzers, selectedStatus }: AnalyzerReportPDFProps
               </View>
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>{analyzer.model}</Text>
+              </View>
+              <View style={styles.tableCol}>
+                <Text style={styles.tableCell}>{analyzer.certificate_number}</Text>
               </View>
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>

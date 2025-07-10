@@ -67,6 +67,7 @@ export const useAnalyzers = () => {
         serial_number: analyzerData.serial_number || '-',
         model: analyzerData.model || '-',
         brand: analyzerData.brand || '-',
+        certificate_number: analyzerData.certificate_number || '-',
         calibration_due_date: formattedDate,
       };
 

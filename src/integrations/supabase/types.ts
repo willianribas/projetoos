@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           brand: string
           calibration_due_date: string
+          certificate_number: string | null
           created_at: string
           id: string
           in_calibration: boolean
@@ -29,6 +30,7 @@ export type Database = {
         Insert: {
           brand?: string
           calibration_due_date: string
+          certificate_number?: string | null
           created_at?: string
           id?: string
           in_calibration?: boolean
@@ -40,6 +42,7 @@ export type Database = {
         Update: {
           brand?: string
           calibration_due_date?: string
+          certificate_number?: string | null
           created_at?: string
           id?: string
           in_calibration?: boolean

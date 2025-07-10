@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Calendar } from '@/components/ui/calendar';
@@ -33,6 +32,7 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
       name: initialData?.name || '',
       model: initialData?.model || '',
       brand: initialData?.brand || '',
+      certificate_number: initialData?.certificate_number || '',
       calibration_due_date: initialData?.calibration_due_date || '',
       in_calibration: initialData?.in_calibration || false,
     }
@@ -53,6 +53,7 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
       serial_number: data.serial_number || '-',
       model: data.model || '-',
       brand: data.brand || '-',
+      certificate_number: data.certificate_number || '-',
       calibration_due_date: data.calibration_due_date || format(new Date(), 'yyyy-MM-dd'),
     };
     
@@ -114,6 +115,15 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
+          <Label htmlFor="certificate_number">N° do Certificado</Label>
+          <Input
+            id="certificate_number"
+            {...register('certificate_number')}
+            placeholder="Digite o número do certificado"
+          />
+        </div>
+
+        <div className="space-y-2">
           <Label htmlFor="calibration_due_date">Data de Vencimento</Label>
           <Popover>
             <PopoverTrigger asChild>
@@ -150,35 +160,35 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
             </PopoverContent>
           </Popover>
         </div>
-
-        {/* Only show "Em Calibração" when editing, not when adding new */}
-        {initialData && (
-          <div className="space-y-2 flex items-end gap-2">
-            <Switch
-              id="in_calibration"
-              checked={inCalibration}
-              onCheckedChange={(checked) => {
-                setValue('in_calibration', checked);
-              }}
-              className={inCalibration ? "bg-blue-500" : ""}
-            />
-            <Label htmlFor="in_calibration">Em Calibração</Label>
-          </div>
-        )}
-
-        {!initialData && (
-          <div className="flex items-end">
-            <input 
-              type="hidden" 
-              {...register('in_calibration')} 
-              value="false" 
-            />
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
-              + Analisador
-            </Button>
-          </div>
-        )}
       </div>
+
+      {/* Show "Em Calibração" switch when editing */}
+      {initialData && (
+        <div className="flex items-center gap-2 pt-2">
+          <Switch
+            id="in_calibration"
+            checked={inCalibration}
+            onCheckedChange={(checked) => {
+              setValue('in_calibration', checked);
+            }}
+            className={inCalibration ? "bg-blue-500" : ""}
+          />
+          <Label htmlFor="in_calibration">Em Calibração</Label>
+        </div>
+      )}
+
+      {!initialData && (
+        <div className="flex justify-end pt-4">
+          <input 
+            type="hidden" 
+            {...register('in_calibration')} 
+            value="false" 
+          />
+          <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+            + Analisador
+          </Button>
+        </div>
+      )}
 
       {initialData && (
         <div className="flex justify-end gap-2 pt-4">

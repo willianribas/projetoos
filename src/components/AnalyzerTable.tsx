@@ -122,6 +122,7 @@ const AnalyzerTable = ({
               <TableHead>Nome</TableHead>
               <TableHead>Marca</TableHead>
               <TableHead>Modelo</TableHead>
+              <TableHead>N° Certificado</TableHead>
               <TableHead>Vencimento</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Ações</TableHead>
@@ -137,6 +138,7 @@ const AnalyzerTable = ({
                     <TableCell>{analyzer.name}</TableCell>
                     <TableCell>{analyzer.brand}</TableCell>
                     <TableCell>{analyzer.model}</TableCell>
+                    <TableCell>{analyzer.certificate_number}</TableCell>
                     <TableCell>
                       {formatCalibrationDate(analyzer.calibration_due_date)}
                     </TableCell>
@@ -166,7 +168,7 @@ const AnalyzerTable = ({
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   Nenhum analisador encontrado com esses critérios.
                 </TableCell>
               </TableRow>

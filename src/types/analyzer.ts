@@ -6,6 +6,7 @@ export interface Analyzer {
   model: string;
   brand: string;
   calibration_due_date: string;
+  certificate_number: string;
   in_calibration: boolean;
   created_at: string;
   user_id: string;
