@@ -10,8 +10,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Trash2, Edit2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { formatCalibrationDate } from '@/lib/dateUtils';
 import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import {
@@ -139,7 +138,7 @@ const AnalyzerTable = ({
                     <TableCell>{analyzer.brand}</TableCell>
                     <TableCell>{analyzer.model}</TableCell>
                     <TableCell>
-                      {format(new Date(analyzer.calibration_due_date), 'MMM yyyy', { locale: ptBR })}
+                      {formatCalibrationDate(analyzer.calibration_due_date)}
                     </TableCell>
                     <TableCell>
                       <Badge className={status.color}>{status.label}</Badge>

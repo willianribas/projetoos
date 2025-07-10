@@ -1,8 +1,7 @@
 
 import { Document, Page, Text, View, StyleSheet } from "@react-pdf/renderer";
 import { AnalyzerWithStatus } from "@/types/analyzer";
-import { format } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { formatCalibrationDate, formatFullDate } from '@/lib/dateUtils';
 
 const styles = StyleSheet.create({
   page: {
@@ -103,7 +102,7 @@ const AnalyzerReportPDF = ({ analyzers, selectedStatus }: AnalyzerReportPDFProps
     analyzers.filter(a => a.status === selectedStatus) : 
     analyzers;
 
-  const today = format(new Date(), "dd 'de' MMMM 'de' yyyy", { locale: ptBR });
+  const today = formatFullDate(new Date());
     
   return (
     <Document>
@@ -149,7 +148,7 @@ const AnalyzerReportPDF = ({ analyzers, selectedStatus }: AnalyzerReportPDFProps
               </View>
               <View style={styles.tableCol}>
                 <Text style={styles.tableCell}>
-                  {format(new Date(analyzer.calibration_due_date), 'MMM yyyy', { locale: ptBR })}
+                  {formatCalibrationDate(analyzer.calibration_due_date)}
                 </Text>
               </View>
               <View style={styles.tableCol}>

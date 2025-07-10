@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { format, parse } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
+import { formatCalendarDate, defaultLocale } from '@/lib/dateUtils';
 import { Analyzer } from '@/types/analyzer';
 import { CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -125,7 +125,7 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
                 )}
               >
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? format(date, "dd MMM yyyy", { locale: ptBR }) : <span>Selecione a data</span>}
+                {date ? formatCalendarDate(date) : <span>Selecione a data</span>}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">

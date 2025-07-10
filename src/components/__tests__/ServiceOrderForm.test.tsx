@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/dom';
 import ServiceOrderForm from '../ServiceOrderForm';
 import { useForm } from 'react-hook-form';
 import { statusOptions } from '../ServiceOrderContent';
