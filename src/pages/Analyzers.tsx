@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { DashboardLayout } from '@/components/layout/DashboardLayout';
+import Navbar from '@/components/Navbar';
 import AnalyzerForm from '@/components/AnalyzerForm';
 import AnalyzerTable from '@/components/AnalyzerTable';
 import { useAnalyzers } from '@/hooks/useAnalyzers';
@@ -43,10 +43,12 @@ const AnalyzersPage = () => {
   ];
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex justify-between items-center">
-          <h1 className="text-3xl font-bold heading-gradient">Analisadores</h1>
+    <div className="min-h-screen w-full">
+      <Navbar />
+      <div className="pt-16">
+        <div className="space-y-4 sm:space-y-6 p-4 sm:p-8 animate-fade-in">
+          <div className="flex justify-between items-center">
+            <h1 className="text-3xl font-bold">Analisadores</h1>
             <div className="flex gap-2">
               <Dialog open={isReportDialogOpen} onOpenChange={setIsReportDialogOpen}>
                 <Button 
@@ -138,8 +140,12 @@ const AnalyzersPage = () => {
             />
           )}
 
+          <div className="text-center text-sm text-foreground/60 py-4">
+            &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
+          </div>
+        </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

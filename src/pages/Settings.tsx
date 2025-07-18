@@ -13,7 +13,8 @@ import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import { useAuth } from "@/components/AuthProvider";
 import { Button } from "@/components/ui/button";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import Header from "@/components/Header";
+import Navbar from "@/components/Navbar";
 
 const Settings = () => {
   const [showHistory, setShowHistory] = useState(false);
@@ -24,52 +25,52 @@ const Settings = () => {
   const serviceOrderId = -1;
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold heading-gradient">Configurações</h1>
+    <div className="min-h-screen w-full">
+      <Navbar />
+      <div className="pt-16">
+        <div className="p-4 sm:p-8">
+          <Header />
+          <Card className="p-6 bg-card/50 backdrop-blur-sm">
+            <h2 className="text-2xl font-bold mb-6">Configurações</h2>
+            <ScrollArea className="h-[calc(100vh-12rem)]">
+              <div className="space-y-6">
+                <ThemeToggle />
+                <HistoryToggle 
+                  showHistory={showHistory} 
+                  setShowHistory={setShowHistory}
+                  serviceOrderId={serviceOrderId}
+                />
+                <DatabaseBackup />
+                <ExportPDF 
+                  serviceOrders={serviceOrders}
+                  statusOptions={statusOptions}
+                />
+                <ExportExcel 
+                  serviceOrders={serviceOrders}
+                  statusOptions={statusOptions}
+                />
+                {user?.email === "williann.dev@gmail.com" && (
+                  <div>
+                    <Button 
+                      variant="outline" 
+                      onClick={() => setShowUserManagement(true)}
+                      className="w-full"
+                    >
+                      Gerenciar Usuários
+                    </Button>
+                  </div>
+                )}
+                
+                <RecycleBin />
+              </div>
+            </ScrollArea>
+          </Card>
+          {showUserManagement && (
+            <UserManagementContainer onClose={() => setShowUserManagement(false)} />
+          )}
         </div>
-        
-        <Card className="modern-card">
-          <ScrollArea className="h-[calc(100vh-16rem)] p-6">
-            <div className="space-y-6">
-              <ThemeToggle />
-              <HistoryToggle 
-                showHistory={showHistory} 
-                setShowHistory={setShowHistory}
-                serviceOrderId={serviceOrderId}
-              />
-              <DatabaseBackup />
-              <ExportPDF 
-                serviceOrders={serviceOrders}
-                statusOptions={statusOptions}
-              />
-              <ExportExcel 
-                serviceOrders={serviceOrders}
-                statusOptions={statusOptions}
-              />
-              {user?.email === "williann.dev@gmail.com" && (
-                <div>
-                  <Button 
-                    variant="outline" 
-                    onClick={() => setShowUserManagement(true)}
-                    className="w-full"
-                  >
-                    Gerenciar Usuários
-                  </Button>
-                </div>
-              )}
-              
-              <RecycleBin />
-            </div>
-          </ScrollArea>
-        </Card>
-        
-        {showUserManagement && (
-          <UserManagementContainer onClose={() => setShowUserManagement(false)} />
-        )}
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 

@@ -6,10 +6,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 import { getStatusColor } from "@/components/filters/ServiceOrderFilters";
+import Header from "@/components/Header";
 import StatusTimeAnalysis from "@/components/analysis/StatusTimeAnalysis";
 import { Hash, Building2, Settings2, StickyNote, ActivitySquare, Clock } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import Navbar from "@/components/Navbar";
 
 const ADEMonitorPage = () => {
   const { serviceOrders } = useServiceOrders();
@@ -109,19 +110,20 @@ const ADEMonitorPage = () => {
   );
 
   return (
-    <DashboardLayout>
-      <div className="space-y-6 animate-fade-in">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold heading-gradient">Monitor ADE</h1>
-        </div>
-        <div className="grid gap-6">
+    <div className="min-h-screen w-full">
+      <Navbar />
+      <div className="pt-16">
+        <div className="container mx-auto p-6 space-y-6 animate-fade-in">
+          <Header />
+          <div className="grid gap-6">
             <TableWithObservation orders={adeOrders} title="Ordens de Serviço em ADE" />
             <TableWithObservation orders={amOrders} title="Ordens de Serviço em A.M" />
             <TableWithObservation orders={msOrders} title="Ordens de Serviço em M.S" />
             <StatusTimeAnalysis serviceOrders={serviceOrders} />
+          </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
   );
 };
 
