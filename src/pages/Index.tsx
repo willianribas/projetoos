@@ -1,45 +1,55 @@
 
-import Header from "@/components/Header";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { DashboardCards } from "@/components/dashboard/DashboardCards";
 import ADEMonitor from "@/components/ADEMonitor";
 import ServiceOrderContent from "@/components/ServiceOrderContent";
 import { ServiceOrderProvider, useServiceOrders } from "@/components/ServiceOrderProvider";
 import ADENotification from "@/components/ADENotification";
-import MetricsHighlight from "@/components/charts/MetricsHighlight";
-import Navbar from "@/components/Navbar";
 import RemindersSection from "@/components/reminders/RemindersSection";
 import { SharedServiceOrders } from "@/components/SharedServiceOrders";
 
 const IndexContent = () => {
-  const {
-    serviceOrders
-  } = useServiceOrders();
-  return <div className="min-h-screen w-full">
-      <Navbar />
-      <div className="pt-16">
-        <div className="space-y-4 sm:space-y-6 p-4 sm:p-8 animate-fade-in bg-zinc-900">
-          <ADENotification serviceOrders={serviceOrders} />
-          <Header />
-          <div className="px-2 sm:px-0">
-            <MetricsHighlight serviceOrders={serviceOrders} />
+  const { serviceOrders } = useServiceOrders();
+  
+  return (
+    <DashboardLayout>
+      <div className="space-y-6 animate-fade-in">
+        {/* Notification */}
+        <ADENotification serviceOrders={serviceOrders} />
+        
+        {/* Dashboard Cards */}
+        <DashboardCards serviceOrders={serviceOrders} />
+        
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+          {/* Left Column - Main Content */}
+          <div className="xl:col-span-2 space-y-6">
+            <ServiceOrderContent showTableByDefault={true} />
+            <ADEMonitor serviceOrders={serviceOrders} />
+          </div>
+          
+          {/* Right Column - Sidebar Content */}
+          <div className="space-y-6">
             <SharedServiceOrders />
             <RemindersSection />
-            <ADEMonitor serviceOrders={serviceOrders} />
-            <ServiceOrderContent showTableByDefault={true} />
-          </div>
-          <div className="text-center text-sm text-foreground/60 py-4">
-            &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
           </div>
         </div>
+        
+        {/* Footer */}
+        <div className="text-center text-sm text-muted-foreground py-8 border-t border-border">
+          &copy; {new Date().getFullYear()} Daily.Flow. Todos os direitos reservados.
+        </div>
       </div>
-    </div>;
+    </DashboardLayout>
+  );
 };
 
 const Index = () => {
-  return <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-      <ServiceOrderProvider>
-        <IndexContent />
-      </ServiceOrderProvider>
-    </div>;
+  return (
+    <ServiceOrderProvider>
+      <IndexContent />
+    </ServiceOrderProvider>
+  );
 };
 
 export default Index;
