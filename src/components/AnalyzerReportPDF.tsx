@@ -90,16 +90,16 @@ const getStatusDisplay = (status: string) => {
 
 interface AnalyzerReportPDFProps {
   analyzers: AnalyzerWithStatus[];
-  selectedStatus: string | null;
+  selectedStatuses: string[];
 }
 
-const AnalyzerReportPDF = ({ analyzers, selectedStatus }: AnalyzerReportPDFProps) => {
-  const reportTitle = selectedStatus ? 
-    `Relatório de Analisadores - ${getStatusDisplay(selectedStatus)}` : 
+const AnalyzerReportPDF = ({ analyzers, selectedStatuses }: AnalyzerReportPDFProps) => {
+  const reportTitle = selectedStatuses.length > 0 ? 
+    `Relatório de Analisadores - ${selectedStatuses.map(s => getStatusDisplay(s)).join(', ')}` : 
     "Relatório de Analisadores";
   
-  const filteredAnalyzers = selectedStatus ? 
-    analyzers.filter(a => a.status === selectedStatus) : 
+  const filteredAnalyzers = selectedStatuses.length > 0 ? 
+    analyzers.filter(a => selectedStatuses.includes(a.status)) : 
     analyzers;
 
   const today = formatFullDate(new Date());

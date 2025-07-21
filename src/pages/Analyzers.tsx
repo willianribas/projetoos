@@ -22,7 +22,7 @@ const AnalyzersPage = () => {
   const { analyzers, loading, addAnalyzer, updateAnalyzer, deleteAnalyzer } = useAnalyzers();
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [reportStatus, setReportStatus] = useState<string | null>(null);
+  const [reportStatuses, setReportStatuses] = useState<string[]>([]);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
 
   const handleStatusChange = (status: string | null) => {
@@ -35,12 +35,27 @@ const AnalyzersPage = () => {
   };
 
   const statusOptions = [
-    { value: null, label: 'Todos' },
     { value: 'in-day', label: 'Em Dia' },
     { value: 'expiring-soon', label: 'Vencerá em breve' },
     { value: 'expired', label: 'Vencido' },
     { value: 'in-calibration', label: 'Em Calibração' },
   ];
+
+  const handleStatusToggle = (status: string) => {
+    setReportStatuses(prev => 
+      prev.includes(status) 
+        ? prev.filter(s => s !== status)
+        : [...prev, status]
+    );
+  };
+
+  const handleSelectAll = () => {
+    if (reportStatuses.length === statusOptions.length) {
+      setReportStatuses([]);
+    } else {
+      setReportStatuses(statusOptions.map(option => option.value));
+    }
+  };
 
   return (
     <div className="min-h-screen w-full">
@@ -64,32 +79,44 @@ const AnalyzersPage = () => {
                     </DialogTitle>
                   </DialogHeader>
                   <div className="space-y-4 py-4">
-                    <div className="space-y-2">
-                      <label className="text-sm font-medium text-foreground">Selecione a situação</label>
-                      <Select 
-                        value={reportStatus || "null"}
-                        onValueChange={(value) => setReportStatus(value === "null" ? null : value)}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Selecione a situação" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {statusOptions.map((option) => (
-                            <SelectItem key={option.label} value={option.value === null ? "null" : option.value || ""}>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <label className="text-sm font-medium text-foreground">Selecione as categorias</label>
+                        <Button 
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={handleSelectAll}
+                        >
+                          {reportStatuses.length === statusOptions.length ? 'Desmarcar Todas' : 'Selecionar Todas'}
+                        </Button>
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-3">
+                        {statusOptions.map((option) => (
+                          <div key={option.value} className="flex items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={option.value}
+                              checked={reportStatuses.includes(option.value)}
+                              onChange={() => handleStatusToggle(option.value)}
+                              className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                            />
+                            <label htmlFor={option.value} className="text-sm text-foreground">
                               {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                            </label>
+                          </div>
+                        ))}
+                      </div>
                     </div>
+                    
                     <div className="text-sm text-muted-foreground">
-                      {reportStatus === null && "Relatório com todos os analisadores"}
-                      {reportStatus === 'in-day' && "Relatório apenas com analisadores em dia"}
-                      {reportStatus === 'expiring-soon' && "Relatório apenas com analisadores que vencerão em breve"}
-                      {reportStatus === 'expired' && "Relatório apenas com analisadores vencidos"}
-                      {reportStatus === 'in-calibration' && "Relatório apenas com analisadores em calibração"}
+                      {reportStatuses.length === 0 && "Relatório com todos os analisadores"}
+                      {reportStatuses.length === 1 && `Relatório apenas com analisadores ${statusOptions.find(opt => opt.value === reportStatuses[0])?.label.toLowerCase()}`}
+                      {reportStatuses.length > 1 && `Relatório com analisadores: ${reportStatuses.map(s => statusOptions.find(opt => opt.value === s)?.label).join(', ')}`}
                     </div>
-                    <BlobProvider document={<AnalyzerReportPDF analyzers={analyzers} selectedStatus={reportStatus} />}>
+                    
+                    <BlobProvider document={<AnalyzerReportPDF analyzers={analyzers} selectedStatuses={reportStatuses} />}>
                       {({ url, loading }) => (
                         <Button 
                           type="button"
@@ -100,7 +127,9 @@ const AnalyzersPage = () => {
                               // Create a link and trigger download
                               const link = document.createElement('a');
                               link.href = url;
-                              const statusLabel = statusOptions.find(opt => opt.value === reportStatus)?.label || 'Todos';
+                              const statusLabel = reportStatuses.length === 0 
+                                ? 'Todos' 
+                                : reportStatuses.map(s => statusOptions.find(opt => opt.value === s)?.label).join('_');
                               link.download = `Relatorio_Analisadores_${statusLabel.replace(/\s+/g, '_')}.pdf`;
                               link.click();
                               setIsReportDialogOpen(false);
