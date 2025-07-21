@@ -65,7 +65,7 @@ const AnalyzersPage = () => {
                   </DialogHeader>
                   <div className="space-y-4 py-4">
                     <div className="space-y-2">
-                      <label className="text-sm font-medium">Selecione a situação</label>
+                      <label className="text-sm font-medium text-foreground">Selecione a situação</label>
                       <Select 
                         value={reportStatus || "null"}
                         onValueChange={(value) => setReportStatus(value === "null" ? null : value)}
@@ -82,6 +82,13 @@ const AnalyzersPage = () => {
                         </SelectContent>
                       </Select>
                     </div>
+                    <div className="text-sm text-muted-foreground">
+                      {reportStatus === null && "Relatório com todos os analisadores"}
+                      {reportStatus === 'in-day' && "Relatório apenas com analisadores em dia"}
+                      {reportStatus === 'expiring-soon' && "Relatório apenas com analisadores que vencerão em breve"}
+                      {reportStatus === 'expired' && "Relatório apenas com analisadores vencidos"}
+                      {reportStatus === 'in-calibration' && "Relatório apenas com analisadores em calibração"}
+                    </div>
                     <BlobProvider document={<AnalyzerReportPDF analyzers={analyzers} selectedStatus={reportStatus} />}>
                       {({ url, loading }) => (
                         <Button 
@@ -93,7 +100,8 @@ const AnalyzersPage = () => {
                               // Create a link and trigger download
                               const link = document.createElement('a');
                               link.href = url;
-                              link.download = `Relatorio_Analisadores${reportStatus ? `_${reportStatus}` : ''}.pdf`;
+                              const statusLabel = statusOptions.find(opt => opt.value === reportStatus)?.label || 'Todos';
+                              link.download = `Relatorio_Analisadores_${statusLabel.replace(/\s+/g, '_')}.pdf`;
                               link.click();
                               setIsReportDialogOpen(false);
                             }
