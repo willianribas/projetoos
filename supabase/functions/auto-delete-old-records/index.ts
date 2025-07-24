@@ -29,6 +29,39 @@ serve(async (req) => {
     const formattedDate = threeDaysAgo.toISOString();
     
     console.log(`Deleting service orders deleted before: ${formattedDate}`);
+    console.log(`Current time: ${now.toISOString()}`);
+    console.log(`Three days ago: ${formattedDate}`);
+    
+    // First, let's check how many records match our criteria
+    const { data: recordsToDelete, error: countError } = await supabase
+      .from("service_orders")
+      .select("id, deleted_at")
+      .lt("deleted_at", formattedDate)
+      .not("deleted_at", "is", null);
+    
+    if (countError) {
+      console.error("Error counting records to delete:", countError);
+      return new Response(JSON.stringify({ error: countError.message }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
+    
+    console.log(`Found ${recordsToDelete?.length || 0} records to delete`);
+    
+    if (!recordsToDelete || recordsToDelete.length === 0) {
+      console.log("No records to delete");
+      return new Response(
+        JSON.stringify({ 
+          message: "Auto-deletion completed - no records to delete",
+          deletedRecords: 0
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 200,
+        }
+      );
+    }
     
     // Delete service orders that were soft-deleted more than 3 days ago
     const { data, error } = await supabase
@@ -45,12 +78,13 @@ serve(async (req) => {
       });
     }
     
-    console.log("Successfully deleted old records:", data?.length || 0);
+    console.log("Successfully deleted old records:", recordsToDelete.length);
     
     return new Response(
       JSON.stringify({ 
         message: "Auto-deletion completed successfully",
-        deletedRecords: data?.length || 0
+        deletedRecords: recordsToDelete.length,
+        recordsFound: recordsToDelete.length
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
