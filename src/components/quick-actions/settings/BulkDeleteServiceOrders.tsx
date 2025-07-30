@@ -18,7 +18,7 @@ const statusOptions = [
 export const BulkDeleteServiceOrders = () => {
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const { data: serviceOrders = [] } = useServiceOrdersQuery();
+  const { data: serviceOrders = [], refetch } = useServiceOrdersQuery();
   const permanentDeleteMutation = usePermanentDeleteServiceOrder();
   const { toast } = useToast();
 

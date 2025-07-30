@@ -23,6 +23,7 @@ export default function NotificationBell() {
   
   const pendingShares = receivedOrders.length;
   const hasSharedOrders = pendingShares > 0;
+  const totalNotifications = notifications.filter(n => !n.is_read).length + pendingShares;
 
   const renderNotificationType = (type: string) => {
     switch (type) {
@@ -61,19 +62,21 @@ export default function NotificationBell() {
               <Bell className="h-[1.2rem] w-[1.2rem] group-hover:text-primary transition-colors" />
             </motion.div>
             <AnimatePresence>
-              {(hasUnread || hasSharedOrders) && (
-                <motion.span
+              {totalNotifications > 0 && (
+                <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
-                  className="absolute h-3 w-3 -top-1 -right-1 rounded-full bg-gradient-to-r from-red-500 to-pink-500 ring-2 ring-background shadow-lg"
+                  className="absolute -top-1 -right-1 flex items-center justify-center min-w-[20px] h-5 px-1 rounded-full bg-gradient-to-r from-red-500 to-pink-500 ring-2 ring-background shadow-lg"
                 >
-                  <motion.div
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ repeat: Infinity, duration: 1.5 }}
-                    className="absolute inset-0 rounded-full bg-red-400/50"
-                  />
-                </motion.span>
+                  <motion.span
+                    animate={{ scale: [1, 1.1, 1] }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                    className="text-white text-xs font-bold leading-none"
+                  >
+                    {totalNotifications > 99 ? "99+" : totalNotifications}
+                  </motion.span>
+                </motion.div>
               )}
             </AnimatePresence>
           </Button>
