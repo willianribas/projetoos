@@ -133,6 +133,9 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                             <Badge variant="outline" className="font-mono text-xs">
                               OS #{order.numeroos}
                             </Badge>
+                            <Badge variant="secondary" className="text-xs bg-primary/20 text-primary">
+                              ADE
+                            </Badge>
                             {order.priority === "critical" && (
                               <Badge variant="destructive" className="text-xs">
                                 <AlertTriangle className="h-3 w-3 mr-1" />
@@ -189,9 +192,9 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="space-y-3"
+                className="space-y-4"
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 mb-3">
                   <div className="p-2 bg-purple-500/10 rounded-lg">
                     <Package className="h-4 w-4 text-purple-500" />
                   </div>
@@ -201,6 +204,64 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                   <Badge variant="outline" className="ml-auto bg-purple-500/10 border-purple-500/30">
                     {adpdOrders.length} {adpdOrders.length === 1 ? 'ordem' : 'ordens'}
                   </Badge>
+                </div>
+                
+                <div className="grid gap-3 max-h-64 overflow-y-auto pr-2">
+                  {adpdOrders.map((order, index) => (
+                    <motion.div
+                      key={order.id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      className="p-4 rounded-lg border transition-all duration-300 hover:shadow-md bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30"
+                    >
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <Badge variant="outline" className="font-mono text-xs">
+                              OS #{order.numeroos}
+                            </Badge>
+                            <Badge variant="secondary" className="text-xs bg-purple-500/20 text-purple-600 dark:text-purple-400">
+                              ADPD
+                            </Badge>
+                            {order.priority === "critical" && (
+                              <Badge variant="destructive" className="text-xs">
+                                <AlertTriangle className="h-3 w-3 mr-1" />
+                                Crítica
+                              </Badge>
+                            )}
+                          </div>
+                          
+                          <div className="space-y-1 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground min-w-[80px]">Patrimônio:</span>
+                              <span className="font-medium">{order.patrimonio}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className="text-muted-foreground min-w-[80px]">Equipamento:</span>
+                              <span className="font-medium truncate" title={order.equipamento}>
+                                {order.equipamento}
+                              </span>
+                            </div>
+                            {order.observacao && (
+                              <div className="flex items-start gap-2">
+                                <span className="text-muted-foreground min-w-[80px]">Observação:</span>
+                                <span className="text-xs text-muted-foreground line-clamp-2">
+                                  {order.observacao}
+                                </span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div className="flex flex-col items-end gap-2">
+                          <div className="p-2 bg-purple-500/20 rounded-lg">
+                            <Package className="h-4 w-4 text-purple-500" />
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
                 </div>
               </motion.div>
             )}
