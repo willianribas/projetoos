@@ -199,7 +199,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                     <Package className="h-4 w-4 text-purple-500" />
                   </div>
                   <h4 className="font-medium text-foreground">
-                    AAguardando Decisão de Proposta de Desativação
+                    Aguardando Decisão de Proposta de Desativação
                   </h4>
                   <Badge variant="outline" className="ml-auto bg-purple-500/10 border-purple-500/30">
                     {adpdOrders.length} {adpdOrders.length === 1 ? 'ordem' : 'ordens'}
