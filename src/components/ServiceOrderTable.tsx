@@ -182,15 +182,6 @@ const ServiceOrderTable = ({
             </CardTitle>
             
             <div className="flex items-center space-x-2">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="batch-mode"
-                  checked={showBatchOperations}
-                  onCheckedChange={setShowBatchOperations}
-                />
-                <Label htmlFor="batch-mode">Modo lote</Label>
-              </div>
-              
               {showBatchOperations && selectedOrders.length > 0 && (
                 <Button 
                   variant="outline" 

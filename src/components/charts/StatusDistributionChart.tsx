@@ -89,15 +89,20 @@ const StatusDistributionChart = ({
     ) : null;
   };
 
+  const totalOrders = serviceOrders.length;
+
   return (
-    <Card className="border-muted bg-card/50 backdrop-blur-sm hover:shadow-lg transition-all">
-      <CardHeader>
-        <CardTitle className="text-lg font-semibold">
+    <Card className="border-muted bg-gradient-to-br from-card/80 to-card/60 backdrop-blur-sm hover:shadow-xl transition-all duration-300 shadow-lg">
+      <CardHeader className="pb-4">
+        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
           Distribuição por Status
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          Total de {totalOrders} {totalOrders === 1 ? 'ordem de serviço' : 'ordens de serviço'}
+        </p>
       </CardHeader>
       <CardContent>
-        <div className="h-[400px] w-full">
+        <div className="h-[500px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -106,8 +111,11 @@ const StatusDistributionChart = ({
                 cy="50%"
                 labelLine={false}
                 label={renderCustomizedLabel}
-                outerRadius={150}
+                outerRadius={180}
+                innerRadius={60}
                 dataKey="value"
+                stroke="#ffffff"
+                strokeWidth={2}
               >
                 {data.map((entry, index) => (
                   <Cell
@@ -121,11 +129,15 @@ const StatusDistributionChart = ({
                 content={({ active, payload }) => {
                   if (active && payload && payload.length) {
                     const data = payload[0].payload;
+                    const percentage = ((data.value / totalOrders) * 100).toFixed(1);
                     return (
-                      <div className="rounded-lg border bg-background p-2 shadow-md">
-                        <p className="text-sm font-medium">{data.name}</p>
+                      <div className="rounded-lg border bg-background/95 backdrop-blur-sm p-3 shadow-xl">
+                        <p className="text-sm font-semibold text-primary">{data.name}</p>
                         <p className="text-sm text-muted-foreground">
-                          Quantidade: {data.value}
+                          Quantidade: <span className="font-medium text-foreground">{data.value}</span>
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          Percentual: <span className="font-medium text-foreground">{percentage}%</span>
                         </p>
                       </div>
                     );
@@ -134,8 +146,11 @@ const StatusDistributionChart = ({
                 }}
               />
               <Legend
-                formatter={(value) => (
-                  <span className="text-sm">{value}</span>
+                wrapperStyle={{ paddingTop: '20px' }}
+                formatter={(value, entry) => (
+                  <span className="text-sm font-medium" style={{ color: entry.color }}>
+                    {value}
+                  </span>
                 )}
               />
             </PieChart>

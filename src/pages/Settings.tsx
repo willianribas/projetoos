@@ -9,7 +9,7 @@ import { HistoryToggle } from "@/components/quick-actions/settings/HistoryToggle
 import { ThemeToggle } from "@/components/quick-actions/settings/ThemeToggle";
 import { UserManagementContainer } from "@/components/quick-actions/settings/UserManagementContainer";
 import { RecycleBin } from "@/components/quick-actions/settings/RecycleBin";
-import { BulkDeleteServiceOrders } from "@/components/quick-actions/settings/BulkDeleteServiceOrders";
+
 import { useServiceOrdersQuery } from "@/hooks/queries/useServiceOrders";
 import { statusOptions } from "@/components/ServiceOrderContent";
 import { useAuth } from "@/components/AuthProvider";
@@ -61,8 +61,6 @@ const Settings = () => {
                     </Button>
                   </div>
                 )}
-                
-                <BulkDeleteServiceOrders />
                 <RecycleBin />
               </div>
             </ScrollArea>

@@ -51,22 +51,20 @@ const Statistics = ({ serviceOrders, statusOptions }: StatisticsProps) => {
       <MetricsHighlight serviceOrders={serviceOrders} />
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <StatusDistributionChart 
-              serviceOrders={serviceOrders} 
-              statusOptions={statusOptions} 
-            />
-            <TimelineChart serviceOrders={serviceOrders} />
-          </div>
-        </div>
-        
-        <div className="lg:col-span-1">
-          <ExportableReports 
-            serviceOrders={serviceOrders}
-            statusOptions={statusOptions}
+        <div className="lg:col-span-3">
+          <StatusDistributionChart 
+            serviceOrders={serviceOrders} 
+            statusOptions={statusOptions} 
           />
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <TimelineChart serviceOrders={serviceOrders} />
+        <ExportableReports 
+          serviceOrders={serviceOrders}
+          statusOptions={statusOptions}
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -79,9 +79,10 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
             });
 
             toast({
-              title: "Ordem de Serviço em ADE",
+              title: "⚠️ Ordem de Serviço em ADE",
               description: `A OS ${order.numeroos} do patrimônio ${order.patrimonio} (${order.equipamento}) está há ${days} dias em ADE.`,
-              duration: 5000,
+              duration: 8000,
+              className: "bg-gradient-to-r from-yellow-50 to-orange-50 border-yellow-200 dark:from-yellow-950/20 dark:to-orange-950/20 dark:border-yellow-800",
             });
 
             setNotifiedOrders(prev => new Set([...prev, order.id]));
@@ -97,9 +98,10 @@ const ADENotification = ({ serviceOrders }: ADENotificationProps) => {
         
         // Create group notification for ADPD orders
         toast({
-          title: "Ordens de Serviço em ADPD",
+          title: "📋 Ordens de Serviço em ADPD",
           description: `Você tem ${serviceOrdersCount} ${serviceOrdersCount === 1 ? 'OS' : 'ordens de serviço'} aguardando decisão de proposta de desativação.`,
-          duration: 5000,
+          duration: 8000,
+          className: "bg-gradient-to-r from-purple-50 to-indigo-50 border-purple-200 dark:from-purple-950/20 dark:to-indigo-950/20 dark:border-purple-800",
         });
         
         // Mark as notified
