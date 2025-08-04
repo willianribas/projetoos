@@ -125,7 +125,8 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className={`p-4 rounded-lg border transition-all duration-300 hover:shadow-md ${getDaysColorClass(order.days)}`}
+                      onClick={() => navigate(`/detailed-service-order?edit=${order.id}`)}
+                      className={`p-4 rounded-lg border transition-all duration-300 hover:shadow-md cursor-pointer hover:scale-[1.02] ${getDaysColorClass(order.days)}`}
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 space-y-2">

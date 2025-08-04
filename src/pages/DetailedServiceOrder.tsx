@@ -27,6 +27,8 @@ import {
 } from "@/components/ui/select";
 import { BlobProvider } from "@react-pdf/renderer";
 import ServiceOrderPDF from "@/components/ServiceOrderPDF";
+import EditServiceOrderDialog from "@/components/EditServiceOrderDialog";
+import { useUpdateServiceOrder } from "@/hooks/mutations/useUpdateServiceOrder";
 
 const DetailedServiceOrder = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -38,8 +40,26 @@ const DetailedServiceOrder = () => {
   const [itemsPerPage, setItemsPerPage] = useState(20); // Default to 20 items per page
   const [exportStatus, setExportStatus] = useState<string | "all">("all");
   const [showExportOptions, setShowExportOptions] = useState(false);
-
+  const [editOrderId, setEditOrderId] = useState<number | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [editedOrder, setEditedOrder] = useState<any>(null);
+  
   const { serviceOrders } = useServiceOrders();
+  
+  // Check for edit parameter in URL
+  React.useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const editId = urlParams.get('edit');
+    if (editId) {
+      const orderToEdit = serviceOrders.find(order => order.id === parseInt(editId));
+      if (orderToEdit) {
+        setEditedOrder(orderToEdit);
+        setIsEditDialogOpen(true);
+      }
+      // Remove the parameter from URL without reloading
+      window.history.replaceState({}, '', window.location.pathname);
+    }
+  }, [serviceOrders]);
 
   const filteredOrders = filterServiceOrders({
     serviceOrders,
@@ -56,6 +76,16 @@ const DetailedServiceOrder = () => {
   const ordersToExport = exportStatus === "all" 
     ? filteredOrders
     : filteredOrders.filter(order => order.status === exportStatus);
+
+  const updateServiceOrderMutation = useUpdateServiceOrder();
+
+  const handleSaveEdit = () => {
+    if (editedOrder) {
+      updateServiceOrderMutation.mutate(editedOrder);
+      setIsEditDialogOpen(false);
+      setEditedOrder(null);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full">
@@ -264,6 +294,15 @@ const DetailedServiceOrder = () => {
                 {selectedOrderId && <ServiceOrderHistory serviceOrderId={selectedOrderId} />}
               </DialogContent>
             </Dialog>
+
+            <EditServiceOrderDialog
+              isOpen={isEditDialogOpen}
+              setIsOpen={setIsEditDialogOpen}
+              editedOrder={editedOrder}
+              setEditedOrder={setEditedOrder}
+              statusOptions={statusOptions}
+              onSave={handleSaveEdit}
+            />
           </div>
         </div>
       </div>

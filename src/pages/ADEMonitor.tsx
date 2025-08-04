@@ -72,8 +72,12 @@ const ADEMonitorPage = () => {
             </TableHeader>
             <TableBody>
               {orders.map((order) => (
-                <TableRow key={order.id}>
-                  <TableCell className="text-left">{order.numeroos}</TableCell>
+                 <TableRow 
+                   key={order.id}
+                   className="cursor-pointer hover:bg-muted/50 transition-colors"
+                   onClick={() => window.location.href = `/detailed-service-order?edit=${order.id}`}
+                 >
+                   <TableCell className="text-left">{order.numeroos}</TableCell>
                   <TableCell className="text-left">{order.patrimonio}</TableCell>
                   <TableCell className="text-left">{order.equipamento}</TableCell>
                   <TableCell className="text-left">

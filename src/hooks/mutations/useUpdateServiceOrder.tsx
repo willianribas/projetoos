@@ -1,14 +1,16 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, rpc } from "@/integrations/supabase/client";
 import { ServiceOrder } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 import { useServiceOrders } from "@/components/ServiceOrderProvider";
+import { useAuth } from "@/components/AuthProvider";
 
 export const useUpdateServiceOrder = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { serviceOrders } = useServiceOrders();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (updatedOrder: ServiceOrder) => {
@@ -33,8 +35,23 @@ export const useUpdateServiceOrder = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: async (data) => {
       queryClient.invalidateQueries({ queryKey: ["service_orders"] });
+      queryClient.invalidateQueries({ queryKey: ["notification_states"] });
+      
+      // Create notification when status changes to ADE
+      if (user && data.status === "ADE") {
+        try {
+          await rpc.createNotificationForRecipient(
+            user.id,
+            data.id,
+            'service_order_status_changed'
+          );
+        } catch (error) {
+          console.error("Error creating notification:", error);
+        }
+      }
+      
       toast({
         title: "Ordem de Serviço atualizada",
         description: "As alterações foram salvas com sucesso!",
