@@ -11,9 +11,10 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface ADEMonitorProps {
   serviceOrders: ServiceOrder[];
+  onEditOrder?: (order: ServiceOrder) => void;
 }
 
-const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
+const ADEMonitor = ({ serviceOrders, onEditOrder }: ADEMonitorProps) => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const adeOrders = serviceOrders.filter(order => order.status === "ADE");
@@ -125,7 +126,7 @@ const ADEMonitor = ({ serviceOrders }: ADEMonitorProps) => {
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      onClick={() => navigate(`/detailed-service-order?edit=${order.id}`)}
+                      onClick={() => onEditOrder ? onEditOrder(order) : navigate(`/detailed-service-order?edit=${order.id}`)}
                       className={`p-4 rounded-lg border transition-all duration-300 hover:shadow-md cursor-pointer hover:scale-[1.02] ${getDaysColorClass(order.days)}`}
                     >
                       <div className="flex items-start justify-between gap-3">

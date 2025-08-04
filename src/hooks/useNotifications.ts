@@ -241,34 +241,53 @@ export function useNotifications() {
 // Helper functions
 function getNotificationTitle(type: string): string {
   switch (type) {
-    case "ADE_8_DAYS":
-      return "⚠️ Alerta ADE";
-    case "shared_service_order":
-      return "📤 OS Compartilhada";
-    case "ade_reminder":
-      return "⏰ Lembrete ADE";
-    case "status_update":
-      return "🔄 Status Atualizado";
-    case "deadline_reminder":
-      return "⏰ Prazo se aproximando";
+    case 'ADE_8_DAYS':
+      return '🚨 URGENTE - OS em ADE há 8+ dias';
+    case 'ADE_5_DAYS':
+      return '⚠️ ATENÇÃO - OS em ADE há 5+ dias';
+    case 'ADE_3_DAYS':
+      return '📋 AVISO - OS em ADE há 3+ dias';
+    case 'shared_service_order':
+      return '📤 OS Compartilhada';
+    case 'service_order_status_changed':
+      return '🔄 Status da OS Alterado';
+    case 'reminder':
+      return '⏰ Lembrete';
     default:
-      return "🔔 Notificação";
+      return '🔔 Notificação';
   }
 }
 
 function getNotificationDescription(notification: Notification): string {
+  // If there's already a description in metadata, use it
+  if (notification.description) {
+    return notification.description;
+  }
+
+  // Create dynamic description based on notification type and service order ID
   switch (notification.notification_type) {
-    case "ADE_8_DAYS":
-      return "Uma ordem de serviço está há mais de 8 dias em ADE.";
-    case "shared_service_order":
-      return "Uma nova ordem de serviço foi compartilhada com você.";
-    case "ade_reminder":
-      return "Lembrete sobre ordem em status ADE.";
-    case "status_update":
-      return "O status de uma ordem de serviço foi atualizado.";
-    case "deadline_reminder":
-      return "Uma ordem de serviço está próxima do prazo.";
+    case 'ADE_8_DAYS':
+    case 'ADE_5_DAYS':
+    case 'ADE_3_DAYS':
+      if (notification.service_order_id) {
+        const days = notification.notification_type === 'ADE_8_DAYS' ? '8+' : 
+                    notification.notification_type === 'ADE_5_DAYS' ? '5+' : '3+';
+        return `OS #${notification.service_order_id} está há ${days} dias em ADE e requer atenção`;
+      }
+      return 'Uma ordem de serviço em ADE requer sua atenção';
+    case 'shared_service_order':
+      if (notification.service_order_id) {
+        return `OS #${notification.service_order_id} foi compartilhada com você`;
+      }
+      return 'Uma nova ordem de serviço foi compartilhada com você';
+    case 'service_order_status_changed':
+      if (notification.service_order_id) {
+        return `O status da OS #${notification.service_order_id} foi alterado`;
+      }
+      return 'O status de uma ordem de serviço foi atualizado';
+    case 'reminder':
+      return 'Você tem um lembrete pendente';
     default:
-      return "Você tem uma nova notificação.";
+      return 'Você tem uma nova notificação';
   }
 }

@@ -14,18 +14,27 @@ export const useADEDaysNotifications = ({ serviceOrders }: UseADEDaysNotificatio
   const queryClient = useQueryClient();
 
   const createNotificationMutation = useMutation({
-    mutationFn: async ({ serviceOrderId, notificationType, days }: { 
+    mutationFn: async ({ serviceOrderId, notificationType, days, order }: { 
       serviceOrderId: number; 
       notificationType: string;
       days: number;
+      order: ServiceOrder;
     }) => {
       if (!user) throw new Error("User not authenticated");
       
-      return rpc.createNotificationForRecipient(
-        user.id,
-        serviceOrderId,
-        notificationType
-      );
+      // Create notification with detailed metadata
+      const { error } = await supabase
+        .from('notification_states')
+        .insert({
+          service_order_id: serviceOrderId,
+          user_id: user.id,
+          notification_type: notificationType,
+          is_read: false
+        });
+
+      if (error) throw error;
+      
+      return { serviceOrderId, notificationType, days, order };
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["notification_states"] });
@@ -89,13 +98,14 @@ export const useADEDaysNotifications = ({ serviceOrders }: UseADEDaysNotificatio
             await createNotificationMutation.mutateAsync({
               serviceOrderId: order.id,
               notificationType: notificationData.type,
-              days
+              days,
+              order
             });
 
-            // Show toast notification for this specific user
+            // Show toast notification for this specific user with detailed OS info
             toast({
-              title: `⚠️ ${notificationData.urgency} - OS em ADE`,
-              description: `A OS ${order.numeroos} do patrimônio ${order.patrimonio} (${order.equipamento}) está há ${days} dias em ADE.`,
+              title: `⚠️ ${notificationData.urgency} - OS #${order.numeroos} em ADE`,
+              description: `Patrimônio: ${order.patrimonio} | Equipamento: ${order.equipamento} | ${days} dias em ADE`,
               duration: 8000,
               className: notificationData.className,
             });

@@ -75,7 +75,11 @@ const ADEMonitorPage = () => {
                  <TableRow 
                    key={order.id}
                    className="cursor-pointer hover:bg-muted/50 transition-colors"
-                   onClick={() => window.location.href = `/detailed-service-order?edit=${order.id}`}
+                   onClick={() => {
+                     const url = new URL(window.location.origin + '/detailed-service-order');
+                     url.searchParams.set('edit', order.id.toString());
+                     window.location.href = url.toString();
+                   }}
                  >
                    <TableCell className="text-left">{order.numeroos}</TableCell>
                   <TableCell className="text-left">{order.patrimonio}</TableCell>
