@@ -7,7 +7,8 @@ import {
   LogOut, 
   Menu,
   Bell,
-  FileText 
+  FileText,
+  Calendar
 } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { SidebarBase } from "@/components/ui/sidebar";
@@ -37,6 +38,11 @@ const Sidebar = () => {
       title: "AM/ADE Detalhada",
       icon: Bell,
       path: "/ade-monitor",
+    },
+    {
+      title: "Calendário",
+      icon: Calendar,
+      path: "/calendar",
     },
     {
       title: "Estatísticas",

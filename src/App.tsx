@@ -14,6 +14,7 @@ import Settings from "./pages/Settings";
 import ADEMonitorPage from "./pages/ADEMonitor";
 import DetailedServiceOrder from "./pages/DetailedServiceOrder";
 import AnalyzersPage from "./pages/Analyzers";
+import Calendar from "./pages/Calendar";
 import { useAuth } from "./components/AuthProvider";
 import { useEffect } from "react";
 import { useServiceOrders } from "./components/ServiceOrderProvider";
@@ -146,6 +147,14 @@ const AppRoutes = () => (
       element={
         <ProtectedRoute>
           <AnalyzersPage />
+        </ProtectedRoute>
+      }
+    />
+    <Route
+      path="/calendar"
+      element={
+        <ProtectedRoute>
+          <Calendar />
         </ProtectedRoute>
       }
     />
