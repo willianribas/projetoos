@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, BarChart2, Settings, LogOut, Bell, FileText, ActivitySquare } from "lucide-react";
+import { Home, BarChart2, Settings, LogOut, Bell, FileText, ActivitySquare, Calendar } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -64,6 +64,10 @@ const Navbar = () => {
     title: "AM/ADE Detalhada",
     icon: Bell,
     path: "/ade-monitor"
+  }, {
+    title: "Calendário",
+    icon: Calendar,
+    path: "/calendar"
   }, {
     title: "Analisadores",
     icon: ActivitySquare,
