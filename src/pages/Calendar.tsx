@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
-import { SidebarContent } from "@/components/ui/sidebar";
-import Sidebar from "@/components/Sidebar";
+import Navbar from "@/components/Navbar";
+import Header from "@/components/Header";
 import { AddEventDialog } from "@/components/calendar/AddEventDialog";
 import { EventDetailsDialog } from "@/components/calendar/EventDetailsDialog";
 import { useCalendarEvents } from "@/hooks/useCalendarEvents";
@@ -121,102 +121,105 @@ const Calendar = () => {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen">
-        <Sidebar />
-        <SidebarContent>
-          <div className="flex items-center justify-center h-full">
+      <div className="min-h-screen w-full">
+        <Navbar />
+        <div className="pt-16">
+          <div className="flex items-center justify-center h-[calc(100vh-4rem)]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
               <p className="text-muted-foreground">Carregando calendário...</p>
             </div>
           </div>
-        </SidebarContent>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <SidebarContent>
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <CalendarIcon className="h-8 w-8 text-primary" />
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">Calendário</h1>
-                <p className="text-muted-foreground">Gerencie suas atividades e compromissos</p>
-              </div>
-            </div>
-            
-            <Button onClick={() => setShowAddDialog(true)} className="gap-2">
-              <Plus className="h-4 w-4" />
-              Nova Atividade
-            </Button>
-          </div>
-
-          {/* Calendar */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center justify-between">
-                <span className="text-2xl">
-                  {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
-                </span>
-                
-                <div className="flex gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => navigateMonth('prev')}
-                  >
-                    <ChevronLeft className="h-4 w-4" />
-                  </Button>
-                  <Button 
-                    variant="outline"
-                    onClick={() => setCurrentDate(new Date())}
-                  >
-                    Hoje
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="icon"
-                    onClick={() => navigateMonth('next')}
-                  >
-                    <ChevronRight className="h-4 w-4" />
-                  </Button>
+    <div className="min-h-screen w-full">
+      <Navbar />
+      <div className="pt-16">
+        <div className="container mx-auto p-6 space-y-6 animate-fade-in">
+          <Header />
+          <div className="px-2 sm:px-0">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <CalendarIcon className="h-8 w-8 text-primary" />
+                <div>
+                  <h1 className="text-3xl font-bold text-foreground">Calendário</h1>
+                  <p className="text-muted-foreground">Gerencie suas atividades e compromissos</p>
                 </div>
-              </CardTitle>
-            </CardHeader>
-            
-            <CardContent>
-              {renderCalendarGrid()}
-            </CardContent>
-          </Card>
+              </div>
+              
+              <Button onClick={() => setShowAddDialog(true)} className="gap-2">
+                <Plus className="h-4 w-4" />
+                Nova Atividade
+              </Button>
+            </div>
 
-          {/* Dialogs */}
-          <AddEventDialog
-            open={showAddDialog}
-            onOpenChange={setShowAddDialog}
-            selectedDate={selectedDate}
-            onEventCreate={async (event) => {
-              await createEvent(event);
-            }}
-          />
+            {/* Calendar */}
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span className="text-2xl">
+                    {format(currentDate, 'MMMM yyyy', { locale: ptBR })}
+                  </span>
+                  
+                  <div className="flex gap-2">
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => navigateMonth('prev')}
+                    >
+                      <ChevronLeft className="h-4 w-4" />
+                    </Button>
+                    <Button 
+                      variant="outline"
+                      onClick={() => setCurrentDate(new Date())}
+                    >
+                      Hoje
+                    </Button>
+                    <Button 
+                      variant="outline" 
+                      size="icon"
+                      onClick={() => navigateMonth('next')}
+                    >
+                      <ChevronRight className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardTitle>
+              </CardHeader>
+              
+              <CardContent>
+                {renderCalendarGrid()}
+              </CardContent>
+            </Card>
 
-          <EventDetailsDialog
-            event={selectedEvent}
-            open={!!selectedEvent}
-            onOpenChange={(open) => !open && setSelectedEvent(null)}
-            onEventUpdate={async (event) => {
-              await updateEvent(event);
-            }}
-            onEventDelete={async (id) => {
-              await deleteEvent(id);
-            }}
-          />
+            {/* Dialogs */}
+            <AddEventDialog
+              open={showAddDialog}
+              onOpenChange={setShowAddDialog}
+              selectedDate={selectedDate}
+              onEventCreate={async (event) => {
+                await createEvent(event);
+              }}
+            />
+
+            <EventDetailsDialog
+              event={selectedEvent}
+              open={!!selectedEvent}
+              onOpenChange={(open) => !open && setSelectedEvent(null)}
+              onEventUpdate={async (event) => {
+                await updateEvent(event);
+              }}
+              onEventDelete={async (id) => {
+                await deleteEvent(id);
+              }}
+            />
+          </div>
         </div>
-      </SidebarContent>
+      </div>
     </div>
   );
 };
