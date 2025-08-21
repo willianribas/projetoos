@@ -3,8 +3,9 @@ import { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import AnalyzerForm from '@/components/AnalyzerForm';
 import AnalyzerTable from '@/components/AnalyzerTable';
+import SearchBar from '@/components/SearchBar';
 import { useAnalyzers } from '@/hooks/useAnalyzers';
-import { Analyzer } from '@/types/analyzer';
+import { Analyzer, AnalyzerWithStatus } from '@/types/analyzer';
 import { Button } from '@/components/ui/button';
 import { ActivitySquare, FileText } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -18,12 +19,22 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 
+interface SearchCriteria {
+  field: string;
+  value: string;
+}
+
 const AnalyzersPage = () => {
   const { analyzers, loading, addAnalyzer, updateAnalyzer, deleteAnalyzer } = useAnalyzers();
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [reportStatuses, setReportStatuses] = useState<string[]>([]);
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false);
+  
+  // Search states
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchField, setSearchField] = useState('all');
+  const [searchCriteria, setSearchCriteria] = useState<SearchCriteria[]>([]);
 
   const handleStatusChange = (status: string | null) => {
     setSelectedStatus(status);
@@ -55,6 +66,43 @@ const AnalyzersPage = () => {
     } else {
       setReportStatuses(statusOptions.map(option => option.value));
     }
+  };
+
+  // Filter analyzers based on search criteria
+  const getFilteredAnalyzers = () => {
+    let filtered = analyzers;
+
+    // Apply search criteria
+    if (searchCriteria.length > 0) {
+      filtered = filtered.filter(analyzer => {
+        return searchCriteria.every(criteria => {
+          const value = criteria.value.toLowerCase();
+          
+          if (criteria.field === 'all') {
+            return Object.values(analyzer).some(field => 
+              String(field).toLowerCase().includes(value)
+            );
+          }
+          
+          const fieldMap: Record<string, keyof AnalyzerWithStatus> = {
+            'nome': 'name',
+            'marca': 'brand',
+            'modelo': 'model',
+            'ns': 'serial_number',
+            'certificado': 'certificate_number'
+          };
+          
+          const fieldKey = fieldMap[criteria.field];
+          if (fieldKey && analyzer[fieldKey]) {
+            return String(analyzer[fieldKey]).toLowerCase().includes(value);
+          }
+          
+          return false;
+        });
+      });
+    }
+
+    return filtered;
   };
 
   return (
@@ -163,13 +211,22 @@ const AnalyzersPage = () => {
             </div>
           </div>
           
+          <SearchBar 
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            searchField={searchField}
+            setSearchField={setSearchField}
+            searchCriteria={searchCriteria}
+            setSearchCriteria={setSearchCriteria}
+          />
+          
           {loading ? (
             <div className="flex justify-center p-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
             </div>
           ) : (
             <AnalyzerTable 
-              analyzers={analyzers} 
+              analyzers={getFilteredAnalyzers()} 
               onDeleteAnalyzer={deleteAnalyzer}
               onUpdateAnalyzer={updateAnalyzer}
               selectedStatus={selectedStatus}

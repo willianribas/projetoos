@@ -62,11 +62,11 @@ const SearchBar = ({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Todos os campos</SelectItem>
-              <SelectItem value="numeroos">Número OS</SelectItem>
-              <SelectItem value="patrimonio">Patrimônio</SelectItem>
-              <SelectItem value="equipamento">Equipamento</SelectItem>
-              <SelectItem value="status">Status</SelectItem>
-              <SelectItem value="observacao">Observação</SelectItem>
+              <SelectItem value="nome">Nome</SelectItem>
+              <SelectItem value="marca">Marca</SelectItem>
+              <SelectItem value="modelo">Modelo</SelectItem>
+              <SelectItem value="ns">NS/PT</SelectItem>
+              <SelectItem value="certificado">N° Certificado</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -88,10 +88,10 @@ const SearchBar = ({
             >
               <span className="font-medium">
                 {criteria.field === 'all' ? 'Todos' : 
-                 criteria.field === 'numeroos' ? 'Número OS' :
-                 criteria.field === 'patrimonio' ? 'Patrimônio' :
-                 criteria.field === 'equipamento' ? 'Equipamento' :
-                 criteria.field === 'status' ? 'Status' : 'Observação'}:
+                 criteria.field === 'nome' ? 'Nome' :
+                 criteria.field === 'marca' ? 'Marca' :
+                 criteria.field === 'modelo' ? 'Modelo' :
+                 criteria.field === 'ns' ? 'NS/PT' : 'N° Certificado'}:
               </span>
               <span className="text-foreground/80">{criteria.value}</span>
               <button
