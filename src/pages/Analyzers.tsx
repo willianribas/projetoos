@@ -68,11 +68,21 @@ const AnalyzersPage = () => {
     }
   };
 
-  // Filter analyzers based on search criteria
+  // Filter analyzers based on search criteria and real-time search
   const getFilteredAnalyzers = () => {
     let filtered = analyzers;
 
-    // Apply search criteria
+    // Apply real-time search for "all fields" when there's a search query
+    if (searchField === 'all' && searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(analyzer => {
+        return Object.values(analyzer).some(field => 
+          String(field).toLowerCase().includes(query)
+        );
+      });
+    }
+
+    // Apply additional search criteria
     if (searchCriteria.length > 0) {
       filtered = filtered.filter(analyzer => {
         return searchCriteria.every(criteria => {
