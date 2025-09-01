@@ -104,19 +104,30 @@ export default function NotificationBell() {
   };
 
   const getNotificationDescription = (notification: any) => {
+    // Use the service order ID to make descriptions more specific
+    const osRef = notification.service_order_id ? `OS #${notification.service_order_id}` : "uma ordem de serviço";
+    
     switch (notification.notification_type) {
       case "ADE_8_DAYS":
-        return "Uma ordem de serviço está há mais de 8 dias em ADE.";
+        return `A ${osRef} está há mais de 8 dias em status ADE e requer atenção urgente.`;
+      case "ADE_5_DAYS":
+        return `A ${osRef} está há mais de 5 dias em status ADE e precisa de atenção.`;
+      case "ADE_3_DAYS":
+        return `A ${osRef} está há mais de 3 dias em status ADE.`;
       case "shared_service_order":
-        return "Uma nova ordem de serviço foi compartilhada com você.";
+        return `A ${osRef} foi compartilhada com você e aguarda aprovação.`;
+      case "service_order_status_changed":
+        return `O status da ${osRef} foi alterado para ADE.`;
       case "ade_reminder":
-        return "Lembrete sobre ordem em status ADE.";
+        return `Lembrete: A ${osRef} está em status ADE.`;
       case "status_update":
-        return "O status de uma ordem de serviço foi atualizado.";
+        return `O status da ${osRef} foi atualizado.`;
       case "deadline_reminder":
-        return "Uma ordem de serviço está próxima do prazo.";
+        return `A ${osRef} está próxima do prazo limite.`;
+      case "reminder":
+        return `Lembrete relacionado à ${osRef}.`;
       default:
-        return "Você tem uma nova notificação.";
+        return `Nova notificação relacionada à ${osRef}.`;
     }
   };
 

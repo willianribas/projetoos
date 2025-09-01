@@ -36,8 +36,14 @@ export const useUpdateServiceOrder = () => {
       return data;
     },
     onSuccess: async (data) => {
+      // Invalidate all related queries to ensure real-time updates
       queryClient.invalidateQueries({ queryKey: ["service_orders"] });
       queryClient.invalidateQueries({ queryKey: ["notification_states"] });
+      queryClient.invalidateQueries({ queryKey: ["deleted_service_orders"] });
+      queryClient.invalidateQueries({ queryKey: ["shared_service_orders"] });
+      
+      // Force refetch of service orders to ensure immediate UI updates
+      queryClient.refetchQueries({ queryKey: ["service_orders"] });
       
       // Create notification when status changes to ADE
       if (user && data.status === "ADE") {
