@@ -60,14 +60,20 @@ export function useNotifications() {
           console.log('New notification received:', payload);
           queryClient.invalidateQueries({ queryKey: ["notification_states", user.id] });
           
-          // Show toast for new notification
+          // Show toast for new notification with detailed info
           const newNotification = payload.new as Notification;
+          const notificationTitle = getNotificationTitle(newNotification.notification_type);
+          const notificationDescription = getNotificationDescription(newNotification);
+          
           toast({
-            title: getNotificationTitle(newNotification.notification_type),
-            description: getNotificationDescription(newNotification),
-            duration: 6000,
+            title: notificationTitle,
+            description: notificationDescription,
+            duration: 8000,
             className: "bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 dark:from-blue-950/20 dark:to-indigo-950/20 dark:border-blue-800",
           });
+          
+          // Also invalidate service orders to update UI state in real-time
+          queryClient.invalidateQueries({ queryKey: ["service_orders"] });
         }
       )
       .on(
@@ -81,6 +87,8 @@ export function useNotifications() {
         (payload) => {
           console.log('Notification updated:', payload);
           queryClient.invalidateQueries({ queryKey: ["notification_states", user.id] });
+          // Also refresh service orders when notifications are updated
+          queryClient.invalidateQueries({ queryKey: ["service_orders"] });
         }
       )
       .subscribe();
