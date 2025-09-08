@@ -132,13 +132,14 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
               <Button
                 variant={"outline"}
                 className={cn(
-                  "w-full justify-start text-left font-normal h-11 px-3 py-2",
+                  "w-full justify-start text-left font-normal h-11 px-4 py-2",
                   "border-input bg-background hover:bg-accent hover:text-accent-foreground",
-                  "transition-colors duration-200",
+                  "transition-all duration-200 shadow-sm hover:shadow-md",
+                  "focus:ring-2 focus:ring-primary/20 focus:border-primary",
                   !date && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-3 h-4 w-4 text-muted-foreground" />
+                <CalendarIcon className="mr-3 h-4 w-4 text-muted-foreground flex-shrink-0" />
                 {date ? (
                   <span className="text-foreground font-medium">
                     {formatCalendarDate(date)}
@@ -149,27 +150,67 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
               </Button>
             </PopoverTrigger>
             <PopoverContent 
-              className="w-auto p-0 shadow-lg border bg-popover" 
+              className="w-auto p-0 shadow-xl border bg-card/95 backdrop-blur-sm" 
               align="start"
               side="bottom"
-              sideOffset={4}
+              sideOffset={8}
             >
-              <div className="bg-popover rounded-lg border shadow-lg">
+              <div className="bg-card rounded-lg border shadow-xl overflow-hidden">
                 <Calendar
                   mode="single"
                   selected={date}
                   onSelect={(newDate) => {
                     setDate(newDate);
                     if (newDate) {
-                      // Use yyyy-MM-dd format to preserve the exact date
                       setValue('calibration_due_date', format(newDate, 'yyyy-MM-dd'));
                     }
                   }}
+                  locale={defaultLocale}
                   initialFocus
                   className={cn(
-                    "p-4 pointer-events-auto rounded-lg",
-                    "text-foreground"
+                    "p-4 pointer-events-auto",
+                    "text-foreground bg-card"
                   )}
+                  classNames={{
+                    months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0",
+                    month: "space-y-4",
+                    caption: "flex justify-center pt-1 relative items-center text-foreground font-medium",
+                    caption_label: "text-sm font-medium text-foreground",
+                    caption_dropdowns: "flex justify-center gap-1",
+                    nav: "space-x-1 flex items-center",
+                    nav_button: cn(
+                      "h-7 w-7 bg-transparent p-0 text-muted-foreground hover:text-foreground",
+                      "hover:bg-accent rounded-md transition-colors"
+                    ),
+                    nav_button_previous: "absolute left-1",
+                    nav_button_next: "absolute right-1",
+                    table: "w-full border-collapse space-y-1",
+                    head_row: "flex",
+                    head_cell: "text-muted-foreground rounded-md w-8 font-normal text-[0.8rem] text-center",
+                    row: "flex w-full mt-2",
+                    cell: cn(
+                      "relative p-0 text-center text-sm focus-within:relative focus-within:z-20",
+                      "h-8 w-8 rounded-md hover:bg-accent transition-colors"
+                    ),
+                    day: cn(
+                      "h-8 w-8 p-0 font-normal text-foreground hover:bg-accent hover:text-accent-foreground",
+                      "rounded-md transition-colors focus:bg-accent focus:text-accent-foreground"
+                    ),
+                    day_range_end: "day-range-end",
+                    day_selected: "bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary focus:text-primary-foreground",
+                    day_today: "bg-accent text-accent-foreground font-semibold",
+                    day_outside: "text-muted-foreground opacity-50",
+                    day_disabled: "text-muted-foreground opacity-50 cursor-not-allowed",
+                    day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
+                    day_hidden: "invisible",
+                    dropdown: cn(
+                      "bg-background border border-input rounded-md px-3 py-1 text-sm",
+                      "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary",
+                      "text-foreground"
+                    ),
+                    dropdown_month: "mr-2",
+                    dropdown_year: "",
+                  }}
                   captionLayout="dropdown-buttons"
                   fromYear={2020}
                   toYear={2035}
