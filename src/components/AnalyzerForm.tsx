@@ -124,39 +124,59 @@ const AnalyzerForm = ({ onSubmit, inDialog = false, initialData }: AnalyzerFormP
         </div>
 
         <div className="space-y-2">
-          <Label htmlFor="calibration_due_date">Data de Vencimento</Label>
+          <Label htmlFor="calibration_due_date" className="text-sm font-medium text-foreground">
+            Data de Vencimento
+          </Label>
           <Popover>
             <PopoverTrigger asChild>
               <Button
                 variant={"outline"}
                 className={cn(
-                  "w-full justify-start text-left font-normal",
+                  "w-full justify-start text-left font-normal h-11 px-3 py-2",
+                  "border-input bg-background hover:bg-accent hover:text-accent-foreground",
+                  "transition-colors duration-200",
                   !date && "text-muted-foreground"
                 )}
               >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                {date ? formatCalendarDate(date) : <span>Selecione a data</span>}
+                <CalendarIcon className="mr-3 h-4 w-4 text-muted-foreground" />
+                {date ? (
+                  <span className="text-foreground font-medium">
+                    {formatCalendarDate(date)}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground">Selecione a data de vencimento</span>
+                )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-              <Calendar
-                mode="single"
-                selected={date}
-                onSelect={(newDate) => {
-                  setDate(newDate);
-                  if (newDate) {
-                    // Use yyyy-MM-dd format to preserve the exact date
-                    setValue('calibration_due_date', format(newDate, 'yyyy-MM-dd'));
-                  }
-                }}
-                initialFocus
-                className={cn("p-3 pointer-events-auto")}
-                captionLayout="dropdown-buttons"
-                fromYear={2020}
-                toYear={2030}
-                showOutsideDays={false}
-                defaultMonth={date || new Date()}
-              />
+            <PopoverContent 
+              className="w-auto p-0 shadow-lg border bg-popover" 
+              align="start"
+              side="bottom"
+              sideOffset={4}
+            >
+              <div className="bg-popover rounded-lg border shadow-lg">
+                <Calendar
+                  mode="single"
+                  selected={date}
+                  onSelect={(newDate) => {
+                    setDate(newDate);
+                    if (newDate) {
+                      // Use yyyy-MM-dd format to preserve the exact date
+                      setValue('calibration_due_date', format(newDate, 'yyyy-MM-dd'));
+                    }
+                  }}
+                  initialFocus
+                  className={cn(
+                    "p-4 pointer-events-auto rounded-lg",
+                    "text-foreground"
+                  )}
+                  captionLayout="dropdown-buttons"
+                  fromYear={2020}
+                  toYear={2035}
+                  showOutsideDays={false}
+                  defaultMonth={date || new Date()}
+                />
+              </div>
             </PopoverContent>
           </Popover>
         </div>
