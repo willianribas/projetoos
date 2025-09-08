@@ -75,7 +75,7 @@ export const useAnalyzers = () => {
         .from('analyzers')
         .insert({
           ...formattedData,
-          user_id: user?.id,
+          user_id: null,
         })
         .select()
         .single();
@@ -171,10 +171,8 @@ export const useAnalyzers = () => {
   };
 
   useEffect(() => {
-    if (user) {
-      fetchAnalyzers();
-    }
-  }, [user]);
+    fetchAnalyzers();
+  }, []);
 
   return {
     analyzers,

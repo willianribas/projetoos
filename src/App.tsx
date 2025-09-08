@@ -144,11 +144,7 @@ const AppRoutes = () => (
     />
     <Route
       path="/analyzers"
-      element={
-        <ProtectedRoute>
-          <AnalyzersPage />
-        </ProtectedRoute>
-      }
+      element={<AnalyzersPage />}
     />
     <Route
       path="/calendar"
