@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { Home, BarChart2, Settings, LogOut, Bell, FileText, ActivitySquare, Calendar } from "lucide-react";
+import { Home, BarChart2, Settings, LogOut, Bell, FileText, ActivitySquare, Calendar, BookOpen } from "lucide-react";
 import { useAuth } from "./AuthProvider";
 import { cn } from "@/lib/utils";
 import { Button } from "./ui/button";
@@ -72,6 +72,10 @@ const Navbar = () => {
     title: "Analisadores",
     icon: ActivitySquare,
     path: "/analyzers"
+  }, {
+    title: "Documentação",
+    icon: BookOpen,
+    path: "/documentation"
   }, {
     title: "Estatísticas",
     icon: BarChart2,

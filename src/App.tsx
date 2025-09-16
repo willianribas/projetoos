@@ -11,6 +11,7 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Statistics from "./pages/Statistics";
 import Settings from "./pages/Settings";
+import Documentation from "./pages/Documentation";
 import ADEMonitorPage from "./pages/ADEMonitor";
 import DetailedServiceOrder from "./pages/DetailedServiceOrder";
 import AnalyzersPage from "./pages/Analyzers";
@@ -145,6 +146,10 @@ const AppRoutes = () => (
     <Route
       path="/analyzers"
       element={<AnalyzersPage />}
+    />
+    <Route
+      path="/documentation"
+      element={<Documentation />}
     />
     <Route
       path="/calendar"
