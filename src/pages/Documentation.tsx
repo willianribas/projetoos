@@ -20,7 +20,8 @@ import {
   Trash,
   Eye,
   FileText,
-  Share
+  Share,
+  Download
 } from "lucide-react";
 
 const Documentation = () => {
@@ -113,6 +114,201 @@ const Documentation = () => {
       description: "Compartilhe OS específicas com outros usuários do sistema de forma segura."
     }
   ];
+
+  const downloadDocumentation = () => {
+    const content = `
+SISTEMA DE ORDENS DE SERVIÇO (OS)
+Documentação Completa do Sistema
+
+===========================================
+VISÃO GERAL
+===========================================
+
+O Sistema de Ordens de Serviço (OS) é uma aplicação completa para gerenciamento 
+eficiente de ordens de serviço, controle de status e acompanhamento de atividades.
+
+===========================================
+SISTEMA DE STATUS
+===========================================
+
+O sistema utiliza 9 status diferentes para acompanhar o ciclo de vida das ordens de serviço:
+
+1. ADE - Aguardando Disponibilidade
+   - Cor: Azul escuro
+   - Ícone: Relógio
+   - Significado: OS criada, aguardando recursos ou disponibilidade
+
+2. AVT - Aguardando Vinda Técnica
+   - Cor: Laranja
+   - Ícone: Calendário com relógio
+   - Significado: Aguardando agendamento ou chegada do técnico
+
+3. EXT - Serviço Externo
+   - Cor: Roxo
+   - Ícone: Prédio
+   - Significado: Serviço será executado por empresa externa
+
+4. A.M - Aquisição de Material
+   - Cor: Vermelho
+   - Ícone: Carrinho de compras
+   - Significado: Aguardando compra/aquisição de materiais necessários
+
+5. INST - Instalação
+   - Cor: Rosa
+   - Ícone: Chave inglesa
+   - Significado: Em processo de instalação
+
+6. M.S - Material Solicitado
+   - Cor: Ciano
+   - Ícone: Pacote
+   - Significado: Material foi solicitado, aguardando entrega
+
+7. OSP - Ordem de Serviço Pronta
+   - Cor: Verde
+   - Ícone: Círculo com check
+   - Significado: Serviço concluído com sucesso
+
+8. E.E - Em Execução
+   - Cor: Laranja
+   - Ícone: Martelo
+   - Significado: Serviço sendo executado atualmente
+
+9. ADPD - Aguardando Decisão de Proposta de Desativação
+   - Cor: Magenta
+   - Ícone: Arquivo com caneta
+   - Significado: Aguardando decisão sobre desativação do equipamento
+
+===========================================
+OPERAÇÕES CRUD
+===========================================
+
+CREATE (CRIAR) - Adicionar nova Ordem de Serviço
+--------------------------------------------------
+Passos:
+1. Clique no botão 'Adicionar OS' na interface principal
+2. Preencha os campos obrigatórios: Número OS, Patrimônio, Equipamento e Status
+3. Defina a prioridade (Normal, Alta, Baixa)
+4. Adicione observações se necessário
+5. Clique em 'Adicionar OS' para salvar
+
+READ (VISUALIZAR) - Consultar e filtrar Ordens de Serviço
+----------------------------------------------------------
+Passos:
+1. Visualize todas as OS na tabela principal
+2. Use a barra de pesquisa para buscar por número, patrimônio ou equipamento
+3. Filtre por status específico usando o dropdown
+4. Use filtros avançados para critérios específicos
+5. Visualize detalhes completos clicando na OS
+
+UPDATE (EDITAR) - Modificar dados de Ordens de Serviço existentes
+-----------------------------------------------------------------
+Passos:
+1. Clique no ícone de edição (lápis) na linha da OS
+2. Modifique os campos desejados no modal de edição
+3. Altere status, prioridade ou observações conforme necessário
+4. Clique em 'Salvar Alterações' para confirmar
+5. As mudanças são registradas no histórico automaticamente
+
+DELETE (EXCLUIR) - Remover Ordens de Serviço (exclusão suave)
+-------------------------------------------------------------
+Passos:
+1. Clique no ícone de lixeira na linha da OS
+2. Confirme a exclusão no diálogo de confirmação
+3. A OS é movida para a lixeira (não excluída permanentemente)
+4. Acesse 'Configurações > Lixeira' para restaurar se necessário
+5. Exclusão permanente disponível apenas na lixeira
+
+===========================================
+FUNCIONALIDADES DO SISTEMA
+===========================================
+
+1. Sistema de Busca Avançado
+   - Pesquise por número OS, patrimônio, equipamento ou observações
+   - Filtros inteligentes para localização rápida
+
+2. Filtros por Status
+   - Filtre rapidamente as OS por status específico
+   - Visualização organizada por categoria
+
+3. Geração de Relatórios
+   - Exporte relatórios em PDF e Excel
+   - Dados filtrados e formatados profissionalmente
+
+4. Compartilhamento
+   - Compartilhe OS específicas com outros usuários
+   - Sistema seguro de permissões
+
+===========================================
+COMO USAR O SISTEMA
+===========================================
+
+1. Acessando o Sistema
+-------------------
+Faça login com suas credenciais para acessar o dashboard principal onde você 
+encontrará a interface de gerenciamento de ordens de serviço.
+
+2. Navegação Principal
+--------------------
+• Dashboard: Visão geral das OS e estatísticas
+• Ordens de Serviço: Gerenciamento completo das OS
+• Estatísticas: Relatórios e gráficos detalhados
+• Configurações: Preferências e gerenciamento do sistema
+
+3. Fluxo de Trabalho Recomendado
+-------------------------------
+1. Criar nova OS com informações básicas
+2. Definir status inicial baseado na situação atual
+3. Acompanhar progresso através das mudanças de status
+4. Utilizar observações para registrar detalhes importantes
+5. Finalizar OS quando o serviço estiver concluído (OSP)
+
+4. Boas Práticas
+---------------
+• Sempre preencha observações detalhadas
+• Mantenha os status atualizados conforme o progresso
+• Use prioridades para organizar o trabalho
+• Revise regularmente as OS em aberto
+• Utilize os relatórios para análise de desempenho
+
+===========================================
+ESTRUTURA DO SISTEMA
+===========================================
+
+Campos Obrigatórios:
+- Número OS: Identificador único
+- Patrimônio: Código do equipamento
+- Equipamento: Descrição do item
+- Status: Estado atual da OS
+
+Campos Opcionais:
+- Prioridade: Normal, Alta ou Baixa
+- Observações: Detalhes adicionais
+- Data de Criação: Preenchida automaticamente
+- Usuário: Responsável pela OS
+
+===========================================
+SUPORTE E AJUDA
+===========================================
+
+Para suporte técnico ou dúvidas sobre o sistema, consulte:
+- Documentação online no sistema
+- Manual do usuário disponível no menu Ajuda
+- Contato com administrador do sistema
+
+Este documento foi gerado automaticamente pelo Sistema de OS
+Data de geração: ${new Date().toLocaleDateString('pt-BR')}
+`;
+
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `Documentacao_Sistema_OS_${new Date().toISOString().split('T')[0]}.txt`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="container mx-auto p-6 space-y-8">
@@ -321,11 +517,20 @@ const Documentation = () => {
         </CardContent>
       </Card>
 
-      <div className="text-center pt-8">
-        <Button size="lg" className="bg-primary hover:bg-primary/90">
-          <Plus className="h-4 w-4 mr-2" />
-          Começar a Usar o Sistema
-        </Button>
+      <div className="text-center pt-8 space-y-4">
+        <div className="flex gap-4 justify-center">
+          <Button size="lg" className="bg-primary hover:bg-primary/90">
+            <Plus className="h-4 w-4 mr-2" />
+            Começar a Usar o Sistema
+          </Button>
+          <Button size="lg" variant="outline" onClick={downloadDocumentation}>
+            <Download className="h-4 w-4 mr-2" />
+            Baixar Documentação
+          </Button>
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Clique em "Baixar Documentação" para obter um arquivo de texto completo com todas as informações
+        </p>
       </div>
     </div>
   );
