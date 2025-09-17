@@ -122,7 +122,7 @@ const ADEMonitor = ({ serviceOrders, onEditOrder }: ADEMonitorProps) => {
                 <div className="grid gap-3 max-h-64 overflow-y-auto pr-2">
                   {adeOrdersWithDays.map((order, index) => (
                     <motion.div
-                      key={order.id}
+                      key={`ade-${order.id}-${order.created_at}`}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
@@ -211,11 +211,12 @@ const ADEMonitor = ({ serviceOrders, onEditOrder }: ADEMonitorProps) => {
                 <div className="grid gap-3 max-h-64 overflow-y-auto pr-2">
                   {adpdOrders.map((order, index) => (
                     <motion.div
-                      key={order.id}
+                      key={`adpd-${order.id}-${order.created_at}`}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      className="p-4 rounded-lg border transition-all duration-300 hover:shadow-md bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30"
+                      onClick={() => onEditOrder ? onEditOrder(order) : navigate(`/detailed-service-order?edit=${order.id}`)}
+                      className="p-4 rounded-lg border transition-all duration-300 hover:shadow-md cursor-pointer hover:scale-[1.02] bg-purple-500/10 text-purple-700 dark:text-purple-300 border-purple-500/30"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1 space-y-2">
@@ -291,9 +292,10 @@ const ADEMonitor = ({ serviceOrders, onEditOrder }: ADEMonitorProps) => {
                 <div className="flex flex-wrap gap-2 ml-8">
                   {msOrders.map((order) => (
                     <motion.div
-                      key={order.id}
+                      key={`ms-${order.id}-${order.created_at}`}
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
+                      onClick={() => onEditOrder ? onEditOrder(order) : navigate(`/detailed-service-order?edit=${order.id}`)}
                     >
                       <Badge 
                         variant="outline" 
