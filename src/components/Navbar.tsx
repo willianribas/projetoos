@@ -11,47 +11,71 @@ const NavItem = ({
   icon: Icon,
   title,
   isActive,
-  onClick
+  onClick,
+  hoveredItem,
+  setHoveredItem,
+  itemKey
 }: {
   icon: any;
   title: string;
   isActive: boolean;
   onClick: () => void;
+  hoveredItem: string | null;
+  setHoveredItem: (key: string | null) => void;
+  itemKey: string;
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  return <Button onClick={onClick} variant="ghost" onMouseEnter={() => setIsHovered(true)} onMouseLeave={() => setIsHovered(false)} className={cn("relative h-12 transition-all duration-300 group", "hover:bg-[#FFDEE2] dark:hover:bg-[#FFDEE2]/10", isHovered ? "w-auto px-4" : "w-12")}>
-      <div className="flex items-center gap-2">
-        <Icon className={cn("h-5 w-5 transition-colors duration-300", isActive ? "text-blue-500" : "text-blue-400", "group-hover:text-[#ff8fa3] dark:group-hover:text-[#ff8fa3]")} />
-        <AnimatePresence>
-          {isHovered && <motion.span initial={{
-          width: 0,
-          opacity: 0
-        }} animate={{
-          width: "auto",
-          opacity: 1
-        }} exit={{
-          width: 0,
-          opacity: 0
-        }} transition={{
-          duration: 0.2
-        }} className="whitespace-nowrap overflow-hidden pl-6">
+  const isHovered = hoveredItem === itemKey;
+  
+  return (
+    <Button 
+      onClick={onClick} 
+      variant="ghost" 
+      onMouseEnter={() => setHoveredItem(itemKey)} 
+      onMouseLeave={() => setHoveredItem(null)}
+      className={cn(
+        "relative h-12 transition-all duration-200 ease-out group",
+        "hover:bg-[#FFDEE2] dark:hover:bg-[#FFDEE2]/10",
+        "flex items-center justify-start",
+        isHovered ? "w-auto px-4" : "w-12 px-3"
+      )}
+    >
+      <div className="flex items-center gap-2 min-w-0">
+        <Icon className={cn(
+          "h-5 w-5 transition-colors duration-200 flex-shrink-0", 
+          isActive ? "text-blue-500" : "text-blue-400", 
+          "group-hover:text-[#ff8fa3] dark:group-hover:text-[#ff8fa3]"
+        )} />
+        <AnimatePresence mode="wait">
+          {isHovered && (
+            <motion.span 
+              initial={{ width: 0, opacity: 0 }} 
+              animate={{ width: "auto", opacity: 1 }} 
+              exit={{ width: 0, opacity: 0 }} 
+              transition={{ duration: 0.15, ease: "easeOut" }}
+              className="whitespace-nowrap overflow-hidden text-sm font-medium"
+            >
               {title}
-            </motion.span>}
+            </motion.span>
+          )}
         </AnimatePresence>
       </div>
-      {isActive && <motion.div layoutId="activeTab" className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" initial={false} transition={{
-      type: "spring",
-      stiffness: 500,
-      damping: 30
-    }} />}
-    </Button>;
+      {isActive && (
+        <motion.div 
+          layoutId="activeTab" 
+          className="absolute bottom-0 left-0 h-0.5 w-full bg-primary" 
+          initial={false} 
+          transition={{ type: "spring", stiffness: 400, damping: 25 }} 
+        />
+      )}
+    </Button>
+  );
 };
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const {
-    signOut
-  } = useAuth();
+  const { signOut } = useAuth();
+  const [hoveredItem, setHoveredItem] = useState<string | null>(null);
+  
   const menuItems = [{
     title: "Início",
     icon: Home,
@@ -81,19 +105,49 @@ const Navbar = () => {
     icon: BarChart2,
     path: "/statistics"
   }];
-  return <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
+  
+  return (
+    <div className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b">
       <div className="flex h-16 items-center justify-between px-4 bg-zinc-900">
         <div className="flex items-center space-x-2 ml-0">
-          {menuItems.map(item => <NavItem key={item.title} icon={item.icon} title={item.title} isActive={location.pathname === item.path} onClick={() => navigate(item.path)} />)}
+          {menuItems.map(item => (
+            <NavItem 
+              key={item.title} 
+              icon={item.icon} 
+              title={item.title} 
+              isActive={location.pathname === item.path} 
+              onClick={() => navigate(item.path)}
+              hoveredItem={hoveredItem}
+              setHoveredItem={setHoveredItem}
+              itemKey={item.title}
+            />
+          ))}
         </div>
 
         <div className="flex items-center space-x-2">
           <UserProfile />
           <NotificationBell />
-          <NavItem icon={Settings} title="Configurações" isActive={location.pathname === "/settings"} onClick={() => navigate("/settings")} />
-          <NavItem icon={LogOut} title="Sair" isActive={false} onClick={signOut} />
+          <NavItem 
+            icon={Settings} 
+            title="Configurações" 
+            isActive={location.pathname === "/settings"} 
+            onClick={() => navigate("/settings")}
+            hoveredItem={hoveredItem}
+            setHoveredItem={setHoveredItem}
+            itemKey="settings"
+          />
+          <NavItem 
+            icon={LogOut} 
+            title="Sair" 
+            isActive={false} 
+            onClick={signOut}
+            hoveredItem={hoveredItem}
+            setHoveredItem={setHoveredItem}
+            itemKey="logout"
+          />
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 export default Navbar;
