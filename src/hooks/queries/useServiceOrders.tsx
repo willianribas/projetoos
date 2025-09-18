@@ -21,9 +21,10 @@ export const useServiceOrdersQuery = () => {
       return data as ServiceOrder[];
     },
     enabled: !!user,
-    staleTime: 1000 * 60 * 5, // 5 minutes
+    staleTime: 1000 * 30, // 30 seconds for more frequent updates
     gcTime: 1000 * 60 * 30, // 30 minutes
-    refetchOnWindowFocus: false,
+    refetchOnWindowFocus: true, // Refetch when window gains focus
     refetchOnMount: true,
+    refetchInterval: 1000 * 60, // Auto-refetch every minute
   });
 };
